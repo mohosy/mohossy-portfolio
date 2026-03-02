@@ -1,0 +1,522 @@
+import type {
+  CredibilityItem,
+  DemoEntry,
+  ExperienceEntry,
+  ProjectEntry,
+  SiteProfile,
+} from "@/types/portfolio";
+
+export const siteProfile: SiteProfile = {
+  name: "Mo Shirmohammadi",
+  tagline:
+    "Software Engineer building production-minded distributed systems, data infrastructure, and applied ML.",
+  email: "mshirmoh@usc.edu",
+  linkedinUrl: "https://linkedin.com/in/mohossy",
+  githubUrl: "https://github.com/mohosy",
+  resumeUrl: "/resume/mo-shirmohammadi-resume.txt",
+  location: "Los Angeles, CA",
+};
+
+export const navItems = [
+  { id: "hero", label: "Home" },
+  { id: "featured", label: "Flagship" },
+  { id: "lab", label: "Interactive Lab" },
+  { id: "catalog", label: "Project Catalog" },
+  { id: "experience", label: "Experience" },
+  { id: "about", label: "About" },
+  { id: "contact", label: "Contact" },
+];
+
+export const credibility: CredibilityItem[] = [
+  {
+    label: "Education",
+    value: "USC Viterbi B.S./M.S. (Computer Science, Spring 2029)",
+  },
+  {
+    label: "Scale",
+    value: "AI student-support chatbot used by 30,000+ students",
+  },
+  {
+    label: "Impact",
+    value: "640+ daily queries, 50% lower latency, 99.9% uptime",
+  },
+  {
+    label: "Recognition",
+    value: "Forbes-featured · 1st Place HTCC 2024",
+  },
+];
+
+export const flagshipProjects: ProjectEntry[] = [
+  {
+    slug: "surgical-data-mesh-platform",
+    name: "Surgical Data Mesh Platform",
+    repoUrl: "https://github.com/mohosy/surgical-data-mesh-platform",
+    tier: "flagship",
+    domains: ["data", "systems", "ml"],
+    summary:
+      "Production-style data platform for robotic surgery telemetry with durable ingest, real-time safety alerting, and a lakehouse analytics path.",
+    stack: [
+      "Python",
+      "Java",
+      "Kafka",
+      "Spark",
+      "Iceberg",
+      "Airflow",
+      "dbt",
+      "Kubernetes",
+      "Terraform",
+    ],
+    architecture: [
+      "Replay-safe ingest with event-level idempotency and quality gates",
+      "Streaming + lakehouse path (Kafka -> Spark -> Iceberg)",
+      "Serving stack tuned for timeline, search, and flexible case documents",
+    ],
+    metrics: [
+      { label: "Data Pattern", value: "Real-time + batch fusion" },
+      { label: "Storage Modes", value: "Operational + analytical" },
+      { label: "Deployment", value: "Cloud-native multi-service" },
+    ],
+    image: "/images/touchless-ops-copilot.png",
+  },
+  {
+    slug: "surggraph-pipeline",
+    name: "SurgGraph Pipeline",
+    repoUrl: "https://github.com/mohosy/SurgGraph-Pipeline",
+    tier: "flagship",
+    domains: ["data", "ml", "systems"],
+    summary:
+      "Graph-enhanced robotic surgery analytics pipeline prototype focused on bottleneck detection, recovery-risk modeling, and workflow intelligence.",
+    stack: ["Python", "Kafka", "Airflow", "dbt", "DuckDB", "Docker", "AWS"],
+    architecture: [
+      "Streaming telemetry workflow with transformation and dashboard serving",
+      "Procedure-graph path analysis for bottleneck and route optimization",
+      "Risk-model pipeline with fairness disparity checks",
+    ],
+    metrics: [
+      { label: "Core Focus", value: "Graph-aware analytics" },
+      { label: "Data Flow", value: "Stream-to-dashboard" },
+      { label: "Operating Mode", value: "Prototype + experiment loop" },
+    ],
+    image: "/images/touchless-ops-copilot.png",
+  },
+  {
+    slug: "distributed-task-queue",
+    name: "Distributed Task Queue",
+    repoUrl: "https://github.com/mohosy/distributed-task-queue",
+    tier: "flagship",
+    domains: ["systems"],
+    summary:
+      "Production-grade distributed queue in pure Python with WAL persistence, retries, deduplication, circuit breaker protections, and DAG scheduling.",
+    stack: ["Python", "WAL", "Concurrency", "Reliability"],
+    architecture: [
+      "Priority scheduler with replay-safe checkpoints and crash recovery",
+      "Retry/backoff + dead-letter queue + dedup safeguards",
+      "DAG and cron execution with P50/P95/P99 latency instrumentation",
+    ],
+    metrics: [
+      { label: "Reliability", value: "Crash recovery + replay" },
+      { label: "Scheduling", value: "Priority + DAG + cron" },
+      { label: "Guardrails", value: "Circuit breaker + DLQ" },
+    ],
+    demoId: "scheduler-lab",
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "database-replication-engine",
+    name: "Database Replication Engine",
+    repoUrl: "https://github.com/mohosy/database-replication-engine",
+    tier: "flagship",
+    domains: ["systems", "data"],
+    summary:
+      "PostgreSQL-inspired replication system from scratch with WAL propagation, leader election, automatic failover, and split-brain handling.",
+    stack: ["TypeScript", "Replication", "Consensus", "Fault Tolerance"],
+    architecture: [
+      "Leader-follower replication over ordered WAL streams",
+      "Failover workflow with election and quorum-style recovery",
+      "Sync/async/semi-sync modes to surface consistency tradeoffs",
+    ],
+    metrics: [
+      { label: "Replication Modes", value: "Sync / Async / Semi-sync" },
+      { label: "Failure Model", value: "Leader loss + recovery" },
+      { label: "Durability", value: "Log-driven state rebuild" },
+    ],
+    demoId: "replication-lab",
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "kv-store-engine",
+    name: "KV Store Engine",
+    repoUrl: "https://github.com/mohosy/kv-store-engine",
+    tier: "flagship",
+    domains: ["systems", "data"],
+    summary:
+      "Java key-value engine with a custom open-addressing hash table, TTL eviction strategies, and atomic snapshot persistence.",
+    stack: ["Java", "Spring Boot", "Data Structures", "Storage Engine"],
+    architecture: [
+      "Custom hash core with collision-aware probing and fast lookup",
+      "TTL eviction via lazy + active cleanup strategies",
+      "Atomic snapshot save/restore for consistent recovery",
+    ],
+    metrics: [
+      { label: "Storage Core", value: "No built-in map" },
+      { label: "Eviction", value: "TTL + active sweep" },
+      { label: "Recovery", value: "Snapshot restore" },
+    ],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "load-balancer-from-scratch",
+    name: "Load Balancer from Scratch",
+    repoUrl: "https://github.com/mohosy/load-balancer-from-scratch",
+    tier: "flagship",
+    domains: ["systems"],
+    summary:
+      "Java load balancer implementing six routing algorithms with health checks, concurrency controls, and failure simulation.",
+    stack: ["Java", "Networking", "Distributed Systems", "Concurrency"],
+    architecture: [
+      "Algorithm suite including round-robin, weighted, and least-connections",
+      "Health probes and fail-fast routing for unavailable backends",
+      "Concurrent request handling with throughput/latency measurements",
+    ],
+    metrics: [
+      { label: "Algorithms", value: "6 routing strategies" },
+      { label: "Operations", value: "Health-check aware" },
+      { label: "Performance", value: "Latency/throughput tracked" },
+    ],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "raft-consensus-simulator",
+    name: "Raft Consensus Simulator",
+    repoUrl: "https://github.com/mohosy/raft-consensus-simulator",
+    tier: "flagship",
+    domains: ["systems"],
+    summary:
+      "Consensus simulator featuring deterministic leader election, log replication behavior, and fault injection scenarios.",
+    stack: ["Distributed Systems", "Consensus", "Fault Injection"],
+    architecture: [
+      "Term-based election model with vote coordination",
+      "Heartbeat and replication mechanics under partial failures",
+      "Deterministic simulation for repeatable debugging and learning",
+    ],
+    metrics: [
+      { label: "Core Behavior", value: "Election + heartbeat" },
+      { label: "Testing Mode", value: "Deterministic scenarios" },
+      { label: "Goal", value: "Consensus intuition" },
+    ],
+    demoId: "consensus-lab",
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "transformer-lm-from-scratch",
+    name: "Transformer LM from Scratch",
+    repoUrl: "https://github.com/mohosy/transformer-lm-from-scratch",
+    tier: "flagship",
+    domains: ["ml", "systems"],
+    summary:
+      "GPT-style decoder model implemented from first principles with manual backpropagation and comprehensive test coverage.",
+    stack: ["Python", "Deep Learning", "Backpropagation", "Testing"],
+    architecture: [
+      "Decoder-only transformer stack with explicit attention flow",
+      "Manual gradient pipeline for full training transparency",
+      "Comprehensive test suite validating numerical and functional correctness",
+    ],
+    metrics: [
+      { label: "Architecture", value: "Decoder-only transformer" },
+      { label: "Learning Depth", value: "Manual gradient path" },
+      { label: "Quality", value: "Full test coverage mindset" },
+    ],
+    image: "/images/profile-circular.png",
+  },
+];
+
+export const secondaryProjects: ProjectEntry[] = [
+  {
+    slug: "lsm-tree-storage-engine",
+    name: "LSM-Tree Storage Engine",
+    repoUrl: "https://github.com/mohosy/lsm-tree-storage-engine",
+    tier: "secondary",
+    domains: ["systems", "data"],
+    summary: "WAL, memtables, SSTables, compaction, and Bloom filters.",
+    stack: ["Python", "Storage Engine"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "postgres-backed-pubsub-queue",
+    name: "Postgres-backed Pub/Sub Queue",
+    repoUrl: "https://github.com/mohosy/postgres-backed-pubsub-queue",
+    tier: "secondary",
+    domains: ["systems", "data"],
+    summary: "Durable messaging with consumer-group offsets and ACID semantics.",
+    stack: ["PostgreSQL", "Python"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "sql-database-engine",
+    name: "SQL Database Engine",
+    repoUrl: "https://github.com/mohosy/sql-database-engine",
+    tier: "secondary",
+    domains: ["systems", "data"],
+    summary: "Parser, executor, indexing, persistence, and REPL.",
+    stack: ["Python", "Databases"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "http-server-from-scratch",
+    name: "HTTP Server from Scratch",
+    repoUrl: "https://github.com/mohosy/http-server-from-scratch",
+    tier: "secondary",
+    domains: ["systems"],
+    summary:
+      "Multithreaded HTTP/1.1 server over raw TCP sockets with middleware and routing.",
+    stack: ["C++", "Networking"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "container-runtime-from-scratch",
+    name: "Container Runtime from Scratch",
+    repoUrl: "https://github.com/mohosy/container-runtime-from-scratch",
+    tier: "secondary",
+    domains: ["systems"],
+    summary: "Docker/OCI runtime simulator with namespace and cgroup mechanics.",
+    stack: ["Systems", "Containers"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "search-engine-from-scratch",
+    name: "Search Engine from Scratch",
+    repoUrl: "https://github.com/mohosy/search-engine-from-scratch",
+    tier: "secondary",
+    domains: ["data", "systems"],
+    summary:
+      "Inverted index with BM25 ranking, boolean queries, and lightweight UI.",
+    stack: ["Python", "IR"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "dns-resolver-from-scratch",
+    name: "DNS Resolver from Scratch",
+    repoUrl: "https://github.com/mohosy/dns-resolver-from-scratch",
+    tier: "secondary",
+    domains: ["systems"],
+    summary: "Iterative DNS resolver over raw UDP sockets from root servers.",
+    stack: ["C++", "Networking"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "memory-allocator-simulator",
+    name: "Memory Allocator Simulator",
+    repoUrl: "https://github.com/mohosy/memory-allocator-simulator",
+    tier: "secondary",
+    domains: ["systems"],
+    summary: "Heap placement strategies: first-fit, best-fit, and worst-fit.",
+    stack: ["C++", "Runtime"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "myers-diff-from-scratch",
+    name: "Myers Diff from Scratch",
+    repoUrl: "https://github.com/mohosy/myers-diff-from-scratch",
+    tier: "secondary",
+    domains: ["systems"],
+    summary: "Myers diff algorithm implementation with unified diff output.",
+    stack: ["Algorithms", "Tooling"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "b-tree-index-from-scratch",
+    name: "B-Tree Index from Scratch",
+    repoUrl: "https://github.com/mohosy/b-tree-index-from-scratch",
+    tier: "secondary",
+    domains: ["data", "systems"],
+    summary: "B-Tree index implementation with CLI visualization.",
+    stack: ["Data Structures", "Database Internals"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "raytracer-from-scratch",
+    name: "Raytracer from Scratch",
+    repoUrl: "https://github.com/mohosy/raytracer-from-scratch",
+    tier: "secondary",
+    domains: ["systems", "fullstack"],
+    summary:
+      "C++17 ray tracer with shading, reflections, anti-aliasing, and multithreaded rendering.",
+    stack: ["C++", "Graphics"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+  {
+    slug: "robot-log-analyzer",
+    name: "Robot Log Analyzer",
+    repoUrl: "https://github.com/mohosy/robot-log-analyzer",
+    tier: "secondary",
+    domains: ["ml", "systems", "data"],
+    summary:
+      "Automated anomaly detection and root-cause triage for robotics V&V logs.",
+    stack: ["Python", "Observability", "ML"],
+    architecture: [],
+    metrics: [],
+    image: "/images/profile-circular.png",
+  },
+];
+
+export const demos: DemoEntry[] = [
+  {
+    id: "scheduler-lab",
+    title: "Scheduler Lab",
+    linkedProjectSlug: "distributed-task-queue",
+    controls: [
+      "Priority weight",
+      "Failure rate",
+      "Backoff intensity",
+      "Tick simulation",
+    ],
+    learningOutcome:
+      "Shows how priority + retry strategy shifts throughput, tail latency, and dead-letter pressure.",
+  },
+  {
+    id: "replication-lab",
+    title: "Replication Failover Lab",
+    linkedProjectSlug: "database-replication-engine",
+    controls: [
+      "Replication mode",
+      "Follower lag",
+      "Inject leader failure",
+      "Recovery reset",
+    ],
+    learningOutcome:
+      "Visualizes consistency/availability tradeoffs across sync, async, and semi-sync replication.",
+  },
+  {
+    id: "rate-limiter-lab",
+    title: "Rate Limiter Lab",
+    linkedProjectSlug: "distributed-task-queue",
+    controls: [
+      "Algorithm mode",
+      "Burst intensity",
+      "Sustained load",
+      "Window duration",
+    ],
+    learningOutcome:
+      "Compares drop/accept behavior under bursty traffic for token bucket and sliding window controls.",
+  },
+  {
+    id: "consensus-lab",
+    title: "Consensus Lab",
+    linkedProjectSlug: "raft-consensus-simulator",
+    controls: [
+      "Node count",
+      "Packet loss",
+      "Election timeout",
+      "Start election",
+    ],
+    learningOutcome:
+      "Builds intuition for quorum, election stability, and heartbeat reliability under partial network failure.",
+  },
+];
+
+export const experience: ExperienceEntry[] = [
+  {
+    org: "Pasadena City College",
+    role: "Founding Software Engineer",
+    dateRange: "Dec 2024 - Aug 2025",
+    bullets: [
+      "Shipped a full-stack generative AI chatbot serving 30,000+ students and handling 640+ daily queries.",
+      "Cut response latency by 50% with backend rate limiting, caching, and optimized OpenAI API orchestration.",
+      "Improved answer accuracy from 38% to 66% through interaction-log-driven prompt iteration.",
+      "Built CI/CD with GitHub Actions and 50+ automated tests, reducing deployment errors by 60%.",
+      "Launched RAG with vector search over 900+ documents and reduced hallucinations by 40%.",
+      "Sustained 99.9% uptime with centralized Sentry error telemetry and sub-hour incident response.",
+    ],
+  },
+  {
+    org: "Access Tech Security",
+    role: "Verkada Systems Technician",
+    dateRange: "Apr 2023 - Present",
+    bullets: [
+      "Resolved hardware-software integration failures across 150+ client sites with a 90% first-visit resolution rate.",
+      "Configured enterprise VLAN/subnet/static-IP network setups for reliable IoT cloud connectivity.",
+      "Automated cross-platform data synchronization with Python against Sonar, ROE, and GraphQL APIs.",
+    ],
+  },
+  {
+    org: "Code Ninjas",
+    role: "Lead Sensei of Curriculum Engagement",
+    dateRange: "Jan 2023 - Feb 2025",
+    bullets: [
+      "Designed a parent-teacher conference platform used by 80+ families.",
+      "Led Python/C# game-development camps and curriculum delivery for youth learners.",
+    ],
+  },
+];
+
+export const skillGroups = [
+  {
+    category: "Languages",
+    items: [
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "Java",
+      "C++",
+      "Swift",
+      "SQL",
+      "Bash",
+    ],
+  },
+  {
+    category: "Backend & APIs",
+    items: ["Node.js", "Express", "Django", "Spring Boot", "FastAPI", "GraphQL"],
+  },
+  {
+    category: "Data & Infra",
+    items: [
+      "PostgreSQL",
+      "MongoDB",
+      "Cassandra",
+      "Elasticsearch",
+      "Redis",
+      "Kafka",
+      "Spark",
+      "Iceberg",
+      "Airflow",
+      "dbt",
+      "Docker",
+      "Kubernetes",
+      "Terraform",
+      "AWS",
+    ],
+  },
+  {
+    category: "AI/ML",
+    items: [
+      "OpenAI API",
+      "RAG Pipelines",
+      "Vector Embeddings",
+      "TensorFlow",
+      "PyTorch",
+      "Prompt Engineering",
+    ],
+  },
+];

@@ -1,0 +1,66 @@
+                                 Mo Shirmohammadi
+Forbes-Featured Engineer • mshirmoh@usc.edu •  mohossy.com
+
+             Education
+University of Southern California (USC)                                                                                                Expected: B.S. Dec 2027, M.S. Jun 2029
+B.S./M.S., Computer Science (Accelerated Program), Viterbi School of Engineering | GPA: 3.92
+• Relevant Coursework: Principles of Software Development, Algorithms & Theory of Computing, Discrete Methods in Computer Science, Probability Theory, Cognitive Science, Advanced Writing for Engineers
+Pasadena City College (PCC)
+A.S., Science, Computer Science | GPA: 3.83 | Coursework: Data Structures C++, Assembly, Linear Algebra, Multivariable Calc, Diff Eq                                                                                                                             
+
+       
+
+
+
+
+             Experience
+Founding Software Engineer, Pasadena City College 
+                                                               December 2024 - August 2025
+
+• Shipped a full-stack generative AI chatbot serving 30,000+ students, handling 640+ daily queries, centralizing campus resources.
+• Engineered a resilient Node.js/Express backend for OpenAI GPT-4 API integration, implementing custom rate limiting and caching that reduced response time by 50%.
+• Leveraged MongoDB interaction logs for prompt iteration, boosting answer accuracy from 38% to 66%.
+• Established a CI/CD pipeline with GitHub Actions, ESLint, and 50+ automated test cases across unit and integration suites, reducing deployment errors by 60% and enabling same-day feature releases.
+• Deployed centralized error logging with Sentry, enabling sub-hour incident response and 99.9% uptime.
+• Developed a RAG pipeline using vector embeddings and k-NN semantic search, indexing 900+ documents with sub-100ms retrieval and reducing hallucinations by 40%.
+• Created agentic mode using Browserbase, Playwright, and Manus AI for automated tasks like checking real-time class availability.
+• Built an intent classification layer that dynamically routes queries between agentic execution and direct LLM inference.
+• Introduced cross-session memory by storing conversation summaries and injecting relevant context into prompts, enabling personalized multi-turn interactions.
+• Integrated Redis for session caching and response memoization, reducing API costs by 36% and improving p95 latency.
+• Designed a responsive React frontend that streamed responses in real time, rendered markdown, and displayed conversation history, which improved user engagement and reduced page‑load time.
+• Added student ID authentication with session persistence, enabling secure access to personalized chat history.
+
+Verkada Systems Technician, Access Tech Security 
+April 2023 - Present
+
+• Diagnosed and resolved complex hardware-software integration failures across 150+ client sites, achieving a 90% first-visit resolution rate through systematic root cause analysis.
+• Configured enterprise networks (VLANs, subnets, static IPs) for cloud-based IoT connectivity, improving reliability and uptime.
+• Orchestrated deployment of 30+ integrated security systems, validating API endpoints and device interoperability among cameras, access control units, and the cloud dashboard, which delivered seamless security monitoring with zero integration errors.
+• Wrote Python scripts integrating Sonar, ROE, and GraphQL APIs to automate data sync across management systems.
+Lead Sensei of Curriculum Engagement, Code Ninjas 
+                                                                January 2023 - February 2025
+
+• Designed a parent-teacher conference web system for 80+ families and instructed 12+ camps on Python/C# game development.
+Founder and CEO, Code Can Bridge Nonprofit                                                                                                           December 2021 - June 2023
+
+• Taught coding to students with learning disabilities; partnered with Pasadena schools, and improved learning outcomes by 60%.
+
+                 Projects
+Founder and Lead Engineer, IRL Social App 
+                                                                   March 2024 - January 2026
+
+• Launched a real-time social video platform with ephemeral DMs, live presence indicators, synchronized virtual hangouts, and in-chat multiplayer games to 470+ high school beta users.
+• Architected hybrid real-time layer combining Agora WebRTC (50ms voice/data) with Socket.io for presence and typing indicators.
+• Programmed real-time Battle Royale game with projectile physics, distance-based damage, knockback, and shrinking storm zones.
+• Implemented ephemeral messaging with Vision Camera capture, FFmpeg transcoding to H.264, view-once tracking with replay limits, sub-second screenshot detection with push alerts, and MongoDB TTL auto-expiration after 24 hours.
+• Crafted Bitmoji-style avatar layer with draggable characters, dance animations, and cross-device position sync at 50ms latency.
+AI-Powered Predator Detection Drone, 1st Place, 2024 HTCC Honors Conference	                             December 2023 - April 2024
+• Fine-tuned a TensorFlow/PyTorch computer vision model on 300+ labeled images, achieving ~80% validation accuracy for real-time coyote detection to protect outdoor pets in residential areas.
+• Deployed model on a Jetson Nano for edge inference, optimizing for real-time processing while considering the drone's battery.
+• Engineered an end-to-end alert pipeline triggering WhatsApp notifications to a neighborhood group upon predator detection.
+
+                                    Skills
+Languages: Python, JavaScript, TypeScript, Java, C++, C#, Swift, SQL, Bash, HTML/CSS
+Technologies: React, React Native, Node.js, Express, Django, Spring Boot, MongoDB, PostgreSQL, AWS, Docker, Git, Socket.io, Redis
+AI/ML: TensorFlow, PyTorch, OpenAI API, LangChain, RAG pipelines, vector embeddings, semantic search, prompt engineering
+
