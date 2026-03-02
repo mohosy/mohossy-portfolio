@@ -202,7 +202,7 @@ export function MiniDemos() {
               className={[
                 "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                 selected
-                  ? "bg-[var(--accent-teal)] text-white"
+                  ? "bg-[var(--accent-teal)] text-[var(--bg)]"
                   : "bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text-strong)]",
               ].join(" ")}
               onClick={() => setActiveDemo(id)}
@@ -226,7 +226,7 @@ export function MiniDemos() {
             href={selectedProject.repoUrl}
             eventName={`demo_repo_click_${selectedProject.slug}`}
             target="_blank"
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-white px-4 py-2 text-sm font-semibold text-[var(--text-strong)] hover:border-[var(--accent-steel)]"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-sm font-semibold text-[var(--text-strong)] hover:border-[var(--accent-steel)]"
           >
             Project Repo
             <span aria-hidden="true">↗</span>
@@ -277,7 +277,7 @@ export function MiniDemos() {
           <button
             type="button"
             onClick={() => setTick((prev) => prev + 1)}
-            className="rounded-full bg-[var(--accent-orange)] px-4 py-2 text-sm font-semibold text-[var(--text-strong)]"
+            className="rounded-full bg-[var(--accent-orange)] px-4 py-2 text-sm font-semibold text-[var(--bg)]"
           >
             Run Tick #{tick}
           </button>
@@ -290,7 +290,7 @@ export function MiniDemos() {
                 <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-[var(--text-muted)]">
                   {task.id}
                 </span>
-                <div className="h-2 overflow-hidden rounded-full bg-white">
+                <div className="h-2 overflow-hidden rounded-full bg-[var(--bg)]">
                   <div
                     className="h-full rounded-full bg-[var(--accent-teal)]"
                     style={{ width: `${Math.min(100, task.score * 4)}%` }}
@@ -301,10 +301,10 @@ export function MiniDemos() {
                   className={[
                     "rounded-full px-2 py-1 text-center text-xs font-semibold uppercase",
                     task.status === "complete"
-                      ? "bg-[rgba(0,122,90,0.16)] text-[var(--accent-teal)]"
+                      ? "bg-[rgba(255,255,255,0.14)] text-[var(--accent-teal)]"
                       : task.status === "retrying"
-                        ? "bg-[rgba(242,106,44,0.18)] text-[var(--accent-orange)]"
-                        : "bg-[rgba(58,102,163,0.18)] text-[var(--accent-steel)]",
+                        ? "bg-[rgba(255,255,255,0.1)] text-[var(--accent-orange)]"
+                        : "bg-[rgba(255,255,255,0.08)] text-[var(--accent-steel)]",
                   ].join(" ")}
                 >
                   {task.status}
@@ -329,7 +329,7 @@ export function MiniDemos() {
               <select
                 value={mode}
                 onChange={(event) => setMode(event.target.value as ReplicationMode)}
-                className="w-full rounded-xl border border-[var(--line)] bg-white px-3 py-2 text-[var(--text-strong)]"
+                className="w-full rounded-xl border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-[var(--text-strong)]"
               >
                 <option value="sync">Sync</option>
                 <option value="semi-sync">Semi-sync</option>
@@ -352,7 +352,7 @@ export function MiniDemos() {
               <button
                 type="button"
                 onClick={() => setFailedNode(leader)}
-                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-strong)]"
+                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--bg)]"
                 disabled={failedNode !== null}
               >
                 Inject Failure
@@ -407,7 +407,7 @@ export function MiniDemos() {
               Term <strong>{term}</strong> · Mode <strong>{mode}</strong> · Commit
               Ack <strong>{replicationAcks}%</strong>
             </p>
-            <div className="mt-3 h-3 rounded-full bg-white">
+            <div className="mt-3 h-3 rounded-full bg-[var(--bg)]">
               <div
                 className="h-full rounded-full bg-[var(--accent-teal)] transition-all"
                 style={{ width: `${replicationAcks}%` }}
@@ -425,7 +425,7 @@ export function MiniDemos() {
               <select
                 value={rateMode}
                 onChange={(event) => setRateMode(event.target.value as RateMode)}
-                className="w-full rounded-xl border border-[var(--line)] bg-white px-3 py-2 text-[var(--text-strong)]"
+                className="w-full rounded-xl border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-[var(--text-strong)]"
               >
                 <option value="token-bucket">Token Bucket</option>
                 <option value="sliding-window">Sliding Window</option>
@@ -474,7 +474,7 @@ export function MiniDemos() {
               const acceptedPct = (slot.accepted / total) * 100;
               return (
                 <div key={slot.index} className="flex flex-col items-center gap-1">
-                  <div className="flex h-20 w-5 flex-col overflow-hidden rounded bg-white">
+                  <div className="flex h-20 w-5 flex-col overflow-hidden rounded bg-[var(--bg)]">
                     <div
                       className="bg-[var(--accent-teal)]"
                       style={{ height: `${acceptedPct}%` }}
@@ -546,7 +546,7 @@ export function MiniDemos() {
             <button
               type="button"
               onClick={runElection}
-              className="self-end rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold text-white"
+              className="self-end rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold text-[var(--bg)] hover:bg-white"
             >
               Start Election
             </button>

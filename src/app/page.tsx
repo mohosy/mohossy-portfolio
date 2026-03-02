@@ -56,14 +56,14 @@ export default function Home() {
                 <TrackedLink
                   href={`mailto:${siteProfile.email}`}
                   eventName="hero_email_click"
-                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold text-[var(--bg)] transition-transform hover:-translate-y-0.5 hover:bg-white"
                 >
                   Internship Contact
                 </TrackedLink>
                 <TrackedLink
                   href={siteProfile.resumeUrl}
                   eventName="hero_resume_download"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-steel)] hover:text-[var(--accent-steel)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                   target="_blank"
                 >
                   Download Resume
@@ -71,7 +71,7 @@ export default function Home() {
                 <TrackedLink
                   href={siteProfile.githubUrl}
                   eventName="hero_github_click"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                   target="_blank"
                 >
                   GitHub
@@ -81,7 +81,7 @@ export default function Home() {
 
             <Reveal delay={0.08}>
               <figure className="relative isolate overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-4 shadow-[var(--card-shadow)]">
-                <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_15%_15%,rgba(0,122,90,0.2),transparent_40%),radial-gradient(circle_at_80%_0%,rgba(58,102,163,0.2),transparent_38%)]" />
+                <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_44%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.08),transparent_42%)]" />
                 <Image
                   src="/images/presentationpic.png"
                   alt="Mo Shirmohammadi presenting"
@@ -280,7 +280,7 @@ export default function Home() {
                 <TrackedLink
                   href={`mailto:${siteProfile.email}`}
                   eventName="contact_email_click"
-                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold text-[var(--bg)] transition-transform hover:-translate-y-0.5 hover:bg-white"
                 >
                   Email Me
                 </TrackedLink>
@@ -288,7 +288,7 @@ export default function Home() {
                   href={siteProfile.linkedinUrl}
                   eventName="contact_linkedin_click"
                   target="_blank"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-steel)] hover:text-[var(--accent-steel)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                 >
                   LinkedIn
                 </TrackedLink>
@@ -296,7 +296,7 @@ export default function Home() {
                   href={siteProfile.githubUrl}
                   eventName="contact_github_click"
                   target="_blank"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                 >
                   GitHub
                 </TrackedLink>
@@ -304,7 +304,7 @@ export default function Home() {
                   href={siteProfile.resumeUrl}
                   eventName="contact_resume_download"
                   target="_blank"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)] hover:text-[var(--accent-teal)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                 >
                   Download Resume
                 </TrackedLink>

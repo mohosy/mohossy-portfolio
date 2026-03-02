@@ -16,12 +16,12 @@ type ProjectCardProps = {
 export function ProjectCard({ project, compact = false }: ProjectCardProps) {
   if (compact) {
     return (
-      <article className="group flex h-full flex-col rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)] transition-transform duration-200 hover:-translate-y-1">
+      <article className="group flex h-full flex-col rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)] transition-transform duration-200 hover:-translate-y-1">
         <div className="mb-3 flex flex-wrap gap-2">
           {project.domains.map((domain) => (
             <span
               key={`${project.slug}-${domain}`}
-              className="rounded-full bg-[var(--surface-alt)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)]"
+              className="rounded-full border border-[var(--line)] bg-[var(--bg)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)]"
             >
               {domainLabel[domain]}
             </span>
@@ -37,7 +37,7 @@ export function ProjectCard({ project, compact = false }: ProjectCardProps) {
           <TrackedLink
             href={project.repoUrl}
             eventName={`secondary_repo_click_${project.slug}`}
-            className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)] hover:text-[var(--accent-teal)]"
+            className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--bg)] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
             target="_blank"
           >
             View Repo
@@ -49,13 +49,13 @@ export function ProjectCard({ project, compact = false }: ProjectCardProps) {
   }
 
   return (
-    <article className="grid gap-5 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] lg:grid-cols-[1.35fr_1fr]">
+    <article className="grid gap-5 rounded-[1.6rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] lg:grid-cols-[1.35fr_1fr]">
       <div>
         <div className="mb-3 flex flex-wrap gap-2">
           {project.domains.map((domain) => (
             <span
               key={`${project.slug}-${domain}`}
-              className="rounded-full bg-[var(--surface-alt)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)]"
+              className="rounded-full border border-[var(--line)] bg-[var(--bg)] px-2.5 py-1 text-xs font-medium text-[var(--text-muted)]"
             >
               {domainLabel[domain]}
             </span>
@@ -87,7 +87,7 @@ export function ProjectCard({ project, compact = false }: ProjectCardProps) {
             {project.stack.map((tech) => (
               <span
                 key={`${project.slug}-${tech}`}
-                className="rounded-md bg-white px-2.5 py-1 text-xs font-medium text-[var(--text-strong)]"
+                className="rounded-md border border-[var(--line)] bg-[var(--bg)] px-2.5 py-1 text-xs font-medium text-[var(--text-strong)]"
               >
                 {tech}
               </span>
@@ -102,7 +102,7 @@ export function ProjectCard({ project, compact = false }: ProjectCardProps) {
             {project.metrics.map((metric) => (
               <li
                 key={`${project.slug}-${metric.label}`}
-                className="flex items-center justify-between gap-4 rounded-lg bg-white px-3 py-2 text-sm"
+                className="flex items-center justify-between gap-4 rounded-lg border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-sm"
               >
                 <span className="text-[var(--text-muted)]">{metric.label}</span>
                 <strong className="text-[var(--text-strong)]">{metric.value}</strong>
@@ -114,7 +114,7 @@ export function ProjectCard({ project, compact = false }: ProjectCardProps) {
           <TrackedLink
             href={project.repoUrl}
             eventName={`featured_repo_click_${project.slug}`}
-            className="inline-flex items-center justify-center rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold text-[var(--bg)] transition-transform hover:-translate-y-0.5 hover:bg-white"
             target="_blank"
           >
             Repository
@@ -122,7 +122,7 @@ export function ProjectCard({ project, compact = false }: ProjectCardProps) {
           {project.demoId ? (
             <a
               href={`#${project.demoId}`}
-              className="inline-flex items-center justify-center rounded-full border border-[var(--line)] px-4 py-2 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-steel)] hover:text-[var(--accent-steel)]"
+              className="inline-flex items-center justify-center rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
             >
               Jump to Demo
             </a>

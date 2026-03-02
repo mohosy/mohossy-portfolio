@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f6f2ea;
-  --surface: #fffdf9;
-  --surface-alt: #eef2ef;
-  --surface-glass: rgba(246, 242, 234, 0.86);
-  --text-strong: #182126;
-  --text-soft: #2b373f;
-  --text-muted: #53616c;
-  --accent-teal: #007a5a;
-  --accent-orange: #f26a2c;
-  --accent-steel: #3a66a3;
-  --line: rgba(24, 33, 38, 0.12);
-  --card-shadow: 0 16px 40px rgba(24, 33, 38, 0.08);
+  --bg: #080808;
+  --surface: #111111;
+  --surface-alt: #171717;
+  --surface-glass: rgba(8, 8, 8, 0.78);
+  --text-strong: #f5f5f5;
+  --text-soft: #d4d4d4;
+  --text-muted: #929292;
+  --accent-teal: #f0f0f0;
+  --accent-orange: #c9c9c9;
+  --accent-steel: #a0a0a0;
+  --line: rgba(255, 255, 255, 0.16);
+  --card-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -28,9 +28,9 @@ body {
   min-height: 100vh;
   color: var(--text-strong);
   background:
-    radial-gradient(circle at 8% 8%, rgba(58, 102, 163, 0.2) 0%, transparent 28%),
-    radial-gradient(circle at 90% 0%, rgba(0, 122, 90, 0.16) 0%, transparent 32%),
-    radial-gradient(circle at 50% 100%, rgba(242, 106, 44, 0.12) 0%, transparent 34%),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 24%),
+    radial-gradient(circle at 100% 5%, rgba(255, 255, 255, 0.05) 0%, transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
     var(--bg);
   font-family: var(--font-sans), sans-serif;
   text-rendering: optimizeLegibility;
@@ -45,7 +45,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-steel);
+  outline: 2px solid var(--accent-teal);
   outline-offset: 3px;
 }
 
