@@ -56,7 +56,7 @@ export default function Home() {
                 <TrackedLink
                   href={`mailto:${siteProfile.email}`}
                   eventName="hero_email_click"
-                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5 hover:bg-white"
+                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold !text-black transition-transform hover:-translate-y-0.5 hover:!text-black hover:bg-[#dcdcdc]"
                 >
                   Internship Contact
                 </TrackedLink>
@@ -280,7 +280,7 @@ export default function Home() {
                 <TrackedLink
                   href={`mailto:${siteProfile.email}`}
                   eventName="contact_email_click"
-                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5 hover:bg-white"
+                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold !text-black transition-transform hover:-translate-y-0.5 hover:!text-black hover:bg-[#dcdcdc]"
                 >
                   Email Me
                 </TrackedLink>
