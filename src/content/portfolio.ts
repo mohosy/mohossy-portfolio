@@ -10,10 +10,10 @@ export const siteProfile: SiteProfile = {
   name: "Mo Shirmohammadi",
   tagline:
     "Software Engineer building production-minded distributed systems, data infrastructure, and applied ML.",
-  email: "mshirmoh@usc.edu",
+  email: "mohoshirmo@gmail.com",
   linkedinUrl: "https://linkedin.com/in/mohossy",
   githubUrl: "https://github.com/mohosy",
-  resumeUrl: "/resume/mo-shirmohammadi-resume.txt",
+  resumeUrl: "/resume/mo-shirmohammadi-resume.pdf",
   location: "Los Angeles, CA",
 };
 

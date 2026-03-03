@@ -1,6 +1,6 @@
 "use client";
 
-import { navItems } from "@/content/portfolio";
+import { navItems, siteProfile } from "@/content/portfolio";
 import { trackEvent } from "@/lib/analytics";
 
 export function TopNav() {
@@ -35,9 +35,9 @@ export function TopNav() {
         </ul>
 
         <a
-          href="#contact"
+          href={`mailto:${siteProfile.email}`}
           className="rounded-full border border-[var(--line)] bg-[var(--accent-teal)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] !text-black transition-all hover:!text-black hover:bg-[#dcdcdc]"
-          onClick={() => trackEvent("primary_contact_anchor_click")}
+          onClick={() => trackEvent("primary_contact_email_click")}
         >
           Contact
         </a>

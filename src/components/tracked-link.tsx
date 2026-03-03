@@ -11,6 +11,7 @@ type TrackedLinkProps = {
   children: ReactNode;
   target?: "_blank" | "_self";
   rel?: string;
+  download?: boolean | string;
 };
 
 export function TrackedLink({
@@ -20,6 +21,7 @@ export function TrackedLink({
   children,
   target = "_self",
   rel,
+  download,
 }: TrackedLinkProps) {
   const resolvedRel =
     rel ?? (target === "_blank" ? "noopener noreferrer" : undefined);
@@ -30,6 +32,7 @@ export function TrackedLink({
       className={className}
       target={target}
       rel={resolvedRel}
+      download={download}
       onClick={() => trackEvent(eventName, { href })}
     >
       {children}

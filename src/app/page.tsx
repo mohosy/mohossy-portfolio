@@ -64,7 +64,7 @@ export default function Home() {
                   href={siteProfile.resumeUrl}
                   eventName="hero_resume_download"
                   className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
-                  target="_blank"
+                  download="Mo-Shirmohammadi-Resume.pdf"
                 >
                   Download Resume
                 </TrackedLink>
@@ -75,6 +75,15 @@ export default function Home() {
                   target="_blank"
                 >
                   GitHub
+                </TrackedLink>
+                <TrackedLink
+                  href={siteProfile.linkedinUrl}
+                  eventName="hero_linkedin_click"
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
+                  target="_blank"
+                >
+                  <LinkedInIcon />
+                  LinkedIn
                 </TrackedLink>
               </div>
             </Reveal>
@@ -288,8 +297,9 @@ export default function Home() {
                   href={siteProfile.linkedinUrl}
                   eventName="contact_linkedin_click"
                   target="_blank"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                 >
+                  <LinkedInIcon />
                   LinkedIn
                 </TrackedLink>
                 <TrackedLink
@@ -303,7 +313,7 @@ export default function Home() {
                 <TrackedLink
                   href={siteProfile.resumeUrl}
                   eventName="contact_resume_download"
-                  target="_blank"
+                  download="Mo-Shirmohammadi-Resume.pdf"
                   className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                 >
                   Download Resume
@@ -314,5 +324,18 @@ export default function Home() {
         </section>
       </main>
     </>
+  );
+}
+
+function LinkedInIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-4 w-4 fill-current"
+      focusable="false"
+    >
+      <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM0 8h5v15H0V8zm7 0h4.78v2.05h.07c.66-1.26 2.29-2.58 4.72-2.58C21.62 7.47 24 10.3 24 15.05V23h-5v-6.79c0-1.62-.03-3.7-2.25-3.7-2.25 0-2.6 1.75-2.6 3.58V23H9V8z" />
+    </svg>
   );
 }
