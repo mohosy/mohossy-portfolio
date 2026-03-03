@@ -1,6 +1,5 @@
 import Image from "next/image";
 import {
-  credibility,
   experience,
   flagshipProjects,
   secondaryProjects,
@@ -30,81 +29,118 @@ const personSchema = {
   },
 };
 
+const proofMetrics = [
+  {
+    value: "30,000+",
+    label: "Students Served",
+    detail: "Founding engineer on an AI support platform used campus-wide.",
+  },
+  {
+    value: "640+",
+    label: "Daily Queries",
+    detail: "Stable real-time traffic with production monitoring and guardrails.",
+  },
+  {
+    value: "50%",
+    label: "Latency Reduction",
+    detail: "Lower response time through caching, routing, and API optimization.",
+  },
+  {
+    value: "99.9%",
+    label: "Uptime",
+    detail: "Operational reliability with faster incident detection and recovery.",
+  },
+];
+
+const spotlightProject = flagshipProjects[0];
+const selectedBuilds = flagshipProjects.slice(1, 4);
+const deepCatalog = secondaryProjects.slice(0, 8);
+
 export default function Home() {
   return (
     <>
       <TopNav />
-      <main id="main-content" className="pb-20 pt-32 sm:pt-36">
+      <main id="main-content" className="pb-20 pt-28 sm:pt-34">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
 
         <section id="hero" className="section-shell">
-          <div className="grid gap-8 lg:grid-cols-[1.35fr_0.95fr] lg:items-end">
+          <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-end">
             <Reveal>
               <p className="editorial-kicker">Forbes-Featured Engineer · USC Viterbi</p>
-              <h1 className="mt-4 font-[family-name:var(--font-display)] text-4xl leading-[1.03] tracking-tight text-[var(--text-strong)] sm:text-5xl md:text-6xl">
-                Building resilient software systems that survive real traffic, real failure, and real scale.
+              <h1 className="mt-4 max-w-4xl font-[family-name:var(--font-display)] text-[clamp(2.3rem,6vw,5.4rem)] leading-[0.95] tracking-tight text-[var(--text-strong)]">
+                Systems that hold under pressure.
               </h1>
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-[var(--text-soft)]">
-                I&apos;m {siteProfile.name}, a software engineer focused on distributed systems,
-                data infrastructure, and applied ML. I design production-minded systems that
-                prioritize reliability, observability, and measurable user impact.
+              <p className="mt-5 max-w-2xl text-[clamp(1rem,1.8vw,1.18rem)] leading-relaxed text-[var(--text-soft)]">
+                I design and ship distributed software for data-heavy, failure-prone,
+                real-world environments. The focus is always the same: reliability,
+                clarity, and measurable operational impact.
               </p>
+
               <div className="mt-8 flex flex-wrap gap-3">
                 <TrackedLink
                   href={`mailto:${siteProfile.email}`}
                   eventName="hero_email_click"
-                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold !text-black transition-transform hover:-translate-y-0.5 hover:!text-black hover:bg-[#dcdcdc]"
+                  className="rounded-full bg-[var(--accent-teal)] px-6 py-3 text-sm font-semibold !text-black transition-transform hover:-translate-y-0.5 hover:!text-black hover:bg-[#dcdcdc]"
                 >
-                  Internship Contact
+                  Contact Me
                 </TrackedLink>
                 <TrackedLink
                   href={siteProfile.resumeUrl}
                   eventName="hero_resume_download"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
+                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                   download="Mo-Shirmohammadi-Resume.pdf"
                 >
                   Download Resume
                 </TrackedLink>
                 <TrackedLink
-                  href={siteProfile.githubUrl}
-                  eventName="hero_github_click"
-                  className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
-                  target="_blank"
-                >
-                  GitHub
-                </TrackedLink>
-                <TrackedLink
                   href={siteProfile.linkedinUrl}
                   eventName="hero_linkedin_click"
-                  className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
+                  className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--surface)] px-6 py-3 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
                   target="_blank"
                 >
                   <LinkedInIcon />
                   LinkedIn
                 </TrackedLink>
               </div>
+
+              <div className="mt-6 flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                <span>Los Angeles, CA</span>
+                <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]" />
+                <span>B.S./M.S. CS, USC</span>
+                <span className="h-1 w-1 rounded-full bg-[var(--text-muted)]" />
+                <TrackedLink
+                  href={siteProfile.githubUrl}
+                  eventName="hero_github_click"
+                  className="hover:text-[var(--text-strong)]"
+                  target="_blank"
+                >
+                  GitHub ↗
+                </TrackedLink>
+              </div>
             </Reveal>
 
-            <Reveal delay={0.08}>
-              <figure className="relative isolate overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-4 shadow-[var(--card-shadow)]">
-                <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(255,255,255,0.12),transparent_44%),radial-gradient(circle_at_80%_0%,rgba(255,255,255,0.08),transparent_42%)]" />
+            <Reveal delay={0.06}>
+              <figure className="relative overflow-hidden rounded-[2.2rem] border border-[var(--line)] bg-[var(--surface)] p-3 shadow-[var(--card-shadow)]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(255,255,255,0.12),transparent_52%)]" />
                 <Image
                   src="/images/presentationpic.png"
                   alt="Mo Shirmohammadi presenting"
                   width={760}
                   height={940}
                   priority
-                  className="h-auto w-full rounded-[1.4rem] object-cover"
+                  className="relative z-10 h-auto w-full rounded-[1.7rem] object-cover"
                 />
-                <figcaption className="mt-4 flex items-center justify-between text-sm text-[var(--text-soft)]">
-                  <span>{siteProfile.location}</span>
-                  <span className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em]">
-                    Software Engineer
-                  </span>
-                </figcaption>
+                <div className="absolute bottom-7 left-7 z-20 rounded-2xl border border-[var(--line)] bg-[rgba(0,0,0,0.62)] px-4 py-3 backdrop-blur">
+                  <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                    Focus
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[var(--text-strong)]">
+                    Distributed Systems · Data Infrastructure · Applied ML
+                  </p>
+                </div>
               </figure>
             </Reveal>
           </div>
@@ -112,17 +148,20 @@ export default function Home() {
 
         <section className="section-shell section-gap">
           <Reveal>
-            <div className="grid gap-3 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)] md:grid-cols-2 xl:grid-cols-4">
-              {credibility.map((item) => (
+            <div className="grid gap-3 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-4 md:grid-cols-2 xl:grid-cols-4">
+              {proofMetrics.map((metric) => (
                 <article
-                  key={item.label}
-                  className="rounded-2xl bg-[var(--surface-alt)] p-4"
+                  key={metric.label}
+                  className="rounded-[1.2rem] border border-[var(--line)] bg-[var(--surface-alt)] p-4"
                 >
-                  <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                    {item.label}
+                  <p className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)]">
+                    {metric.value}
                   </p>
-                  <p className="mt-2 text-sm leading-relaxed text-[var(--text-soft)]">
-                    {item.value}
+                  <p className="mt-1 text-sm font-semibold text-[var(--text-soft)]">
+                    {metric.label}
+                  </p>
+                  <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                    {metric.detail}
                   </p>
                 </article>
               ))}
@@ -132,15 +171,112 @@ export default function Home() {
 
         <section id="featured" className="section-shell section-gap">
           <Reveal>
-            <p className="editorial-kicker">Flagship Work</p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Eight projects that prove systems depth, product execution, and technical range.
+            <p className="editorial-kicker">Flagship Spotlight</p>
+            <h2 className="mt-3 max-w-3xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-5xl">
+              {spotlightProject.name}
             </h2>
           </Reveal>
-          <div className="mt-8 grid gap-6">
-            {flagshipProjects.map((project, index) => (
-              <Reveal key={project.slug} delay={Math.min(index * 0.04, 0.24)}>
-                <ProjectCard project={project} />
+
+          <div className="mt-7 grid gap-6 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 lg:grid-cols-[1.2fr_0.8fr]">
+            <Reveal>
+              <p className="max-w-3xl text-base leading-relaxed text-[var(--text-soft)]">
+                {spotlightProject.summary}
+              </p>
+              <ol className="mt-6 grid gap-3">
+                {spotlightProject.architecture.slice(0, 3).map((point, index) => (
+                  <li
+                    key={point}
+                    className="flex gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] p-3"
+                  >
+                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--line)] text-xs font-semibold text-[var(--text-strong)]">
+                      {index + 1}
+                    </span>
+                    <span className="text-sm leading-relaxed text-[var(--text-soft)]">{point}</span>
+                  </li>
+                ))}
+              </ol>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <TrackedLink
+                  href={spotlightProject.repoUrl}
+                  eventName={`spotlight_repo_click_${spotlightProject.slug}`}
+                  className="rounded-full bg-[var(--accent-teal)] px-5 py-2.5 text-sm font-semibold !text-black transition-transform hover:-translate-y-0.5 hover:!text-black hover:bg-[#dcdcdc]"
+                  target="_blank"
+                >
+                  View Repository
+                </TrackedLink>
+                <a
+                  href="#lab"
+                  className="rounded-full border border-[var(--line)] bg-[var(--bg)] px-5 py-2.5 text-sm font-semibold text-[var(--text-strong)] transition-colors hover:border-[var(--accent-teal)]"
+                >
+                  See Live Demos
+                </a>
+              </div>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)]">
+                <Image
+                  src="/images/touchless-ops-copilot.png"
+                  alt="Surgical Data Mesh platform screenshot"
+                  width={1200}
+                  height={700}
+                  className="h-auto w-full object-cover"
+                />
+              </div>
+              <ul className="mt-4 grid gap-2">
+                {spotlightProject.metrics.map((metric) => (
+                  <li
+                    key={metric.label}
+                    className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-2 text-sm"
+                  >
+                    <span className="text-[var(--text-muted)]">{metric.label}</span>
+                    <span className="font-semibold text-[var(--text-strong)]">{metric.value}</span>
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+          </div>
+        </section>
+
+        <section id="catalog" className="section-shell section-gap">
+          <Reveal>
+            <p className="editorial-kicker">Selected Builds</p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
+              Three systems projects that recruiters can parse in under a minute.
+            </h2>
+          </Reveal>
+          <div className="mt-7 grid gap-4 lg:grid-cols-3">
+            {selectedBuilds.map((project, index) => (
+              <Reveal key={project.slug} delay={Math.min(index * 0.06, 0.16)}>
+                <article className="flex h-full flex-col rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)]">
+                  <h3 className="text-xl font-semibold tracking-tight text-[var(--text-strong)]">
+                    {project.name}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">
+                    {project.summary}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {project.stack.slice(0, 4).map((item) => (
+                      <span
+                        key={`${project.slug}-${item}`}
+                        className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2.5 py-1 text-[11px] font-semibold text-[var(--text-muted)]"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-auto pt-5">
+                    <TrackedLink
+                      href={project.repoUrl}
+                      eventName={`selected_build_repo_click_${project.slug}`}
+                      className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-strong)] underline decoration-[var(--line)] underline-offset-4 hover:decoration-[var(--text-strong)]"
+                      target="_blank"
+                    >
+                      Open Repo
+                      <span aria-hidden="true">↗</span>
+                    </TrackedLink>
+                  </div>
+                </article>
               </Reveal>
             ))}
           </div>
@@ -158,16 +294,16 @@ export default function Home() {
           </Reveal>
         </section>
 
-        <section id="catalog" className="section-shell section-gap">
+        <section className="section-shell section-gap">
           <Reveal>
-            <p className="editorial-kicker">Project Catalog</p>
+            <p className="editorial-kicker">Deep Catalog</p>
             <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
               Additional systems and infrastructure builds.
             </h2>
           </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {secondaryProjects.map((project, index) => (
-              <Reveal key={project.slug} delay={Math.min(index * 0.03, 0.22)}>
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {deepCatalog.map((project, index) => (
+              <Reveal key={project.slug} delay={Math.min(index * 0.03, 0.2)}>
                 <ProjectCard project={project} compact />
               </Reveal>
             ))}
