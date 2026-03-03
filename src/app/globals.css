@@ -11,8 +11,8 @@
   --accent-teal: #f0f0f0;
   --accent-orange: #c9c9c9;
   --accent-steel: #a0a0a0;
-  --line: rgba(255, 255, 255, 0.16);
-  --card-shadow: 0 22px 60px rgba(0, 0, 0, 0.45);
+  --line: rgba(255, 255, 255, 0.14);
+  --card-shadow: 0 12px 28px rgba(0, 0, 0, 0.32);
 }
 
 * {
@@ -28,9 +28,9 @@ body {
   min-height: 100vh;
   color: var(--text-strong);
   background:
-    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.08) 0%, transparent 24%),
-    radial-gradient(circle at 100% 5%, rgba(255, 255, 255, 0.05) 0%, transparent 28%),
-    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 22%),
+    radial-gradient(circle at 100% 5%, rgba(255, 255, 255, 0.03) 0%, transparent 26%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.02) 0%, transparent 36%),
     var(--bg);
   font-family: var(--font-sans), sans-serif;
   text-rendering: optimizeLegibility;
@@ -51,7 +51,7 @@ a {
 
 .section-shell {
   margin-inline: auto;
-  max-width: 80rem;
+  max-width: 78rem;
   padding-inline: clamp(1rem, 2.4vw, 2.5rem);
 }
 

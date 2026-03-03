@@ -202,7 +202,7 @@ export function MiniDemos() {
               className={[
                 "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                 selected
-                  ? "bg-[var(--accent-teal)] text-[var(--bg)]"
+                  ? "bg-[var(--accent-teal)] text-black"
                   : "bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text-strong)]",
               ].join(" ")}
               onClick={() => setActiveDemo(id)}
@@ -277,7 +277,7 @@ export function MiniDemos() {
           <button
             type="button"
             onClick={() => setTick((prev) => prev + 1)}
-            className="rounded-full bg-[var(--accent-orange)] px-4 py-2 text-sm font-semibold text-[var(--bg)]"
+            className="rounded-full bg-[var(--accent-orange)] px-4 py-2 text-sm font-semibold text-black"
           >
             Run Tick #{tick}
           </button>
@@ -352,7 +352,7 @@ export function MiniDemos() {
               <button
                 type="button"
                 onClick={() => setFailedNode(leader)}
-                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--bg)]"
+                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-black"
                 disabled={failedNode !== null}
               >
                 Inject Failure
@@ -546,7 +546,7 @@ export function MiniDemos() {
             <button
               type="button"
               onClick={runElection}
-              className="self-end rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold text-[var(--bg)] hover:bg-white"
+              className="self-end rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold text-black hover:bg-white"
             >
               Start Election
             </button>

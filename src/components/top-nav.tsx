@@ -36,7 +36,7 @@ export function TopNav() {
 
         <a
           href="#contact"
-          className="rounded-full border border-[var(--line)] bg-[var(--accent-teal)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--bg)] transition-all hover:bg-white"
+          className="rounded-full border border-[var(--line)] bg-[var(--accent-teal)] px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-black transition-all hover:bg-white"
           onClick={() => trackEvent("primary_contact_anchor_click")}
         >
           Contact

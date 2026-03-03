@@ -79,7 +79,7 @@ export default function RootLayout({
       <body className={`${display.variable} ${sans.variable} ${mono.variable} antialiased`}>
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[var(--accent-teal)] focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--bg)]"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-[var(--accent-teal)] focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-black"
         >
           Skip to main content
         </a>
