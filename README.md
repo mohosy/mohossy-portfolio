@@ -27,10 +27,7 @@ npm run start
 
 ## Deploy (Vercel)
 
-1. Import this project into Vercel.
-2. Add domain `mohossy.com` + `www.mohossy.com` in project settings.
-3. Point GoDaddy nameservers to Vercel nameservers.
-4. Wait for DNS + TLS issuance to complete.
+See [DEPLOY.md](./DEPLOY.md) for the exact production workflow, GitHub push steps, Vercel deploy commands, DNS records, and SSL setup for `mohossy.com`.
 
 ## Content Editing
 
