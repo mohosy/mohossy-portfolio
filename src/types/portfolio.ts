@@ -1,9 +1,24 @@
 export type ProjectTier = "flagship" | "secondary";
 export type ProjectDomain = "systems" | "data" | "ml" | "fullstack";
+export type ProjectVisualTemplate =
+  | "pipeline"
+  | "queue"
+  | "replication"
+  | "storage"
+  | "network"
+  | "runtime"
+  | "ml"
+  | "search";
 
 export interface ProjectMetric {
   label: string;
   value: string;
+}
+
+export interface ProjectVisualConfig {
+  template?: ProjectVisualTemplate;
+  seed?: number;
+  density?: 1 | 2 | 3;
 }
 
 export interface ProjectEntry {
@@ -18,6 +33,8 @@ export interface ProjectEntry {
   metrics: ProjectMetric[];
   demoId?: string;
   image: string;
+  visual?: ProjectVisualConfig;
+  recruiterHook?: string;
 }
 
 export interface DemoEntry {

@@ -77,6 +77,8 @@ export const flagshipProjects: ProjectEntry[] = [
       { label: "Deployment", value: "Cloud-native multi-service" },
     ],
     image: "/images/touchless-ops-copilot.png",
+    visual: { template: "pipeline", seed: 11, density: 3 },
+    recruiterHook: "Built for high-volume telemetry ingest with reliable stream-to-lake analytics.",
   },
   {
     slug: "surggraph-pipeline",
@@ -98,6 +100,8 @@ export const flagshipProjects: ProjectEntry[] = [
       { label: "Operating Mode", value: "Prototype + experiment loop" },
     ],
     image: "/images/touchless-ops-copilot.png",
+    visual: { template: "pipeline", seed: 22, density: 2 },
+    recruiterHook: "Graph pipeline for bottleneck detection and recovery-risk insight.",
   },
   {
     slug: "distributed-task-queue",
@@ -120,6 +124,8 @@ export const flagshipProjects: ProjectEntry[] = [
     ],
     demoId: "scheduler-lab",
     image: "/images/profile-circular.png",
+    visual: { template: "queue", seed: 33, density: 3 },
+    recruiterHook: "Queue core with retries, dedup, and latency-aware scheduling controls.",
   },
   {
     slug: "database-replication-engine",
@@ -142,6 +148,8 @@ export const flagshipProjects: ProjectEntry[] = [
     ],
     demoId: "replication-lab",
     image: "/images/profile-circular.png",
+    visual: { template: "replication", seed: 44, density: 2 },
+    recruiterHook: "Leader-follower replication with failover and split-brain safeguards.",
   },
   {
     slug: "kv-store-engine",
@@ -163,6 +171,8 @@ export const flagshipProjects: ProjectEntry[] = [
       { label: "Recovery", value: "Snapshot restore" },
     ],
     image: "/images/profile-circular.png",
+    visual: { template: "storage", seed: 55, density: 2 },
+    recruiterHook: "Custom KV internals with TTL policy and atomic snapshot recovery.",
   },
   {
     slug: "load-balancer-from-scratch",
@@ -184,6 +194,8 @@ export const flagshipProjects: ProjectEntry[] = [
       { label: "Performance", value: "Latency/throughput tracked" },
     ],
     image: "/images/profile-circular.png",
+    visual: { template: "network", seed: 66, density: 2 },
+    recruiterHook: "Health-aware routing engine with multiple balancing strategies.",
   },
   {
     slug: "raft-consensus-simulator",
@@ -206,6 +218,8 @@ export const flagshipProjects: ProjectEntry[] = [
     ],
     demoId: "consensus-lab",
     image: "/images/profile-circular.png",
+    visual: { template: "replication", seed: 77, density: 2 },
+    recruiterHook: "Deterministic Raft scenarios for elections, quorums, and heartbeat stability.",
   },
   {
     slug: "transformer-lm-from-scratch",
@@ -227,6 +241,8 @@ export const flagshipProjects: ProjectEntry[] = [
       { label: "Quality", value: "Full test coverage mindset" },
     ],
     image: "/images/profile-circular.png",
+    visual: { template: "ml", seed: 88, density: 3 },
+    recruiterHook: "From-scratch decoder stack with transparent gradient flow and tests.",
   },
 ];
 
@@ -242,6 +258,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "storage", seed: 91, density: 2 },
+    recruiterHook: "LSM internals with compaction and bloom-aware reads.",
   },
   {
     slug: "postgres-backed-pubsub-queue",
@@ -254,6 +272,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "queue", seed: 92, density: 2 },
+    recruiterHook: "Durable pub/sub queue powered by relational consistency guarantees.",
   },
   {
     slug: "sql-database-engine",
@@ -266,6 +286,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "storage", seed: 93, density: 2 },
+    recruiterHook: "Database kernel covering parse, plan, execute, and persist loops.",
   },
   {
     slug: "http-server-from-scratch",
@@ -279,6 +301,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "network", seed: 94, density: 2 },
+    recruiterHook: "Socket-level HTTP server with concurrency and middleware plumbing.",
   },
   {
     slug: "container-runtime-from-scratch",
@@ -291,6 +315,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "runtime", seed: 95, density: 2 },
+    recruiterHook: "Runtime isolation model using namespace and cgroup primitives.",
   },
   {
     slug: "search-engine-from-scratch",
@@ -304,6 +330,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "search", seed: 96, density: 2 },
+    recruiterHook: "Search stack with indexing, ranking, and low-latency retrieval.",
   },
   {
     slug: "dns-resolver-from-scratch",
@@ -316,6 +344,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "network", seed: 97, density: 2 },
+    recruiterHook: "End-to-end recursive DNS traversal over UDP.",
   },
   {
     slug: "memory-allocator-simulator",
@@ -328,6 +358,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "runtime", seed: 98, density: 2 },
+    recruiterHook: "Allocator simulation for fragmentation and placement tradeoffs.",
   },
   {
     slug: "myers-diff-from-scratch",
@@ -340,6 +372,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "search", seed: 99, density: 1 },
+    recruiterHook: "Minimal diff engine with precise edit-path reconstruction.",
   },
   {
     slug: "b-tree-index-from-scratch",
@@ -352,6 +386,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "storage", seed: 100, density: 2 },
+    recruiterHook: "Index internals with split/merge behavior and traversal logic.",
   },
   {
     slug: "raytracer-from-scratch",
@@ -365,6 +401,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "ml", seed: 101, density: 2 },
+    recruiterHook: "Rendering pipeline tuned for realism and throughput.",
   },
   {
     slug: "robot-log-analyzer",
@@ -378,6 +416,8 @@ export const secondaryProjects: ProjectEntry[] = [
     architecture: [],
     metrics: [],
     image: "/images/profile-circular.png",
+    visual: { template: "pipeline", seed: 102, density: 2 },
+    recruiterHook: "Log anomaly triage pipeline for robotics safety workflows.",
   },
 ];
 

@@ -21,12 +21,32 @@ const demoTitleMap: Record<DemoId, string> = {
   "consensus-lab": "Consensus Lab",
 };
 
+const demoEmojiMap: Record<DemoId, string> = {
+  "scheduler-lab": "🕹️",
+  "replication-lab": "🛰️",
+  "rate-limiter-lab": "⚡",
+  "consensus-lab": "🗳️",
+};
+
+const missionByDemo: Record<DemoId, string> = {
+  "scheduler-lab": "Balance priorities and keep dead-letter pressure low.",
+  "replication-lab": "Survive failover while preserving high commit acks.",
+  "rate-limiter-lab": "Absorb bursts without massive rejection spikes.",
+  "consensus-lab": "Stabilize elections and maintain quorum under packet loss.",
+};
+
 function range(n: number) {
   return Array.from({ length: n }, (_, i) => i);
 }
 
 export function MiniDemos() {
   const [activeDemo, setActiveDemo] = useState<DemoId>("scheduler-lab");
+  const [labScore, setLabScore] = useState(0);
+  const [combo, setCombo] = useState(1);
+  const [bestScore, setBestScore] = useState(0);
+  const [runCount, setRunCount] = useState(0);
+  const [mission, setMission] = useState(missionByDemo["scheduler-lab"]);
+  const [spark, setSpark] = useState(0);
 
   const [priorityWeight, setPriorityWeight] = useState(3);
   const [failureRate, setFailureRate] = useState(22);
@@ -190,8 +210,72 @@ export function MiniDemos() {
     (project) => project.slug === selectedDemo?.linkedProjectSlug,
   );
 
+  const excitement = Math.min(100, Math.round((labScore % 900) / 8 + combo * 8 + runCount * 2));
+
+  const addScore = (points: number, nextMission: string) => {
+    const gained = points * combo;
+    setLabScore((prev) => {
+      const next = prev + gained;
+      setBestScore((best) => Math.max(best, next));
+      return next;
+    });
+    setCombo((prev) => Math.min(8, prev + 1));
+    setMission(nextMission);
+    setSpark((prev) => prev + 1);
+  };
+
+  const selectDemo = (id: DemoId) => {
+    setActiveDemo(id);
+    setCombo(1);
+    setMission(missionByDemo[id]);
+    setSpark((prev) => prev + 1);
+    setLabScore((prev) => {
+      const next = prev + 6;
+      setBestScore((best) => Math.max(best, next));
+      return next;
+    });
+  };
+
   return (
-    <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] sm:p-8">
+    <div className="lab-shell relative overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] sm:p-8">
+      <div aria-hidden="true" className="lab-shell-glow-a" />
+      <div aria-hidden="true" className="lab-shell-glow-b" />
+      <div className="lab-hud mb-5 rounded-2xl border border-white/14 bg-[rgba(8,16,22,0.72)] p-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.17em] text-[var(--text-muted)]">
+              Interactive Lab Arcade
+            </p>
+            <p className="mt-1 text-sm text-[var(--text-soft)]">{mission}</p>
+          </div>
+          <button
+            type="button"
+            className="lab-reset-btn"
+            onClick={() => {
+              setLabScore(0);
+              setCombo(1);
+              setRunCount(0);
+              setMission(missionByDemo[activeDemo]);
+            }}
+          >
+            Reset Game
+          </button>
+        </div>
+
+        <div className="mt-4 grid gap-2 sm:grid-cols-4">
+          <GameStat label="Score" value={String(labScore)} spark={spark} />
+          <GameStat label="Combo" value={`x${combo}`} spark={spark} />
+          <GameStat label="Best" value={String(bestScore)} spark={spark} />
+          <GameStat label="Fun Meter" value={`${excitement}%`} spark={spark} />
+        </div>
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/55">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[#60efd7] via-[#76c5ff] to-[#9fbcff] transition-all duration-500"
+            style={{ width: `${excitement}%` }}
+          />
+        </div>
+      </div>
+
       <div className="mb-5 flex flex-wrap gap-2">
         {(demos.map((demo) => demo.id) as DemoId[]).map((id) => {
           const selected = id === activeDemo;
@@ -200,21 +284,26 @@ export function MiniDemos() {
               key={id}
               type="button"
               className={[
-                "rounded-full px-4 py-2 text-sm font-semibold transition-colors",
+                "lab-tab rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                 selected
-                  ? "bg-[var(--accent-teal)] text-black"
+                  ? "bg-gradient-to-r from-[#68eed7] to-[#94c7ff] text-black"
                   : "bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text-strong)]",
               ].join(" ")}
-              onClick={() => setActiveDemo(id)}
+              onClick={() => {
+                selectDemo(id);
+              }}
               aria-pressed={selected}
             >
+              <span aria-hidden="true" className="mr-1">
+                {demoEmojiMap[id]}
+              </span>
               {demoTitleMap[id]}
             </button>
           );
         })}
       </div>
 
-      <div className="mb-6 grid gap-3 rounded-2xl bg-[var(--surface-alt)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-white/10 bg-[rgba(17,17,17,0.92)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-sm text-[var(--text-soft)]">{selectedDemo?.learningOutcome}</p>
           <p className="mt-2 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
@@ -228,6 +317,7 @@ export function MiniDemos() {
             target="_blank"
             className="inline-flex items-center gap-2 rounded-full border border-[var(--line)] bg-[var(--bg)] px-4 py-2 text-sm font-semibold text-[var(--text-strong)] hover:border-[var(--accent-steel)]"
           >
+            <RepoIcon />
             Project Repo
             <span aria-hidden="true">↗</span>
           </TrackedLink>
@@ -276,23 +366,27 @@ export function MiniDemos() {
           </div>
           <button
             type="button"
-            onClick={() => setTick((prev) => prev + 1)}
-            className="rounded-full bg-[var(--accent-orange)] px-4 py-2 text-sm font-semibold !text-black hover:bg-[#b5b5b5]"
+            onClick={() => {
+              setTick((prev) => prev + 1);
+              setRunCount((prev) => prev + 1);
+              addScore(24, "Simulation tick complete. Keep retries under control.");
+            }}
+            className="lab-action-btn"
           >
-            Run Tick #{tick}
+            🚀 Run Simulation Tick #{tick}
           </button>
           <ul className="grid gap-2">
             {schedulerTasks.map((task) => (
               <li
                 key={task.id}
-                className="grid items-center gap-2 rounded-xl bg-[var(--surface-alt)] px-3 py-2 text-sm sm:grid-cols-[88px_1fr_92px_80px]"
+                className="grid items-center gap-2 rounded-xl border border-white/8 bg-[var(--surface-alt)] px-3 py-2 text-sm sm:grid-cols-[88px_1fr_92px_92px_30px]"
               >
                 <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-[var(--text-muted)]">
                   {task.id}
                 </span>
-                <div className="h-2 overflow-hidden rounded-full bg-[var(--bg)]">
+                <div className="h-2.5 overflow-hidden rounded-full bg-[var(--bg)]">
                   <div
-                    className="h-full rounded-full bg-[var(--accent-teal)]"
+                    className="h-full rounded-full bg-gradient-to-r from-[#65efd7] via-[#84dcff] to-[#9fbcff] transition-all duration-500"
                     style={{ width: `${Math.min(100, task.score * 4)}%` }}
                   />
                 </div>
@@ -301,13 +395,16 @@ export function MiniDemos() {
                   className={[
                     "rounded-full px-2 py-1 text-center text-xs font-semibold uppercase",
                     task.status === "complete"
-                      ? "bg-[rgba(255,255,255,0.14)] text-[var(--accent-teal)]"
+                      ? "bg-[rgba(101,239,215,0.18)] text-[#9ff7ea]"
                       : task.status === "retrying"
-                        ? "bg-[rgba(255,255,255,0.1)] text-[var(--accent-orange)]"
-                        : "bg-[rgba(255,255,255,0.08)] text-[var(--accent-steel)]",
+                        ? "bg-[rgba(159,188,255,0.16)] text-[#c2d6ff]"
+                        : "bg-[rgba(255,171,171,0.15)] text-[#ffc9c9]",
                   ].join(" ")}
                 >
                   {task.status}
+                </span>
+                <span aria-hidden="true">
+                  {task.status === "complete" ? "✅" : task.status === "retrying" ? "🔁" : "💥"}
                 </span>
               </li>
             ))}
@@ -328,7 +425,10 @@ export function MiniDemos() {
               Replication Mode
               <select
                 value={mode}
-                onChange={(event) => setMode(event.target.value as ReplicationMode)}
+                onChange={(event) => {
+                  setMode(event.target.value as ReplicationMode);
+                  addScore(5, "Replication mode changed. Compare consistency tradeoffs.");
+                }}
                 className="w-full rounded-xl border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-[var(--text-strong)]"
               >
                 <option value="sync">Sync</option>
@@ -351,7 +451,10 @@ export function MiniDemos() {
             <div className="grid grid-cols-2 gap-2 self-end">
               <button
                 type="button"
-                onClick={() => setFailedNode(leader)}
+                onClick={() => {
+                  setFailedNode(leader);
+                  addScore(18, "Failure injected. Watch automatic leader recovery.");
+                }}
                 className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide !text-black hover:bg-[#b5b5b5]"
                 disabled={failedNode !== null}
               >
@@ -363,6 +466,7 @@ export function MiniDemos() {
                   setTerm(14);
                   setLeader("A");
                   setFailedNode(null);
+                  addScore(5, "Cluster reset. Run another failover challenge.");
                 }}
                 className="rounded-full border border-[var(--line)] px-3 py-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-strong)]"
               >
@@ -381,7 +485,7 @@ export function MiniDemos() {
               return (
                 <div
                   key={node}
-                  className="rounded-2xl bg-[var(--surface-alt)] p-4 text-center"
+                  className="rounded-2xl border border-white/10 bg-[var(--surface-alt)] p-4 text-center"
                 >
                   <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
                     Node {node}
@@ -390,26 +494,26 @@ export function MiniDemos() {
                     className={[
                       "mt-2 text-lg font-semibold capitalize",
                       role === "leader"
-                        ? "text-[var(--accent-teal)]"
+                        ? "text-[#9ff7ea]"
                         : role === "failed"
-                          ? "text-[var(--accent-orange)]"
+                          ? "text-[#ffc9c9]"
                           : "text-[var(--text-soft)]",
                     ].join(" ")}
                   >
-                    {role}
+                    {role} {role === "leader" ? "👑" : role === "failed" ? "💥" : "🛰️"}
                   </p>
                 </div>
               );
             })}
           </div>
-          <div className="rounded-2xl bg-[var(--surface-alt)] p-4">
+          <div className="rounded-2xl border border-white/10 bg-[var(--surface-alt)] p-4">
             <p className="text-sm text-[var(--text-soft)]">
               Term <strong>{term}</strong> · Mode <strong>{mode}</strong> · Commit
               Ack <strong>{replicationAcks}%</strong>
             </p>
             <div className="mt-3 h-3 rounded-full bg-[var(--bg)]">
               <div
-                className="h-full rounded-full bg-[var(--accent-teal)] transition-all"
+                className="h-full rounded-full bg-gradient-to-r from-[#68eed7] to-[#9fbcff] transition-all"
                 style={{ width: `${replicationAcks}%` }}
               />
             </div>
@@ -424,7 +528,10 @@ export function MiniDemos() {
               Algorithm
               <select
                 value={rateMode}
-                onChange={(event) => setRateMode(event.target.value as RateMode)}
+                onChange={(event) => {
+                  setRateMode(event.target.value as RateMode);
+                  addScore(7, "Algorithm swapped. Push burst traffic and compare behavior.");
+                }}
                 className="w-full rounded-xl border border-[var(--line)] bg-[var(--bg)] px-3 py-2 text-[var(--text-strong)]"
               >
                 <option value="token-bucket">Token Bucket</option>
@@ -468,19 +575,19 @@ export function MiniDemos() {
               />
             </label>
           </div>
-          <div className="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1">
+          <div className="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1.5 rounded-2xl border border-white/10 bg-[rgba(17,17,17,0.78)] p-3">
             {limiterTimeline.map((slot) => {
               const total = slot.accepted + slot.rejected || 1;
               const acceptedPct = (slot.accepted / total) * 100;
               return (
                 <div key={slot.index} className="flex flex-col items-center gap-1">
-                  <div className="flex h-20 w-5 flex-col overflow-hidden rounded bg-[var(--bg)]">
+                  <div className="flex h-24 w-5 flex-col overflow-hidden rounded-md border border-white/10 bg-[var(--bg)]">
                     <div
-                      className="bg-[var(--accent-teal)]"
+                      className="bg-gradient-to-t from-[#55e7cd] to-[#9cf3e6]"
                       style={{ height: `${acceptedPct}%` }}
                     />
                     <div
-                      className="bg-[var(--accent-orange)]"
+                      className="bg-gradient-to-t from-[#ff7f8d] to-[#ffc2c9]"
                       style={{ height: `${100 - acceptedPct}%` }}
                     />
                   </div>
@@ -545,17 +652,21 @@ export function MiniDemos() {
             </label>
             <button
               type="button"
-              onClick={runElection}
-              className="self-end rounded-full bg-[var(--accent-teal)] px-4 py-2 text-sm font-semibold !text-black hover:bg-[#dcdcdc] hover:!text-black"
+              onClick={() => {
+                runElection();
+                setRunCount((prev) => prev + 1);
+                addScore(18, "Election triggered. Hold quorum and stabilize leadership.");
+              }}
+              className="lab-action-btn self-end"
             >
-              Start Election
+              🎯 Start Election
             </button>
           </div>
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
             {heartbeats.map((node) => (
               <div
                 key={node.node}
-                className="rounded-2xl bg-[var(--surface-alt)] p-4 text-center"
+                className="rounded-2xl border border-white/10 bg-[var(--surface-alt)] p-4 text-center"
               >
                 <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
                   Node {node.node}
@@ -564,13 +675,13 @@ export function MiniDemos() {
                   className={[
                     "mt-2 text-sm font-semibold uppercase",
                     node.state === "leader"
-                      ? "text-[var(--accent-teal)]"
+                      ? "text-[#9ff7ea]"
                       : node.state === "ack"
-                        ? "text-[var(--accent-steel)]"
-                        : "text-[var(--accent-orange)]",
+                        ? "text-[#c2d6ff]"
+                        : "text-[#ffc9c9]",
                   ].join(" ")}
                 >
-                  {node.state}
+                  {node.state} {node.state === "leader" ? "👑" : node.state === "ack" ? "✅" : "❌"}
                 </p>
               </div>
             ))}
@@ -592,11 +703,46 @@ export function MiniDemos() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-[var(--surface-alt)] px-3 py-2">
+    <div className="rounded-xl border border-white/10 bg-[var(--surface-alt)] px-3 py-2">
       <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         {label}
       </p>
       <p className="mt-1 text-base font-semibold text-[var(--text-strong)]">{value}</p>
     </div>
+  );
+}
+
+function GameStat({
+  label,
+  value,
+  spark,
+}: {
+  label: string;
+  value: string;
+  spark: number;
+}) {
+  return (
+    <div
+      className="rounded-xl border border-white/12 bg-[rgba(10,17,24,0.9)] px-3 py-2"
+      key={`${label}-${spark}`}
+    >
+      <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+        {label}
+      </p>
+      <p className="mt-1 text-base font-semibold text-[#ecfffb]">{value}</p>
+    </div>
+  );
+}
+
+function RepoIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-4 w-4 fill-current"
+      focusable="false"
+    >
+      <path d="M12 .7a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.4.7-4.1-1.4-4.1-1.4-.6-1.3-1.3-1.7-1.3-1.7-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.4-5.5-6a4.7 4.7 0 0 1 1.2-3.3 4.4 4.4 0 0 1 .1-3.2s1-.3 3.3 1.2a11.2 11.2 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.4 1 .4 2.2.1 3.2a4.6 4.6 0 0 1 1.2 3.3c0 4.6-2.8 5.7-5.5 6 .4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A12 12 0 0 0 12 .7Z" />
+    </svg>
   );
 }
