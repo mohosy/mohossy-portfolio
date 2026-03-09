@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutGroup,
   motion,
@@ -43,6 +45,9 @@ const NAV_LINKS = [
 ] as const;
 
 export function TopNav() {
+  const pathname = usePathname();
+  const isPortfolioRoute = pathname === "/";
+  const isOpenSourceRoute = pathname.startsWith("/open-source");
   const reducedMotion = useReducedMotion();
   const [activeSection, setActiveSection] = useState("hero");
   const [isScrolling, setIsScrolling] = useState(false);
@@ -338,49 +343,139 @@ export function TopNav() {
           style={reducedMotion ? undefined : { width: underlineWidth }}
         />
 
-        <motion.a
-          href="#hero"
-          className="relative z-10 inline-flex shrink-0 items-center rounded-full px-1.5 py-0.5 font-[family-name:var(--font-display)] text-[9.5px] font-semibold tracking-[0.14em] text-[var(--text-strong)] sm:text-[10.5px]"
-          style={reducedMotion ? undefined : { scale: brandScale }}
-        >
-          MO SHIRMOHAMMADI
-        </motion.a>
+        {isPortfolioRoute ? (
+          <motion.a
+            href="#hero"
+            className="relative z-10 inline-flex shrink-0 items-center rounded-full px-1.5 py-0.5 font-[family-name:var(--font-display)] text-[9.5px] font-semibold tracking-[0.14em] text-[var(--text-strong)] sm:text-[10.5px]"
+            style={reducedMotion ? undefined : { scale: brandScale }}
+          >
+            MO SHIRMOHAMMADI
+          </motion.a>
+        ) : (
+          <motion.div
+            className="relative z-10 shrink-0"
+            style={reducedMotion ? undefined : { scale: brandScale }}
+          >
+            <Link
+              href="/"
+              className="inline-flex items-center rounded-full px-1.5 py-0.5 font-[family-name:var(--font-display)] text-[9.5px] font-semibold tracking-[0.14em] text-[var(--text-strong)] sm:text-[10.5px]"
+              onClick={() => trackEvent("secondary_nav_home_click")}
+            >
+              MO SHIRMOHAMMADI
+            </Link>
+          </motion.div>
+        )}
 
         <LayoutGroup id="top-nav-tabs">
-          <motion.ul
-            className="relative z-10 hidden flex-1 items-center justify-center md:flex"
-            style={reducedMotion ? undefined : { scale: linksScale, gap: linksGap }}
-          >
-            {NAV_LINKS.map((item) => {
-              const isActive = isNavActive(item.activeIds);
+          {isPortfolioRoute ? (
+            <motion.ul
+              className="relative z-10 hidden flex-1 items-center justify-center md:flex"
+              style={reducedMotion ? undefined : { scale: linksScale, gap: linksGap }}
+            >
+              {NAV_LINKS.map((item) => {
+                const isActive = isNavActive(item.activeIds);
 
-              return (
+                return (
+                  <li key={item.id}>
+                    <a
+                      href={item.href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={[
+                        "top-nav-link relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border border-transparent px-2.5 text-[10px] font-medium uppercase tracking-[0.14em] transition-all",
+                        isActive ? "is-active" : "",
+                      ].join(" ")}
+                    >
+                      {isActive ? (
+                        <motion.span
+                          layoutId="top-nav-active-pill"
+                          className="top-nav-active-pill absolute inset-0 rounded-full"
+                          transition={
+                            reducedMotion
+                              ? { duration: 0 }
+                              : { type: "spring", stiffness: 520, damping: 42, mass: 0.55 }
+                          }
+                        />
+                      ) : null}
+                      <span className="relative z-10">{item.label}</span>
+                    </a>
+                  </li>
+                );
+              })}
+            </motion.ul>
+          ) : (
+            <motion.ul
+              className="relative z-10 hidden flex-1 items-center justify-center md:flex"
+              style={reducedMotion ? undefined : { scale: linksScale, gap: linksGap }}
+            >
+              {[
+                { id: "portfolio", label: "Portfolio", href: "/", active: pathname === "/" },
+                {
+                  id: "open-source",
+                  label: "Open Source",
+                  href: "/open-source",
+                  active: isOpenSourceRoute,
+                },
+                {
+                  id: "github",
+                  label: "GitHub",
+                  href: siteProfile.githubUrl,
+                  active: false,
+                  external: true,
+                },
+              ].map((item) => (
                 <li key={item.id}>
-                  <a
-                    href={item.href}
-                    aria-current={isActive ? "page" : undefined}
-                    className={[
-                      "top-nav-link relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border border-transparent px-2.5 text-[10px] font-medium uppercase tracking-[0.14em] transition-all",
-                      isActive ? "is-active" : "",
-                    ].join(" ")}
-                  >
-                    {isActive ? (
-                      <motion.span
-                        layoutId="top-nav-active-pill"
-                        className="top-nav-active-pill absolute inset-0 rounded-full"
-                        transition={
-                          reducedMotion
-                            ? { duration: 0 }
-                            : { type: "spring", stiffness: 520, damping: 42, mass: 0.55 }
-                        }
-                      />
-                    ) : null}
-                    <span className="relative z-10">{item.label}</span>
-                  </a>
+                  {item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={[
+                        "top-nav-link relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border border-transparent px-2.5 text-[10px] font-medium uppercase tracking-[0.14em] transition-all",
+                        item.active ? "is-active" : "",
+                      ].join(" ")}
+                      onClick={() => trackEvent(`secondary_nav_${item.id}_click`)}
+                    >
+                      {item.active ? (
+                        <motion.span
+                          layoutId="top-nav-active-pill"
+                          className="top-nav-active-pill absolute inset-0 rounded-full"
+                          transition={
+                            reducedMotion
+                              ? { duration: 0 }
+                              : { type: "spring", stiffness: 520, damping: 42, mass: 0.55 }
+                          }
+                        />
+                      ) : null}
+                      <span className="relative z-10">{item.label}</span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      aria-current={item.active ? "page" : undefined}
+                      className={[
+                        "top-nav-link relative inline-flex h-7 items-center justify-center overflow-hidden rounded-full border border-transparent px-2.5 text-[10px] font-medium uppercase tracking-[0.14em] transition-all",
+                        item.active ? "is-active" : "",
+                      ].join(" ")}
+                      onClick={() => trackEvent(`secondary_nav_${item.id}_click`)}
+                    >
+                      {item.active ? (
+                        <motion.span
+                          layoutId="top-nav-active-pill"
+                          className="top-nav-active-pill absolute inset-0 rounded-full"
+                          transition={
+                            reducedMotion
+                              ? { duration: 0 }
+                              : { type: "spring", stiffness: 520, damping: 42, mass: 0.55 }
+                          }
+                        />
+                      ) : null}
+                      <span className="relative z-10">{item.label}</span>
+                    </Link>
+                  )}
                 </li>
-              );
-            })}
-          </motion.ul>
+              ))}
+            </motion.ul>
+          )}
         </LayoutGroup>
 
         <motion.div

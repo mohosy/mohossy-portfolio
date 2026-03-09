@@ -560,3 +560,39 @@ export const skillGroups = [
     ],
   },
 ];
+
+export const openSourceProjects: ProjectEntry[] = [
+  {
+    slug: "openevals",
+    name: "OpenEvals",
+    repoUrl: "https://github.com/mohosy/OpenEvals",
+    tier: "flagship",
+    domains: ["ml", "fullstack"],
+    summary:
+      "Open-source eval studio for prompt comparisons, regression tracking, and GitHub-native LLM evals. Built to make prompt testing visual, shareable, and approachable.",
+    stack: [
+      "React",
+      "TypeScript",
+      "FastAPI",
+      "PostgreSQL",
+      "Redis",
+      "Dramatiq",
+      "OpenAI API",
+      "GitHub Actions",
+    ],
+    architecture: [
+      "Git-friendly YAML suites for prompts, test cases, deterministic checks, and rubric scoring.",
+      "FastAPI + worker backend for queued runs, baseline pinning, regression deltas, and CI uploads.",
+      "React UI for side-by-side model comparison, benchmark sharing, and screenshot-worthy eval reviews.",
+    ],
+    metrics: [
+      { label: "Release", value: "v0.1.0 public" },
+      { label: "Workflow", value: "UI + CLI + CI" },
+      { label: "Community", value: "Discussions live" },
+    ],
+    image: "/images/projects/openevals-social.png",
+    visual: { template: "ml", seed: 101, density: 3 },
+    recruiterHook:
+      "A full open-source product loop: UX, backend orchestration, CI integration, and GitHub community setup.",
+  },
+];
