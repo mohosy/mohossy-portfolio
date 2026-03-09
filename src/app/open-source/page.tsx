@@ -74,6 +74,21 @@ const pagePrinciples = [
   },
 ];
 
+const heroMetricLinks: Record<string, { href: string; eventName: string }> = {
+  Release: {
+    href: "https://github.com/mohosy/OpenEvals/releases/tag/v0.1.0",
+    eventName: "open_source_hero_release_click",
+  },
+  Workflow: {
+    href: "https://github.com/mohosy/OpenEvals#readme",
+    eventName: "open_source_hero_workflow_click",
+  },
+  Community: {
+    href: "https://github.com/mohosy/OpenEvals/discussions",
+    eventName: "open_source_hero_community_click",
+  },
+};
+
 export const metadata: Metadata = {
   title: "Open Source",
   description:
@@ -181,31 +196,62 @@ export default function OpenSourcePage() {
 
             <Reveal delay={0.08}>
               <div className="relative">
-                <div className="absolute inset-x-8 -bottom-8 h-24 rounded-full bg-[#d3bc9f]/34 blur-3xl" />
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-8 -bottom-8 h-24 rounded-full bg-[#d3bc9f]/34 blur-3xl"
+                />
                 <div className="relative overflow-hidden rounded-[2rem] border border-[rgba(64,48,30,0.08)] bg-[rgba(255,250,244,0.82)] p-4 shadow-[0_30px_70px_rgba(86,63,34,0.14)] sm:p-5">
-                  <div className="rounded-[1.6rem] border border-[rgba(64,48,30,0.08)] bg-[#fcf8f1] p-3 sm:p-4">
+                  <TrackedLink
+                    href={featuredProject.repoUrl}
+                    eventName="open_source_hero_preview_click"
+                    className="group block rounded-[1.6rem] border border-[rgba(64,48,30,0.08)] bg-[#fcf8f1] p-3 transition-transform duration-200 hover:-translate-y-1 sm:p-4"
+                    target="_blank"
+                  >
                     <Image
                       src={featuredProject.image}
                       alt="OpenEvals preview"
                       width={1200}
                       height={630}
-                      className="h-auto w-full rounded-[1.2rem] border border-[rgba(64,48,30,0.08)] object-cover"
+                      className="h-auto w-full rounded-[1.2rem] border border-[rgba(64,48,30,0.08)] object-cover transition-transform duration-300 group-hover:scale-[1.01]"
                     />
-                  </div>
+                    <div className="mt-3 flex items-center justify-between gap-3 px-1">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                        Open the repo
+                      </p>
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--text-strong)]">
+                        View on GitHub
+                        <ArrowIcon />
+                      </span>
+                    </div>
+                  </TrackedLink>
                   <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                    {featuredProject.metrics.map((metric) => (
-                      <article
-                        key={metric.label}
-                        className="rounded-[1.2rem] border border-[rgba(64,48,30,0.08)] bg-white/78 p-4"
-                      >
-                        <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                          {metric.label}
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-[var(--text-strong)]">
-                          {metric.value}
-                        </p>
-                      </article>
-                    ))}
+                    {featuredProject.metrics.map((metric) => {
+                      const link = heroMetricLinks[metric.label];
+
+                      return (
+                        <TrackedLink
+                          key={metric.label}
+                          href={link?.href ?? featuredProject.repoUrl}
+                          eventName={link?.eventName ?? "open_source_hero_metric_click"}
+                          target="_blank"
+                          className="group rounded-[1.2rem] border border-[rgba(64,48,30,0.08)] bg-white/78 p-4 transition-transform duration-200 hover:-translate-y-1 hover:border-[rgba(64,48,30,0.14)] hover:bg-white"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                                {metric.label}
+                              </p>
+                              <p className="mt-2 text-sm font-semibold text-[var(--text-strong)]">
+                                {metric.value}
+                              </p>
+                            </div>
+                            <span className="mt-0.5 text-[var(--text-muted)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+                              <ArrowIcon />
+                            </span>
+                          </div>
+                        </TrackedLink>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
