@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import Image from "next/image";
+import { OpenSourceProjectShelf } from "@/components/open-source-project-shelf";
 import { Reveal } from "@/components/reveal";
 import { ScrollProgress } from "@/components/scroll-progress";
 import { TopNav } from "@/components/top-nav";
@@ -154,7 +155,7 @@ export default function OpenSourcePage() {
                 <TrackedLink
                   href={featuredProject.repoUrl}
                   eventName="open_source_featured_repo_click"
-                  className="inline-flex items-center gap-2 rounded-full bg-[#18120d] px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-[#f8f1e7] shadow-[0_20px_45px_rgba(24,18,13,0.16)] transition-transform duration-200 hover:-translate-y-0.5"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#18120d] px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] !text-white shadow-[0_20px_45px_rgba(24,18,13,0.16)] transition-transform duration-200 hover:-translate-y-0.5"
                   target="_blank"
                 >
                   <GitHubIcon />
@@ -284,91 +285,43 @@ export default function OpenSourcePage() {
         </section>
 
         <section className="section-shell section-gap">
-          <div className="grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
-            <Reveal intensity="low">
-              <article className="rounded-[2rem] border border-[rgba(64,48,30,0.08)] bg-[rgba(255,250,244,0.85)] p-7 shadow-[0_24px_60px_rgba(86,63,34,0.1)]">
-                <p className="editorial-kicker kicker-with-icon text-[var(--text-muted)]">
-                  <SparkIcon />
-                  Featured Repository
-                </p>
-                <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl leading-[0.96] tracking-[-0.04em] text-[var(--text-strong)]">
-                  {featuredProject.name}
-                </h2>
-                <p className="mt-4 max-w-2xl text-base leading-relaxed text-[var(--text-soft)]">
-                  {featuredProject.summary}
-                </p>
-                <div className="mt-7 grid gap-3">
-                  {featuredProject.architecture.map((point) => (
-                    <div
-                      key={point}
-                      className="flex items-start gap-3 rounded-[1.25rem] border border-[rgba(64,48,30,0.08)] bg-[#f7efe3] px-4 py-3 text-sm leading-relaxed text-[var(--text-soft)]"
-                    >
-                      <span className="mt-0.5 text-[var(--accent-orange)]">
-                        <NodeIcon />
-                      </span>
-                      {point}
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {featuredProject.stack.map((tech) => (
-                    <span
-                      key={tech}
-                      className="rounded-full border border-[rgba(64,48,30,0.08)] bg-white/78 px-3 py-1.5 text-xs font-semibold text-[var(--text-soft)]"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </article>
-            </Reveal>
+          <Reveal intensity="low">
+            <p className="editorial-kicker kicker-with-icon text-[var(--text-muted)]">
+              <SparkIcon />
+              Project Shelf
+            </p>
+            <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl leading-[0.98] tracking-[-0.04em] text-[var(--text-strong)] sm:text-4xl">
+              This page is now structured like a real catalog, not a one-off feature block.
+            </h2>
+          </Reveal>
+          <div className="mt-7">
+            <OpenSourceProjectShelf projects={openSourceProjects} />
+          </div>
+        </section>
 
-            <Reveal delay={0.08}>
-              <article className="h-full rounded-[2rem] border border-[rgba(64,48,30,0.08)] bg-[linear-gradient(180deg,rgba(255,250,244,0.84),rgba(247,238,225,0.98))] p-7 shadow-[0_24px_60px_rgba(86,63,34,0.08)]">
-                <p className="editorial-kicker kicker-with-icon text-[var(--text-muted)]">
-                  <LaunchIcon />
-                  Why This Repo Opens Well
-                </p>
-                <h2 className="mt-4 max-w-xl font-[family-name:var(--font-display)] text-3xl leading-[1] tracking-[-0.04em] text-[var(--text-strong)]">
-                  The project is shaped like something people can adopt, not just inspect.
-                </h2>
-                <div className="mt-7 grid gap-3">
-                  {launchSurface.map((item) => (
-                    <article
-                      key={item.label}
-                      className="rounded-[1.25rem] border border-[rgba(64,48,30,0.08)] bg-white/72 p-4"
-                    >
-                      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                        {item.label}
-                      </p>
-                      <p className="mt-2 text-sm leading-relaxed text-[var(--text-soft)]">
-                        {item.detail}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  <TrackedLink
-                    href={featuredProject.repoUrl}
-                    eventName="open_source_featured_repo_secondary_click"
-                    className="inline-flex items-center gap-2 rounded-full border border-[rgba(64,48,30,0.1)] bg-white/82 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--text-strong)] transition-transform duration-200 hover:-translate-y-0.5"
-                    target="_blank"
-                  >
-                    <GitHubIcon />
-                    Repository
-                  </TrackedLink>
-                  <TrackedLink
-                    href="https://github.com/mohosy/OpenEvals/discussions"
-                    eventName="open_source_featured_discussions_click"
-                    className="inline-flex items-center gap-2 rounded-full border border-transparent px-2 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-[var(--text-muted)] transition-colors duration-200 hover:text-[var(--text-strong)]"
-                    target="_blank"
-                  >
-                    <ArrowIcon />
-                    Discussions
-                  </TrackedLink>
-                </div>
-              </article>
-            </Reveal>
+        <section className="section-shell section-gap">
+          <Reveal intensity="low">
+            <p className="editorial-kicker kicker-with-icon text-[var(--text-muted)]">
+              <LaunchIcon />
+              Why These Repos Open Well
+            </p>
+            <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl leading-[0.98] tracking-[-0.04em] text-[var(--text-strong)] sm:text-4xl">
+              The packaging is meant to help strangers understand the project fast.
+            </h2>
+          </Reveal>
+          <div className="mt-7 grid gap-4 lg:grid-cols-3">
+            {launchSurface.map((item, index) => (
+              <Reveal key={item.label} delay={Math.min(index * 0.06, 0.12)}>
+                <article className="h-full rounded-[1.5rem] border border-[rgba(64,48,30,0.08)] bg-[rgba(255,250,244,0.82)] p-5 shadow-[0_20px_48px_rgba(86,63,34,0.08)]">
+                  <p className="text-sm font-semibold uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                    {item.label}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">
+                    {item.detail}
+                  </p>
+                </article>
+              </Reveal>
+            ))}
           </div>
         </section>
 
@@ -566,25 +519,6 @@ function ArrowIcon() {
     >
       <path d="M7 17 17 7" />
       <path d="M8 7h9v9" />
-    </svg>
-  );
-}
-
-function NodeIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-4 w-4 fill-none stroke-current"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-    >
-      <circle cx="5.4" cy="12" r="2.1" />
-      <circle cx="18.6" cy="6.6" r="2.1" />
-      <circle cx="18.6" cy="17.4" r="2.1" />
-      <path d="M7.3 11.1 16.7 7.4M7.3 12.9l9.4 3.7" />
     </svg>
   );
 }
