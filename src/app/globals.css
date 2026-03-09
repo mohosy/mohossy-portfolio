@@ -445,6 +445,16 @@ a {
   transition: opacity 0.28s ease;
 }
 
+.nav-shell[data-nav-tone="light"]::before {
+  background: linear-gradient(
+    115deg,
+    transparent 24%,
+    rgba(214, 162, 99, 0.18) 44%,
+    rgba(118, 140, 109, 0.14) 58%,
+    transparent 76%
+  );
+}
+
 .nav-shell-resting {
   filter: saturate(1);
 }
@@ -473,6 +483,13 @@ a {
   box-shadow:
     0 0 0 1px rgba(120, 153, 217, 0.14),
     0 0 20px rgba(232, 188, 96, 0.16);
+}
+
+.nav-shell[data-nav-tone="light"] .nav-activity-ring {
+  border: 1px solid rgba(101, 78, 47, 0.16);
+  box-shadow:
+    0 0 0 1px rgba(101, 78, 47, 0.06),
+    0 0 20px rgba(214, 176, 121, 0.12);
 }
 
 @keyframes nav-shell-shimmer {
@@ -570,6 +587,10 @@ a {
     background-color 0.22s ease;
 }
 
+.nav-shell[data-nav-tone="light"] .top-nav-link {
+  color: color-mix(in srgb, var(--text-soft) 84%, #7c6c5b 16%);
+}
+
 .top-nav-link:hover {
   color: var(--text-strong);
   background: rgba(255, 255, 255, 0.05);
@@ -577,10 +598,19 @@ a {
   border-color: rgba(255, 255, 255, 0.12);
 }
 
+.nav-shell[data-nav-tone="light"] .top-nav-link:hover {
+  background: rgba(43, 30, 17, 0.04);
+  border-color: rgba(72, 53, 32, 0.08);
+}
+
 .top-nav-link.is-active {
   color: #f2fcff;
   border-color: transparent;
   background: transparent;
+}
+
+.nav-shell[data-nav-tone="light"] .top-nav-link.is-active {
+  color: var(--text-strong);
 }
 
 .top-nav-active-pill {
@@ -593,6 +623,18 @@ a {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.2),
     0 8px 20px rgba(4, 20, 22, 0.42);
+}
+
+.nav-shell[data-nav-tone="light"] .top-nav-active-pill {
+  border: 1px solid rgba(76, 58, 37, 0.1);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.88),
+    rgba(241, 229, 210, 0.94)
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.72),
+    0 10px 22px rgba(97, 71, 40, 0.12);
 }
 
 .nav-shell[data-nav-state="scrolling"] .top-nav-active-pill {
@@ -658,10 +700,25 @@ a {
     box-shadow 0.24s ease;
 }
 
+.nav-shell[data-nav-tone="light"] .top-resume-icon {
+  border-color: rgba(76, 58, 37, 0.14);
+  background: linear-gradient(
+    130deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(242, 231, 213, 0.92)
+  );
+  color: var(--text-strong);
+}
+
 .top-resume-icon:hover {
   transform: translateY(-2px) scale(1.04);
   border-color: rgba(245, 209, 132, 0.78);
   box-shadow: 0 14px 24px rgba(0, 0, 0, 0.3);
+}
+
+.nav-shell[data-nav-tone="light"] .top-resume-icon:hover {
+  border-color: rgba(206, 157, 92, 0.5);
+  box-shadow: 0 14px 24px rgba(117, 87, 50, 0.14);
 }
 
 .top-resume-icon svg {

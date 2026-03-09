@@ -2,7 +2,6 @@ import Image from "next/image";
 import {
   experience,
   flagshipProjects,
-  openSourceProjects,
   secondaryProjects,
   siteProfile,
   skillGroups,
@@ -78,7 +77,6 @@ const irlArchitecture = [
 ] as const;
 
 const spotlightProject = flagshipProjects[0];
-const openSourceSpotlight = openSourceProjects[0];
 const selectedBuilds = flagshipProjects.slice(1, 4);
 const deepCatalog = secondaryProjects.slice(0, 8);
 const visualFeedProjects = [...flagshipProjects, ...secondaryProjects.slice(0, 4)];
@@ -419,85 +417,6 @@ export default function Home() {
                 </article>
               </Reveal>
             ))}
-          </div>
-        </section>
-
-        <section className="section-shell section-gap">
-          <Reveal intensity="low">
-            <p className="editorial-kicker kicker-with-icon">
-              <OpenSourceIcon />
-              Building in Public
-            </p>
-            <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              A new open-source page for products I want people to actually fork, use, and talk about.
-            </h2>
-          </Reveal>
-
-          <div className="mt-7 grid gap-6 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 lg:grid-cols-[0.95fr_1.05fr]">
-            <Reveal>
-              <p className="max-w-2xl text-base leading-relaxed text-[var(--text-soft)]">
-                I&apos;m starting to publish more of my work as open-source products rather than
-                one-off experiments. The first one is OpenEvals, a visual eval studio for prompt
-                testing, model comparisons, and regression tracking.
-              </p>
-              <ul className="mt-6 grid gap-3 text-sm text-[var(--text-soft)]">
-                {openSourceSpotlight.architecture.map((point) => (
-                  <li
-                    key={point}
-                    className="flex items-start gap-2 rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] px-4 py-3"
-                  >
-                    <span className="mt-0.5 text-[var(--accent-fresh)]">
-                      <NodeIcon />
-                    </span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <TrackedLink
-                  href="/open-source"
-                  eventName="home_open_source_page_click"
-                  className="btn-primary"
-                >
-                  <OpenSourceIcon />
-                  Explore Open Source
-                </TrackedLink>
-                <TrackedLink
-                  href={openSourceSpotlight.repoUrl}
-                  eventName="home_openevals_repo_click"
-                  className="btn-secondary"
-                  target="_blank"
-                >
-                  <GitHubIcon />
-                  View OpenEvals
-                </TrackedLink>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.08}>
-              <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)]">
-                <Image
-                  src={openSourceSpotlight.image}
-                  alt="OpenEvals project preview"
-                  width={1200}
-                  height={630}
-                  className="h-auto w-full object-cover"
-                />
-              </div>
-              <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                {openSourceSpotlight.metrics.map((metric) => (
-                  <div
-                    key={metric.label}
-                    className="rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-3"
-                  >
-                    <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                      {metric.label}
-                    </p>
-                    <p className="mt-2 text-sm font-semibold text-[var(--text-strong)]">{metric.value}</p>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
           </div>
         </section>
 

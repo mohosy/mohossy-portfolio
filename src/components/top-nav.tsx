@@ -48,6 +48,7 @@ export function TopNav() {
   const pathname = usePathname();
   const isPortfolioRoute = pathname === "/";
   const isOpenSourceRoute = pathname.startsWith("/open-source");
+  const usesLightChrome = isOpenSourceRoute;
   const reducedMotion = useReducedMotion();
   const [activeSection, setActiveSection] = useState("hero");
   const [isScrolling, setIsScrolling] = useState(false);
@@ -101,7 +102,9 @@ export function TopNav() {
   const navShadow = useTransform(
     depth,
     [0, 1],
-    ["0 14px 34px rgba(0,0,0,0.42)", "0 20px 46px rgba(0,0,0,0.56)"],
+    usesLightChrome
+      ? ["0 14px 34px rgba(106,78,44,0.1)", "0 20px 46px rgba(106,78,44,0.16)"]
+      : ["0 14px 34px rgba(0,0,0,0.42)", "0 20px 46px rgba(0,0,0,0.56)"],
   );
   const islandWidth = useTransform(depth, [0, 1], ["53rem", "40.5rem"]);
   const islandPadX = useTransform(depth, [0, 1], [12, 7]);
@@ -110,10 +113,18 @@ export function TopNav() {
   const linksScale = useTransform(depth, [0, 1], [1, 0.93]);
   const actionsScale = useTransform(depth, [0, 1], [1, 0.9]);
   const linksGap = useTransform(depth, [0, 1], [12, 7.5]);
-  const navBgOpacity = useTransform(depth, [0, 1], [0.74, 0.88]);
-  const navBorderOpacity = useTransform(depth, [0, 1], [0.16, 0.24]);
-  const navBg = useMotionTemplate`rgba(8, 8, 8, ${navBgOpacity})`;
-  const navBorder = useMotionTemplate`rgba(255, 255, 255, ${navBorderOpacity})`;
+  const navBgOpacity = useTransform(depth, [0, 1], usesLightChrome ? [0.84, 0.94] : [0.74, 0.88]);
+  const navBorderOpacity = useTransform(
+    depth,
+    [0, 1],
+    usesLightChrome ? [0.1, 0.16] : [0.16, 0.24],
+  );
+  const navBg = usesLightChrome
+    ? useMotionTemplate`rgba(250, 245, 237, ${navBgOpacity})`
+    : useMotionTemplate`rgba(8, 8, 8, ${navBgOpacity})`;
+  const navBorder = usesLightChrome
+    ? useMotionTemplate`rgba(88, 68, 45, ${navBorderOpacity})`
+    : useMotionTemplate`rgba(255, 255, 255, ${navBorderOpacity})`;
   const bubbleAOffsetY = useTransform(depth, [0, 1], [0, -9]);
   const bubbleBOffsetY = useTransform(depth, [0, 1], [0, -7]);
   const bubbleAOffsetX = useTransform(depth, [0, 1], [0, 7]);
@@ -225,6 +236,7 @@ export function TopNav() {
           damping: isScrolling ? 34 : 30,
           mass: 0.62,
         }}
+        data-nav-tone={usesLightChrome ? "light" : "dark"}
         aria-label="Primary"
       >
         <motion.span
@@ -252,7 +264,10 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute -left-6 -top-8 h-20 w-20 rounded-full bg-white/14 blur-2xl"
+          className={[
+            "absolute -left-6 -top-8 h-20 w-20 rounded-full blur-2xl",
+            usesLightChrome ? "bg-[#e0cab0]/78" : "bg-white/14",
+          ].join(" ")}
           style={
             reducedMotion
               ? undefined
@@ -284,7 +299,10 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute right-[22%] top-[-34px] h-16 w-16 rounded-full bg-[#9fe3ff1f] blur-2xl"
+          className={[
+            "absolute right-[22%] top-[-34px] h-16 w-16 rounded-full blur-2xl",
+            usesLightChrome ? "bg-[#d7dfd1]/86" : "bg-[#9fe3ff1f]",
+          ].join(" ")}
           style={
             reducedMotion
               ? undefined
@@ -316,7 +334,10 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute bottom-[-22px] left-[38%] h-14 w-14 rounded-full bg-white/10 blur-2xl"
+          className={[
+            "absolute bottom-[-22px] left-[38%] h-14 w-14 rounded-full blur-2xl",
+            usesLightChrome ? "bg-[#f7f0e5]/90" : "bg-white/10",
+          ].join(" ")}
           style={reducedMotion ? undefined : { opacity: bubbleCOpacity }}
           animate={
             reducedMotion
