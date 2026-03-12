@@ -58,6 +58,8 @@ export interface SiteProfile {
   email: string;
   linkedinUrl: string;
   githubUrl: string;
+  twitterUrl: string;
+  redditUrl: string;
   resumeUrl: string;
   location: string;
 }

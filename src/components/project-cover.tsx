@@ -57,13 +57,13 @@ export function ProjectCover({
       >
         <defs>
           <linearGradient id={`cover-bg-${project.slug}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#0a0a0a" />
-            <stop offset="55%" stopColor="#121212" />
-            <stop offset="100%" stopColor="#181818" />
+            <stop offset="0%" stopColor="#e8eaed" />
+            <stop offset="55%" stopColor="#f0f1f3" />
+            <stop offset="100%" stopColor="#f5f6f8" />
           </linearGradient>
           <linearGradient id={`cover-wire-${project.slug}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.72)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0.18)" />
+            <stop offset="0%" stopColor="rgba(0,0,0,0.35)" />
+            <stop offset="100%" stopColor="rgba(0,0,0,0.08)" />
           </linearGradient>
           <filter id={`cover-glow-${project.slug}`} x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="6" result="blur" />
@@ -76,15 +76,15 @@ export function ProjectCover({
 
         <rect x="0" y="0" width="960" height="540" fill={`url(#cover-bg-${project.slug})`} />
         <g opacity="0.16">
-          <path d="M0 110H960" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
-          <path d="M0 220H960" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
-          <path d="M0 330H960" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
-          <path d="M0 440H960" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
-          <path d="M160 0V540" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-          <path d="M320 0V540" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-          <path d="M480 0V540" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-          <path d="M640 0V540" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
-          <path d="M800 0V540" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
+          <path d="M0 110H960" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
+          <path d="M0 220H960" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
+          <path d="M0 330H960" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
+          <path d="M0 440H960" stroke="rgba(0,0,0,0.08)" strokeWidth="1" />
+          <path d="M160 0V540" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+          <path d="M320 0V540" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+          <path d="M480 0V540" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+          <path d="M640 0V540" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
+          <path d="M800 0V540" stroke="rgba(0,0,0,0.06)" strokeWidth="1" />
         </g>
 
         <rect
@@ -93,8 +93,8 @@ export function ProjectCover({
           width="888"
           height="468"
           rx="24"
-          fill="rgba(0,0,0,0.42)"
-          stroke="rgba(255,255,255,0.16)"
+          fill="rgba(255,255,255,0.5)"
+          stroke="rgba(0,0,0,0.08)"
           strokeWidth="2"
         />
 
@@ -128,7 +128,7 @@ export function ProjectCover({
                     y={(y1 + y2) / 2 - 8}
                     fontSize="14"
                     textAnchor="middle"
-                    fill="rgba(255,255,255,0.68)"
+                    fill="rgba(0,0,0,0.4)"
                     fontFamily="var(--font-mono), monospace"
                     letterSpacing="0.06em"
                   >
@@ -159,14 +159,14 @@ export function ProjectCover({
                 width={Math.max(14, node.w - 20)}
                 height="8"
                 rx="4"
-                fill="rgba(255,255,255,0.06)"
+                fill="rgba(0,0,0,0.04)"
               />
               <text
                 x={node.x + node.w / 2}
                 y={node.y + node.h / 2 + 6}
                 textAnchor="middle"
                 fontSize={density >= 3 ? "16" : "15"}
-                fill="rgba(255,255,255,0.9)"
+                fill="rgba(0,0,0,0.7)"
                 fontFamily="var(--font-mono), monospace"
                 letterSpacing="0.04em"
               >
@@ -177,7 +177,7 @@ export function ProjectCover({
                 cy={node.y + 14}
                 r="4"
                 className="diagram-glow"
-                fill={index % 2 === 0 ? "rgba(173,214,255,0.95)" : "rgba(184,255,211,0.9)"}
+                fill={index % 2 === 0 ? "rgba(37,99,235,0.7)" : "rgba(16,185,129,0.7)"}
                 filter={`url(#cover-glow-${project.slug})`}
               />
             </g>
@@ -191,7 +191,7 @@ export function ProjectCover({
             fontFamily="var(--font-mono), monospace"
             fontSize="14"
             letterSpacing="0.13em"
-            fill="rgba(255,255,255,0.58)"
+            fill="rgba(0,0,0,0.35)"
           >
             SYSTEM DIAGRAM
           </text>
@@ -201,7 +201,7 @@ export function ProjectCover({
             fontFamily="var(--font-display), sans-serif"
             fontSize="30"
             letterSpacing="-0.02em"
-            fill="rgba(255,255,255,0.94)"
+            fill="rgba(0,0,0,0.8)"
           >
             {template.title}
           </text>
@@ -210,7 +210,7 @@ export function ProjectCover({
             y="148"
             fontFamily="var(--font-sans), sans-serif"
             fontSize="16"
-            fill="rgba(255,255,255,0.66)"
+            fill="rgba(0,0,0,0.4)"
           >
             {template.subtitle}
           </text>
@@ -407,22 +407,22 @@ function createNode(
 
 function resolveNodeFill(tone: NodeTone) {
   if (tone === "primary") {
-    return "rgba(255,255,255,0.11)";
+    return "rgba(37,99,235,0.08)";
   }
   if (tone === "secondary") {
-    return "rgba(255,255,255,0.07)";
+    return "rgba(0,0,0,0.04)";
   }
-  return "rgba(255,255,255,0.04)";
+  return "rgba(0,0,0,0.02)";
 }
 
 function resolveNodeStroke(tone: NodeTone) {
   if (tone === "primary") {
-    return "rgba(255,255,255,0.6)";
+    return "rgba(37,99,235,0.4)";
   }
   if (tone === "secondary") {
-    return "rgba(255,255,255,0.36)";
+    return "rgba(0,0,0,0.15)";
   }
-  return "rgba(255,255,255,0.24)";
+  return "rgba(0,0,0,0.1)";
 }
 
 function hashSlug(input: string) {

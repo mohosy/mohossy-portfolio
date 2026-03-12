@@ -1,0 +1,38 @@
+REMAINING LIGHT THEME TASKS — Portfolio (mohossy.com)
+=====================================================
+
+WHAT'S DONE:
+- globals.css: All :root CSS variables converted (--bg, --surface, --text-*, --accent-*, --line, --card-shadow)
+- globals.css: Body background gradient updated to light
+- globals.css: All button styles (btn-primary, btn-gold-glass, btn-secondary, btn-ghost) — now blue/white instead of gold/dark
+- globals.css: Hero section (avatar, title, figure, badge, focus label, kicker, caret)
+- globals.css: Nav styles (nav-shell, nav-activity-ring, nav-pill, nav links)
+- globals.css: Resume icon and contact button
+- globals.css: Lab section (shell, glows, HUD, reset btn, tab, action btn, heading sweep/pulse)
+- globals.css: Proof cards
+- globals.css: Footer (cinematic glow, sweep, CTA, grid, btn, meta, location, icon links)
+- top-nav.tsx: Nav background rgba(255,255,255,...) instead of rgba(8,8,8,...), border rgba(0,0,0,...), lighter shadows, bubble glows
+- mini-demos.tsx: Dark backgrounds → var(--surface-alt), borders → var(--line), gradient bars → emerald/blue, status text colors updated
+- auto-play-video.tsx: Button overlay → light glass
+- scroll-progress.tsx: Track → bg-black/8, glow → blue
+- project-visual-carousel.tsx: Hover/focus borders updated
+
+
+REMAINING (needs more work):
+1. project-cover.tsx — SVG backgrounds still use dark gradients (#0a0a0a, #121212, #181818) and white strokes/fills designed for dark. Needs: swap background stops to light grays (#f0f1f3, #e5e7eb, #f8f9fa), change stroke colors from rgba(255,255,255,...) to rgba(0,0,0,...), update text fills.
+
+2. project-visual-carousel.tsx — The dark gradient overlay on project cards (line 30): `bg-[linear-gradient(to_top,rgba(0,0,0,0.9),rgba(0,0,0,0.4),rgba(0,0,0,0.18))]` and the domain badges use `bg-black/42 text-white/92`. These need lighter treatments.
+
+3. mini-demos.tsx — The `!text-black` on the action button (line ~458) should become `!text-white`. Also review any remaining hardcoded neon colors (the gradients look fine but double-check in browser).
+
+4. page.tsx — The hero figure glow (line 225) uses `rgba(255,255,255,0.14)` which was for dark bg glints. Needs review. The Picasso iframe section uses `bg-[var(--surface)]` so it should auto-adapt.
+
+5. Font consideration — The user mentioned liking Picasso's Lato font. Currently the portfolio uses Plus Jakarta Sans (body) and Syne (display). Could optionally switch body font to Lato in layout.tsx. Ask user if they want this.
+
+6. Deploy — After all changes, run the deploy script per DEPLOY.md:
+   cd /Users/mo/Downloads/myportfolio/site-temp
+   git add . && git commit -m "Convert to light theme"
+   git push origin main
+   (Vercel auto-deploys from main)
+
+7. Visual QA — Load the site locally (`npm run dev`) or check the Vercel preview to spot any remaining dark artifacts, low-contrast text, or broken glass effects.

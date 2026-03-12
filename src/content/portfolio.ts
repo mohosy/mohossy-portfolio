@@ -13,6 +13,8 @@ export const siteProfile: SiteProfile = {
   email: "mohoshirmo@gmail.com",
   linkedinUrl: "https://linkedin.com/in/mohossy",
   githubUrl: "https://github.com/mohosy",
+  twitterUrl: "https://x.com/Mohossy1",
+  redditUrl: "https://www.reddit.com/user/mohoshirno/",
   resumeUrl: "/resume/mo-shirmohammadi-resume.pdf",
   location: "Los Angeles, CA",
 };
@@ -22,6 +24,7 @@ export const navItems = [
   { id: "featured", label: "Flagship" },
   { id: "lab", label: "Interactive Lab" },
   { id: "catalog", label: "Project Catalog" },
+  { id: "picasso", label: "Picasso" },
   { id: "experience", label: "Experience" },
   { id: "about", label: "About" },
   { id: "contact", label: "Contact" },

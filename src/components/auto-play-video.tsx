@@ -184,7 +184,7 @@ export function AutoPlayVideo({
             video.muted = false;
             void video.play().then(() => setNeedsSoundUnlock(false)).catch(() => {});
           }}
-          className="absolute bottom-3 right-3 z-10 rounded-full border border-[var(--line)] bg-[rgba(8,14,22,0.8)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-strong)] backdrop-blur transition hover:border-[var(--accent-teal)]"
+          className="absolute bottom-3 right-3 z-10 rounded-full border border-[var(--line)] bg-[rgba(255,255,255,0.88)] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--text-strong)] backdrop-blur transition hover:border-[var(--accent-teal)]"
         >
           Tap For Sound
         </button>

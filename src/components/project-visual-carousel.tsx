@@ -23,25 +23,25 @@ export function ProjectVisualCarousel({ projects }: ProjectVisualCarouselProps) 
               href={project.repoUrl}
               eventName={`visual_feed_click_${project.slug}`}
               target="_blank"
-              className="group block overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--card-shadow)] transition-all duration-300 hover:-translate-y-1 hover:border-white/28 focus-visible:border-white/42"
+              className="group block overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--card-shadow)] transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(37,99,235,0.2)] focus-visible:border-[rgba(37,99,235,0.3)]"
             >
               <div className="relative h-60 overflow-hidden sm:h-64">
                 <ProjectCover project={project} animated priority="high" />
-                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.9),rgba(0,0,0,0.4),rgba(0,0,0,0.18))]" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(255,255,255,0.85),rgba(255,255,255,0.3),transparent)]" />
                 <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
                   {project.domains.slice(0, 2).map((domain) => (
                     <span
                       key={`${project.slug}-${domain}-${index}`}
-                      className="rounded-full border border-white/20 bg-black/42 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/92"
+                      className="rounded-full border border-[rgba(0,0,0,0.1)] bg-white/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-strong)]"
                     >
                       {domain}
                     </span>
                   ))}
                 </div>
                 <div className="absolute bottom-3 left-3 right-3">
-                  <p className="text-sm font-semibold leading-tight text-white">{project.name}</p>
+                  <p className="text-sm font-semibold leading-tight text-[var(--text-strong)]">{project.name}</p>
                   {project.recruiterHook ? (
-                    <p className="mt-1 text-xs leading-relaxed text-white/72">
+                    <p className="mt-1 text-xs leading-relaxed text-[var(--text-soft)]">
                       {project.recruiterHook}
                     </p>
                   ) : null}

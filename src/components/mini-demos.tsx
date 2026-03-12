@@ -240,7 +240,7 @@ export function MiniDemos() {
     <div className="lab-shell relative overflow-hidden rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] sm:p-8">
       <div aria-hidden="true" className="lab-shell-glow-a" />
       <div aria-hidden="true" className="lab-shell-glow-b" />
-      <div className="lab-hud mb-5 rounded-2xl border border-white/14 bg-[rgba(8,16,22,0.72)] p-4">
+      <div className="lab-hud mb-5 rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] p-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.17em] text-[var(--text-muted)]">
@@ -270,7 +270,7 @@ export function MiniDemos() {
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/55">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[#60efd7] via-[#76c5ff] to-[#9fbcff] transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-blue-400 to-blue-500 transition-all duration-500"
             style={{ width: `${excitement}%` }}
           />
         </div>
@@ -286,7 +286,7 @@ export function MiniDemos() {
               className={[
                 "lab-tab rounded-full px-4 py-2 text-sm font-semibold transition-colors",
                 selected
-                  ? "bg-gradient-to-r from-[#68eed7] to-[#94c7ff] text-black"
+                  ? "bg-gradient-to-r from-emerald-400 to-blue-400 text-white"
                   : "bg-[var(--surface-alt)] text-[var(--text-muted)] hover:text-[var(--text-strong)]",
               ].join(" ")}
               onClick={() => {
@@ -303,7 +303,7 @@ export function MiniDemos() {
         })}
       </div>
 
-      <div className="mb-6 grid gap-3 rounded-2xl border border-white/10 bg-[rgba(17,17,17,0.92)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
+      <div className="mb-6 grid gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] p-4 sm:grid-cols-[1fr_auto] sm:items-center">
         <div>
           <p className="text-sm text-[var(--text-soft)]">{selectedDemo?.learningOutcome}</p>
           <p className="mt-2 font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
@@ -386,7 +386,7 @@ export function MiniDemos() {
                 </span>
                 <div className="h-2.5 overflow-hidden rounded-full bg-[var(--bg)]">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-[#65efd7] via-[#84dcff] to-[#9fbcff] transition-all duration-500"
+                    className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-blue-400 to-blue-500 transition-all duration-500"
                     style={{ width: `${Math.min(100, task.score * 4)}%` }}
                   />
                 </div>
@@ -395,10 +395,10 @@ export function MiniDemos() {
                   className={[
                     "rounded-full px-2 py-1 text-center text-xs font-semibold uppercase",
                     task.status === "complete"
-                      ? "bg-[rgba(101,239,215,0.18)] text-[#9ff7ea]"
+                      ? "bg-emerald-50 text-emerald-600"
                       : task.status === "retrying"
-                        ? "bg-[rgba(159,188,255,0.16)] text-[#c2d6ff]"
-                        : "bg-[rgba(255,171,171,0.15)] text-[#ffc9c9]",
+                        ? "bg-blue-50 text-blue-600"
+                        : "bg-red-50 text-red-500",
                   ].join(" ")}
                 >
                   {task.status}
@@ -455,7 +455,7 @@ export function MiniDemos() {
                   setFailedNode(leader);
                   addScore(18, "Failure injected. Watch automatic leader recovery.");
                 }}
-                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide !text-black hover:bg-[#b5b5b5]"
+                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide !text-white hover:bg-blue-700"
                 disabled={failedNode !== null}
               >
                 Inject Failure
@@ -485,7 +485,7 @@ export function MiniDemos() {
               return (
                 <div
                   key={node}
-                  className="rounded-2xl border border-white/10 bg-[var(--surface-alt)] p-4 text-center"
+                  className="rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] p-4 text-center"
                 >
                   <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
                     Node {node}
@@ -494,9 +494,9 @@ export function MiniDemos() {
                     className={[
                       "mt-2 text-lg font-semibold capitalize",
                       role === "leader"
-                        ? "text-[#9ff7ea]"
+                        ? "text-emerald-600"
                         : role === "failed"
-                          ? "text-[#ffc9c9]"
+                          ? "text-red-500"
                           : "text-[var(--text-soft)]",
                     ].join(" ")}
                   >
@@ -506,14 +506,14 @@ export function MiniDemos() {
               );
             })}
           </div>
-          <div className="rounded-2xl border border-white/10 bg-[var(--surface-alt)] p-4">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] p-4">
             <p className="text-sm text-[var(--text-soft)]">
               Term <strong>{term}</strong> · Mode <strong>{mode}</strong> · Commit
               Ack <strong>{replicationAcks}%</strong>
             </p>
             <div className="mt-3 h-3 rounded-full bg-[var(--bg)]">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-[#68eed7] to-[#9fbcff] transition-all"
+                className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 transition-all"
                 style={{ width: `${replicationAcks}%` }}
               />
             </div>
@@ -575,19 +575,19 @@ export function MiniDemos() {
               />
             </label>
           </div>
-          <div className="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1.5 rounded-2xl border border-white/10 bg-[rgba(17,17,17,0.78)] p-3">
+          <div className="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1.5 rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] p-3">
             {limiterTimeline.map((slot) => {
               const total = slot.accepted + slot.rejected || 1;
               const acceptedPct = (slot.accepted / total) * 100;
               return (
                 <div key={slot.index} className="flex flex-col items-center gap-1">
-                  <div className="flex h-24 w-5 flex-col overflow-hidden rounded-md border border-white/10 bg-[var(--bg)]">
+                  <div className="flex h-24 w-5 flex-col overflow-hidden rounded-md border border-[var(--line)] bg-[var(--bg)]">
                     <div
-                      className="bg-gradient-to-t from-[#55e7cd] to-[#9cf3e6]"
+                      className="bg-gradient-to-t from-emerald-400 to-emerald-300"
                       style={{ height: `${acceptedPct}%` }}
                     />
                     <div
-                      className="bg-gradient-to-t from-[#ff7f8d] to-[#ffc2c9]"
+                      className="bg-gradient-to-t from-red-400 to-red-300"
                       style={{ height: `${100 - acceptedPct}%` }}
                     />
                   </div>
@@ -666,7 +666,7 @@ export function MiniDemos() {
             {heartbeats.map((node) => (
               <div
                 key={node.node}
-                className="rounded-2xl border border-white/10 bg-[var(--surface-alt)] p-4 text-center"
+                className="rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)] p-4 text-center"
               >
                 <p className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.16em] text-[var(--text-muted)]">
                   Node {node.node}
@@ -675,10 +675,10 @@ export function MiniDemos() {
                   className={[
                     "mt-2 text-sm font-semibold uppercase",
                     node.state === "leader"
-                      ? "text-[#9ff7ea]"
+                      ? "text-emerald-600"
                       : node.state === "ack"
-                        ? "text-[#c2d6ff]"
-                        : "text-[#ffc9c9]",
+                        ? "text-blue-600"
+                        : "text-red-500",
                   ].join(" ")}
                 >
                   {node.state} {node.state === "leader" ? "👑" : node.state === "ack" ? "✅" : "❌"}
@@ -703,7 +703,7 @@ export function MiniDemos() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-[var(--surface-alt)] px-3 py-2">
+    <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-2">
       <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         {label}
       </p>
@@ -723,13 +723,13 @@ function GameStat({
 }) {
   return (
     <div
-      className="rounded-xl border border-white/12 bg-[rgba(10,17,24,0.9)] px-3 py-2"
+      className="rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-2"
       key={`${label}-${spark}`}
     >
       <p className="font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
         {label}
       </p>
-      <p className="mt-1 text-base font-semibold text-[#ecfffb]">{value}</p>
+      <p className="mt-1 text-base font-semibold text-[var(--text-strong)]">{value}</p>
     </div>
   );
 }
