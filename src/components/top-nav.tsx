@@ -17,23 +17,23 @@ import { trackEvent } from "@/lib/analytics";
 
 const TRACKED_SECTIONS = [
   "hero",
-  "about",
   "featured",
+  "spotlight",
   "catalog",
-  "irl",
+  "products",
   "lab",
   "experience",
+  "about",
   "contact",
 ] as const;
 
 const NAV_LINKS = [
   { id: "hero", label: "Home", href: "#hero", activeIds: ["hero"] },
-  { id: "about", label: "About", href: "#about", activeIds: ["about"] },
   {
     id: "projects",
     label: "Projects",
     href: "#featured",
-    activeIds: ["featured", "catalog", "irl", "lab"],
+    activeIds: ["featured", "spotlight", "catalog", "products", "lab"],
   },
   {
     id: "experience",
@@ -41,6 +41,7 @@ const NAV_LINKS = [
     href: "#experience",
     activeIds: ["experience"],
   },
+  { id: "about", label: "About", href: "#about", activeIds: ["about"] },
   { id: "contact", label: "Contact", href: "#contact", activeIds: ["contact"] },
 ] as const;
 

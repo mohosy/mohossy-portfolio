@@ -11,8 +11,8 @@ import { AutoPlayVideo } from "@/components/auto-play-video";
 import { CinematicReveal } from "@/components/cinematic-reveal";
 import { ProjectCard } from "@/components/project-card";
 import { ProjectVisualCarousel } from "@/components/project-visual-carousel";
-import { Reveal } from "@/components/reveal";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { ScrollScene } from "@/components/scroll-scene";
 import { TopNav } from "@/components/top-nav";
 import { TrackedLink } from "@/components/tracked-link";
 import { TypewriterKicker } from "@/components/typewriter-kicker";
@@ -110,46 +110,79 @@ export default function Home() {
     <>
       <TopNav />
       <ScrollProgress />
-      <main id="main-content" className="pb-20 pt-28 sm:pt-34">
+      <main id="main-content" className="pb-0 pt-16">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
 
-        <section id="hero" className="section-shell">
-          <div className="grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-end">
-            <Reveal intensity="low" className="hero-copy relative z-10">
-              <p className="editorial-kicker kicker-with-icon">
-                <SparkIcon />
-                <TypewriterKicker
-                  text="Forbes-Featured Engineer · USC Viterbi"
-                  speedMs={84}
-                  delayMs={780}
-                />
-              </p>
-              <h1 className="hero-title mt-4 max-w-3xl font-[family-name:var(--font-display)] text-[clamp(1.8rem,4.3vw,3.72rem)] leading-[0.96] tracking-tight text-[var(--text-strong)]">
-                <span className="hero-inline-avatar" aria-hidden="true">
-                  <Image
-                    src="/images/main-profile-pic.png"
-                    alt=""
-                    width={1522}
-                    height={1534}
-                    priority
-                    className="h-full w-full object-cover object-[42%_50%]"
-                  />
-                </span>
-                Taming <span className="whitespace-nowrap">complexity in</span>
-                <span className="hero-title-muted block text-[var(--text-muted)]">
-                  distributed systems and ML infra.
-                </span>
-              </h1>
-              <p className="mt-5 max-w-2xl text-[clamp(1rem,1.8vw,1.18rem)] leading-relaxed text-[var(--text-soft)]">
-                I build distributed and data-intensive software designed for failure-prone,
-                high-stakes environments. My passion is at the intersection of software
-                and social impact.
-              </p>
+        <ScrollScene id="hero" scrollHeight="180vh">
+          {/* Banner */}
+          <div className="profile-banner">
+            <Image
+              src="/images/me-in-suit.png"
+              alt="Mo Shirmohammadi"
+              width={668}
+              height={1480}
+              priority
+              className="profile-banner-photo"
+            />
+            <div className="profile-banner-overlay" />
+            <div aria-hidden="true" className="profile-banner-grid" />
+          </div>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+          {/* Profile Card */}
+          <div className="section-shell relative">
+            {/* Profile photo overlapping banner */}
+            <div className="-mt-[3.5rem] sm:-mt-[4.5rem] lg:-mt-[5.25rem] mb-4">
+              <div className="profile-avatar-ring inline-block h-[7rem] w-[7rem] sm:h-[9rem] sm:w-[9rem] lg:h-[10.5rem] lg:w-[10.5rem]">
+                <Image
+                  src="/images/profile-circular.png"
+                  alt="Mo Shirmohammadi"
+                  width={400}
+                  height={400}
+                  priority
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+
+            {/* Identity */}
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="editorial-kicker kicker-with-icon">
+                  <SparkIcon />
+                  <TypewriterKicker
+                    text="Forbes-Featured Engineer · USC Viterbi"
+                    speedMs={84}
+                    delayMs={780}
+                  />
+                </p>
+                <h1 className="mt-3 font-[family-name:var(--font-display)] text-[clamp(2rem,4.5vw,3.2rem)] leading-[1.02] tracking-tight text-[var(--text-strong)]">
+                  Mo Shirmohammadi
+                </h1>
+                <p className="mt-3 max-w-2xl text-[clamp(1rem,1.8vw,1.18rem)] leading-relaxed text-[var(--text-soft)]">
+                  I build distributed and data-intensive software designed for failure-prone,
+                  high-stakes environments. My passion is at the intersection of software
+                  and social impact.
+                </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.14em] text-[var(--text-muted)]">
+                  <span className="hero-meta-chip">
+                    <LocationIcon />
+                    Los Angeles, CA
+                  </span>
+                  <span className="hero-meta-chip">
+                    <GraduationIcon />
+                    B.S./M.S. CS, USC
+                  </span>
+                  <span className="hero-meta-chip">
+                    <BriefcaseIcon />
+                    Open to SWE internships · Summer 2026
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-3 sm:shrink-0">
                 <TrackedLink
                   href={`mailto:${siteProfile.email}`}
                   eventName="hero_email_click"
@@ -185,130 +218,37 @@ export default function Home() {
                   Open Source
                 </TrackedLink>
               </div>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.14em] text-[var(--text-muted)]">
-                <span className="hero-meta-chip">
-                  <LocationIcon />
-                  Los Angeles, CA
-                </span>
-                <span className="hero-meta-chip">
-                  <GraduationIcon />
-                  B.S./M.S. CS, USC
-                </span>
-                <span className="hero-meta-chip">
-                  <BriefcaseIcon />
-                  Open to SWE internships · Summer 2026
-                </span>
-                <a href="#featured" className="hero-meta-link">
-                  <ScrollDownIcon />
-                  Scroll to Work
-                </a>
-              </div>
-            </Reveal>
-
-            <CinematicReveal
-              variant="hero-image"
-              delay={0.12}
-              className="relative z-10 lg:self-end lg:justify-self-end lg:w-[70%]"
-            >
-              <figure className="hero-figure group relative mx-auto h-[27rem] max-w-[380px] overflow-hidden rounded-none bg-[var(--surface-alt)] shadow-[var(--card-shadow)] sm:h-[29rem]">
-                <div className="hero-figure-glow absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(217,119,6,0.05),transparent_54%)]" />
-                <Image
-                  src="/images/me-in-suit.png"
-                  alt="Mo Shirmohammadi in a suit"
-                  width={668}
-                  height={1480}
-                  priority
-                  className="relative z-10 h-full w-full object-cover object-top"
-                />
-                <div className="hero-focus-badge absolute bottom-4 left-4 z-20 max-w-[84%] rounded-lg px-4 py-3 backdrop-blur">
-                  <p className="hero-focus-label font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                    Focus
-                  </p>
-                  <p className="hero-focus-copy mt-1.5 text-[11px] font-semibold text-[var(--text-strong)] sm:text-xs">
-                    Distributed Systems · Data Infrastructure · Applied ML
-                  </p>
-                </div>
-              </figure>
-            </CinematicReveal>
-          </div>
-        </section>
-
-        <section className="section-shell section-gap">
-          <Reveal intensity="low">
-            <div className="grid gap-3 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-4 md:grid-cols-2 xl:grid-cols-4">
-              {proofMetrics.map((metric) => (
-                <article
-                  key={metric.label}
-                  className="proof-card rounded-[1.2rem] border border-[var(--line)] bg-[var(--surface-alt)] p-4"
-                >
-                  <span className="metric-badge" aria-hidden="true">
-                    {getMetricIcon(metric.label)}
-                  </span>
-                  <p className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)]">
-                    {metric.value}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[var(--text-soft)]">
-                    {metric.label}
-                  </p>
-                  <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
-                    {metric.detail}
-                  </p>
-                </article>
-              ))}
             </div>
-          </Reveal>
-        </section>
 
-        <section className="section-shell section-gap">
-          <Reveal intensity="low">
-            <p className="editorial-kicker kicker-with-icon">
-              <SparkIcon />
-              In Action
-            </p>
-            <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Moments from building, presenting, and shipping.
-            </h2>
-          </Reveal>
-          <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            <Reveal from="left" pace="slow">
-              <figure className="group in-action-float in-action-float-a mx-auto flex w-full max-w-[25rem] items-center justify-center">
-                <Image
-                  src="/images/me-speaking-mic.png"
-                  alt="Mo Shirmohammadi speaking into a microphone"
-                  width={830}
-                  height={1266}
-                  className="h-[22rem] w-auto max-w-full rounded-[0.85rem] object-contain transition duration-500 group-hover:scale-[1.03] sm:h-[24.5rem]"
-                />
-              </figure>
-            </Reveal>
-            <Reveal delay={0.06} from="left" pace="slow">
-              <figure className="group in-action-float in-action-float-b mx-auto flex w-full max-w-[25rem] items-center justify-center">
-                <Image
-                  src="/images/me-working-desk.png"
-                  alt="Mo Shirmohammadi working at a desk"
-                  width={824}
-                  height={1448}
-                  className="h-[22rem] w-auto max-w-full rounded-[0.85rem] object-contain transition duration-500 group-hover:scale-[1.03] sm:h-[24.5rem]"
-                />
-              </figure>
-            </Reveal>
-            <Reveal delay={0.12} from="left" pace="slow">
-              <figure className="group in-action-float in-action-float-c mx-auto flex w-full max-w-[25rem] items-center justify-center">
-                <Image
-                  src="/images/app-built-preview.png"
-                  alt="Screenshot of an app built by Mo Shirmohammadi"
-                  width={746}
-                  height={1490}
-                  className="h-[22rem] w-auto max-w-full rounded-[0.85rem] object-contain transition duration-500 group-hover:scale-[1.03] sm:h-[24.5rem]"
-                />
-              </figure>
-            </Reveal>
+            {/* Proof Metrics - directly under profile card */}
+            <div className="mt-8">
+              <div className="grid gap-3 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-4 md:grid-cols-2 xl:grid-cols-4">
+                {proofMetrics.map((metric) => (
+                  <article
+                    key={metric.label}
+                    className="proof-card rounded-[1.2rem] border border-[var(--line)] bg-[var(--surface-alt)] p-4"
+                  >
+                    <span className="metric-badge" aria-hidden="true">
+                      {getMetricIcon(metric.label)}
+                    </span>
+                    <p className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)]">
+                      {metric.value}
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-[var(--text-soft)]">
+                      {metric.label}
+                    </p>
+                    <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
+                      {metric.detail}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
           </div>
-        </section>
+        </ScrollScene>
 
-        <section className="section-shell section-gap">
-          <Reveal intensity="low">
+        <ScrollScene id="featured" scrollHeight="120vh">
+          <div className="section-shell">
             <p className="editorial-kicker kicker-with-icon">
               <GridIcon />
               Project Visual Feed
@@ -316,14 +256,14 @@ export default function Home() {
             <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
               Auto-generated system diagrams that make each project instantly scannable.
             </h2>
-          </Reveal>
-          <Reveal delay={0.05} intensity="low" className="mt-7">
-            <ProjectVisualCarousel projects={visualFeedProjects} />
-          </Reveal>
-        </section>
+            <div className="mt-7">
+              <ProjectVisualCarousel projects={visualFeedProjects} />
+            </div>
+          </div>
+        </ScrollScene>
 
-        <section id="featured" className="section-shell section-gap">
-          <Reveal intensity="low">
+        <ScrollScene id="spotlight" scrollHeight="160vh">
+          <div className="section-shell">
             <p className="editorial-kicker kicker-with-icon">
               <StarIcon />
               Flagship Spotlight
@@ -331,85 +271,83 @@ export default function Home() {
             <h2 className="mt-3 max-w-3xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-5xl">
               {spotlightProject.name}
             </h2>
-          </Reveal>
 
-          <div className="mt-7 grid gap-6 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 lg:grid-cols-[1.2fr_0.8fr]">
-            <Reveal>
-              <p className="max-w-3xl text-base leading-relaxed text-[var(--text-soft)]">
-                {spotlightProject.summary}
-              </p>
-              <ol className="mt-6 grid gap-3">
-                {spotlightProject.architecture.slice(0, 3).map((point, index) => (
-                  <li
-                    key={point}
-                    className="flex gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] p-3"
+            <div className="mt-7 grid gap-6 rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 lg:grid-cols-[1.2fr_0.8fr]">
+              <div>
+                <p className="max-w-3xl text-base leading-relaxed text-[var(--text-soft)]">
+                  {spotlightProject.summary}
+                </p>
+                <ol className="mt-6 grid gap-3">
+                  {spotlightProject.architecture.slice(0, 3).map((point, index) => (
+                    <li
+                      key={point}
+                      className="flex gap-3 rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] p-3"
+                    >
+                      <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--line)] text-xs font-semibold text-[var(--text-strong)]">
+                        {index + 1}
+                      </span>
+                      <span className="text-sm leading-relaxed text-[var(--text-soft)]">{point}</span>
+                    </li>
+                  ))}
+                </ol>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <TrackedLink
+                    href={spotlightProject.repoUrl}
+                    eventName={`spotlight_repo_click_${spotlightProject.slug}`}
+                    className="btn-primary"
+                    target="_blank"
                   >
-                    <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--line)] text-xs font-semibold text-[var(--text-strong)]">
-                      {index + 1}
-                    </span>
-                    <span className="text-sm leading-relaxed text-[var(--text-soft)]">{point}</span>
-                  </li>
-                ))}
-              </ol>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <TrackedLink
-                  href={spotlightProject.repoUrl}
-                  eventName={`spotlight_repo_click_${spotlightProject.slug}`}
-                  className="btn-primary"
-                  target="_blank"
-                >
-                  <GitHubIcon />
-                  View Repository
-                </TrackedLink>
-                <a
-                  href="#lab"
-                  className="btn-secondary"
-                >
-                  <LabIcon />
-                  See Live Demos
-                </a>
+                    <GitHubIcon />
+                    View Repository
+                  </TrackedLink>
+                  <a
+                    href="#lab"
+                    className="btn-secondary"
+                  >
+                    <LabIcon />
+                    See Live Demos
+                  </a>
+                </div>
               </div>
-            </Reveal>
 
-            <Reveal delay={0.08}>
-              <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)]">
-                <Image
-                  src="/images/touchless-ops-copilot.png"
-                  alt="Surgical Data Mesh platform screenshot"
-                  width={1200}
-                  height={700}
-                  className="h-auto w-full object-cover"
-                />
+              <div>
+                <div className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface-alt)]">
+                  <Image
+                    src="/images/touchless-ops-copilot.png"
+                    alt="Surgical Data Mesh platform screenshot"
+                    width={1200}
+                    height={700}
+                    className="h-auto w-full object-cover"
+                  />
+                </div>
+                <ul className="mt-4 grid gap-2">
+                  {spotlightProject.metrics.map((metric) => (
+                    <li
+                      key={metric.label}
+                      className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-2 text-sm"
+                    >
+                      <span className="text-[var(--text-muted)]">{metric.label}</span>
+                      <span className="font-semibold text-[var(--text-strong)]">{metric.value}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="mt-4 grid gap-2">
-                {spotlightProject.metrics.map((metric) => (
-                  <li
-                    key={metric.label}
-                    className="flex items-center justify-between rounded-lg border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-2 text-sm"
-                  >
-                    <span className="text-[var(--text-muted)]">{metric.label}</span>
-                    <span className="font-semibold text-[var(--text-strong)]">{metric.value}</span>
-                  </li>
-                ))}
-              </ul>
-            </Reveal>
+            </div>
           </div>
-        </section>
+        </ScrollScene>
 
-        <section id="catalog" className="section-shell section-gap">
-          <Reveal intensity="low">
+        <ScrollScene id="catalog" scrollHeight="150vh">
+          <div className="section-shell">
             <p className="editorial-kicker kicker-with-icon">
               <LayersIcon />
-              Selected Builds
+              Project Catalog
             </p>
             <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Three systems projects that recruiters can parse in under a minute.
+              Systems, data, and ML engineering builds.
             </h2>
-          </Reveal>
-          <div className="mt-7 grid gap-4 lg:grid-cols-3">
-            {selectedBuilds.map((project, index) => (
-              <Reveal key={project.slug} delay={Math.min(index * 0.06, 0.16)}>
-                <article className="flex h-full flex-col rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)]">
+            <div className="mt-7 grid gap-4 lg:grid-cols-3">
+              {selectedBuilds.map((project) => (
+                <article key={project.slug} className="flex h-full flex-col rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)]">
                   <h3 className="text-xl font-semibold tracking-tight text-[var(--text-strong)]">
                     {project.name}
                   </h3>
@@ -439,62 +377,28 @@ export default function Home() {
                     </TrackedLink>
                   </div>
                 </article>
-              </Reveal>
-            ))}
+              ))}
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {deepCatalog.map((project) => (
+                <ProjectCard key={project.slug} project={project} compact />
+              ))}
+            </div>
           </div>
-        </section>
+        </ScrollScene>
 
-        <section id="lab" className="section-shell section-gap">
-          <CinematicReveal variant="lab-heading" className="lab-heading-cinematic">
-            <p className="editorial-kicker kicker-with-icon">
-              <LabIcon />
-              Interactive Lab
-            </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Playable systems simulations that mirror real design tradeoffs.
-            </h2>
-          </CinematicReveal>
-          <Reveal delay={0.06} className="mt-7">
-            <MiniDemos />
-          </Reveal>
-        </section>
-
-        <section className="section-shell section-gap">
-          <Reveal intensity="low">
-            <p className="editorial-kicker kicker-with-icon">
-              <CatalogIcon />
-              Deep Catalog
-            </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Additional systems and infrastructure builds.
-            </h2>
-          </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {deepCatalog.map((project, index) => (
-              <Reveal key={project.slug} delay={Math.min(index * 0.03, 0.2)}>
-                <ProjectCard project={project} compact />
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section id="irl" className="section-shell section-gap">
-          <Reveal intensity="low">
+        <ScrollScene id="products" scrollHeight="180vh">
+          <div className="section-shell">
             <p className="editorial-kicker kicker-with-icon">
               <RocketIcon />
-              IRL Official
+              Product Showcases
             </p>
             <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Dedicated product section for IRL: launch video, architecture, and production stack.
+              Full-stack products built end-to-end.
             </h2>
-            <p className="mt-4 max-w-3xl text-base leading-relaxed text-[var(--text-soft)]">
-              I built IRL as a multi-surface product system: mobile app, realtime backend,
-              web profiles, and admin tooling. This is the full technical snapshot.
-            </p>
-          </Reveal>
 
-          <div className="mt-9 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-            <Reveal>
+            {/* IRL block */}
+            <div className="mt-9 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
               <div className="space-y-6">
                 <div className="flex items-center gap-3 border-b border-[var(--line)] pb-3">
                   <Image
@@ -557,9 +461,7 @@ export default function Home() {
                   </TrackedLink>
                 </div>
               </div>
-            </Reveal>
 
-            <Reveal delay={0.08}>
               <div className="space-y-4">
                 <p className="editorial-kicker kicker-with-icon">
                   <VideoIcon />
@@ -579,118 +481,121 @@ export default function Home() {
                   app imagery instead of your suit portrait.
                 </p>
               </div>
-            </Reveal>
-          </div>
-        </section>
+            </div>
 
-        <section id="picasso" className="section-shell section-gap">
-          <Reveal intensity="low">
-            <p className="editorial-kicker kicker-with-icon">
-              <PaletteIcon />
-              Picasso
-            </p>
-            <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              AI visual engine that illustrates answers in real-time with animated drawings, voice narration, and live image annotation.
-            </h2>
-            <p className="mt-4 max-w-3xl text-base leading-relaxed text-[var(--text-soft)]">
-              Ask any question and Picasso draws the answer — SVG strokes animate in sync with AI narration while the camera pans and zooms like a live presenter. For real-world objects, it pulls Google images and annotates them with arrows, circles, and highlights.
-            </p>
-          </Reveal>
+            <hr className="my-12 border-[var(--line)]" />
 
-          <div className="mt-9 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-            <Reveal>
-              <div className="space-y-6">
-                <div className="flex items-center gap-3 border-b border-[var(--line)] pb-3">
-                  <Image
-                    src="/images/picasso/rabbit.png"
-                    alt="Picasso mascot"
-                    width={120}
-                    height={120}
-                    className="h-12 w-12 object-contain"
-                  />
-                  <div>
-                    <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
-                      Live Demo
-                    </p>
-                    <h3 className="text-xl font-semibold tracking-tight text-[var(--text-strong)] sm:text-2xl">
-                      Picasso Visual AI
-                    </h3>
+            {/* Picasso block */}
+            <div className="mt-4">
+              <div className="flex items-center gap-3 border-b border-[var(--line)] pb-3">
+                <Image
+                  src="/images/picasso/rabbit.png"
+                  alt="Picasso mascot"
+                  width={120}
+                  height={120}
+                  className="h-12 w-12 object-contain"
+                />
+                <div>
+                  <p className="font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)]">
+                    Live Demo
+                  </p>
+                  <h3 className="text-xl font-semibold tracking-tight text-[var(--text-strong)] sm:text-2xl">
+                    Picasso Visual AI
+                  </h3>
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+                <div className="space-y-6">
+                  <div className="flex flex-wrap gap-2">
+                    {picassoStack.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-1.5 text-xs font-semibold text-[var(--text-soft)]"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+
+                  <ul className="grid gap-3 text-sm leading-relaxed text-[var(--text-soft)]">
+                    {picassoFeatures.map((point) => (
+                      <li key={point} className="flex items-start gap-2 border-l-2 border-[var(--line)] pl-3">
+                        <span className="mt-0.5 text-[var(--accent-fresh)]">
+                          <NodeIcon />
+                        </span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="flex flex-wrap gap-3">
+                    <TrackedLink
+                      href="https://picasso-eta.vercel.app"
+                      eventName="picasso_live_click"
+                      target="_blank"
+                      className="btn-gold-glass"
+                    >
+                      <GlobeIcon />
+                      Try Picasso Live
+                    </TrackedLink>
+                    <TrackedLink
+                      href="https://github.com/mohosy/picasso"
+                      eventName="picasso_repo_click"
+                      target="_blank"
+                      className="btn-secondary"
+                    >
+                      <GitHubIcon />
+                      View Repository
+                    </TrackedLink>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
-                  {picassoStack.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-1.5 text-xs font-semibold text-[var(--text-soft)]"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-
-                <ul className="grid gap-3 text-sm leading-relaxed text-[var(--text-soft)]">
-                  {picassoFeatures.map((point) => (
-                    <li key={point} className="flex items-start gap-2 border-l-2 border-[var(--line)] pl-3">
-                      <span className="mt-0.5 text-[var(--accent-fresh)]">
-                        <NodeIcon />
-                      </span>
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="flex flex-wrap gap-3">
-                  <TrackedLink
-                    href="https://picasso-eta.vercel.app"
-                    eventName="picasso_live_click"
-                    target="_blank"
-                    className="btn-gold-glass"
-                  >
-                    <GlobeIcon />
-                    Try Picasso Live
-                  </TrackedLink>
-                  <TrackedLink
-                    href="https://github.com/mohosy/picasso"
-                    eventName="picasso_repo_click"
-                    target="_blank"
-                    className="btn-secondary"
-                  >
-                    <GitHubIcon />
-                    View Repository
-                  </TrackedLink>
+                <div className="space-y-4">
+                  <p className="editorial-kicker kicker-with-icon">
+                    <LabIcon />
+                    Try It Now
+                  </p>
+                  <h3 className="mt-2 text-xl font-semibold tracking-tight text-[var(--text-strong)] sm:text-2xl">
+                    Interactive Demo
+                  </h3>
+                  <div className="overflow-hidden rounded-xl border border-[var(--line)] shadow-lg">
+                    <iframe
+                      src="https://picasso-eta.vercel.app"
+                      title="Picasso Visual AI Demo"
+                      className="h-[500px] w-full border-0"
+                      loading="lazy"
+                      allow="microphone"
+                    />
+                  </div>
+                  <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">
+                    Type any question above — Picasso will draw the answer with animated illustrations, voice narration, and real images from the web.
+                  </p>
                 </div>
               </div>
-            </Reveal>
-
-            <Reveal delay={0.08}>
-              <div className="space-y-4">
-                <p className="editorial-kicker kicker-with-icon">
-                  <LabIcon />
-                  Try It Now
-                </p>
-                <h3 className="mt-2 text-xl font-semibold tracking-tight text-[var(--text-strong)] sm:text-2xl">
-                  Interactive Demo
-                </h3>
-                <div className="overflow-hidden rounded-xl border border-[var(--line)] shadow-lg">
-                  <iframe
-                    src="https://picasso-eta.vercel.app"
-                    title="Picasso Visual AI Demo"
-                    className="h-[500px] w-full border-0"
-                    loading="lazy"
-                    allow="microphone"
-                  />
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">
-                  Type any question above — Picasso will draw the answer with animated illustrations, voice narration, and real images from the web.
-                </p>
-              </div>
-            </Reveal>
+            </div>
           </div>
-        </section>
+        </ScrollScene>
 
-        <section id="experience" className="section-shell section-gap">
-          <Reveal intensity="low">
+        <ScrollScene id="lab" scrollHeight="130vh">
+          <div className="section-shell">
+            <CinematicReveal variant="lab-heading" className="lab-heading-cinematic">
+              <p className="editorial-kicker kicker-with-icon">
+                <LabIcon />
+                Interactive Lab
+              </p>
+              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
+                Playable systems simulations that mirror real design tradeoffs.
+              </h2>
+            </CinematicReveal>
+            <div className="mt-7">
+              <MiniDemos />
+            </div>
+          </div>
+        </ScrollScene>
+
+        <ScrollScene id="experience" scrollHeight="150vh">
+          <div className="section-shell">
             <p className="editorial-kicker kicker-with-icon">
               <BriefcaseIcon />
               Experience
@@ -698,11 +603,10 @@ export default function Home() {
             <h2 className="mt-3 max-w-4xl font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
               Shipping at scale across campus tech, enterprise systems, and education.
             </h2>
-          </Reveal>
-          <div className="mt-8 space-y-4">
-            {experience.map((entry, index) => (
-              <Reveal key={`${entry.org}-${entry.role}`} delay={Math.min(index * 0.06, 0.18)}>
+            <div className="mt-8 space-y-4">
+              {experience.map((entry, index) => (
                 <article
+                  key={`${entry.org}-${entry.role}`}
                   className={[
                     "relative rounded-[1.6rem] border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)] sm:p-6",
                     index === 0 ? "lg:pr-[16rem]" : "",
@@ -744,47 +648,14 @@ export default function Home() {
                     ))}
                   </ul>
                 </article>
-              </Reveal>
-            ))}
+              ))}
+            </div>
           </div>
-        </section>
+        </ScrollScene>
 
-        <section className="section-shell section-gap">
-          <Reveal intensity="low">
-            <p className="editorial-kicker kicker-with-icon">
-              <SkillsIcon />
-              Skills Matrix
-            </p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-              Core toolkit for backend, data, and ML systems.
-            </h2>
-          </Reveal>
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {skillGroups.map((group, index) => (
-              <Reveal key={group.category} delay={Math.min(index * 0.06, 0.18)}>
-                <article className="rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface)] p-5 shadow-[var(--card-shadow)]">
-                  <h3 className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
-                    {group.category}
-                  </h3>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {group.items.map((item) => (
-                      <span
-                        key={`${group.category}-${item}`}
-                        className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-1.5 text-xs font-semibold text-[var(--text-soft)]"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section id="about" className="section-shell section-gap">
-          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-            <Reveal>
+        <ScrollScene id="about" scrollHeight="140vh">
+          <div className="section-shell">
+            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
               <figure className="group overflow-hidden rounded-[1.8rem] border border-[var(--line)] bg-[var(--surface)] p-3 shadow-[var(--card-shadow)]">
                 <Image
                   src="/images/about-me-pic.png"
@@ -794,33 +665,54 @@ export default function Home() {
                   className="h-auto w-full rounded-[1.2rem] object-contain transition duration-500 group-hover:scale-[1.02]"
                 />
               </figure>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <p className="editorial-kicker kicker-with-icon">
-                <UserIcon />
-                About
-              </p>
-              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
-                I care about systems that are fast, fault-tolerant, and explainable under pressure.
-              </h2>
-              <p className="mt-5 text-base leading-relaxed text-[var(--text-soft)]">
-                I&apos;m currently in USC&apos;s accelerated B.S./M.S. Computer Science track.
-                My engineering style is pragmatic: design for reliability first, instrument every
-                critical path, and let measurable outcomes drive iteration. Across projects, I aim
-                to bridge theoretical depth and production constraints.
-              </p>
-              <p className="mt-4 text-base leading-relaxed text-[var(--text-soft)]">
-                Outside class and internships, I build from-scratch engines and simulators to
-                sharpen systems intuition: replication, scheduling, storage internals, consensus,
-                networking, and model pipelines. That practice translates directly into cleaner,
-                faster delivery on real teams.
-              </p>
-            </Reveal>
-          </div>
-        </section>
+              <div>
+                <p className="editorial-kicker kicker-with-icon">
+                  <UserIcon />
+                  About
+                </p>
+                <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--text-strong)] sm:text-4xl">
+                  I care about systems that are fast, fault-tolerant, and explainable under pressure.
+                </h2>
+                <p className="mt-5 text-base leading-relaxed text-[var(--text-soft)]">
+                  I&apos;m currently in USC&apos;s accelerated B.S./M.S. Computer Science track.
+                  My engineering style is pragmatic: design for reliability first, instrument every
+                  critical path, and let measurable outcomes drive iteration. Across projects, I aim
+                  to bridge theoretical depth and production constraints.
+                </p>
+                <p className="mt-4 text-base leading-relaxed text-[var(--text-soft)]">
+                  Outside class and internships, I build from-scratch engines and simulators to
+                  sharpen systems intuition: replication, scheduling, storage internals, consensus,
+                  networking, and model pipelines. That practice translates directly into cleaner,
+                  faster delivery on real teams.
+                </p>
 
-        <section id="contact" className="section-shell section-gap">
-          <Reveal intensity="low">
+                {/* Skills Matrix merged in */}
+                <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                  {skillGroups.map((group) => (
+                    <article key={group.category} className="rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface-alt)] p-4">
+                      <h3 className="font-[family-name:var(--font-mono)] text-xs uppercase tracking-[0.18em] text-[var(--text-muted)]">
+                        {group.category}
+                      </h3>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {group.items.map((item) => (
+                          <span
+                            key={`${group.category}-${item}`}
+                            className="rounded-full border border-[var(--line)] bg-[var(--surface)] px-2.5 py-1 text-xs font-semibold text-[var(--text-soft)]"
+                          >
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScrollScene>
+
+        <ScrollScene id="contact" static>
+          <div className="section-shell section-gap">
             <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] sm:p-8">
               <p className="editorial-kicker kicker-with-icon">
                 <ChatIcon />
@@ -881,10 +773,10 @@ export default function Home() {
                 </TrackedLink>
               </div>
             </div>
-          </Reveal>
-        </section>
+          </div>
+        </ScrollScene>
 
-        <section className="section-shell section-gap">
+        <div className="section-shell section-gap">
           <CinematicReveal variant="footer" className="footer-cinematic">
             <footer className="site-footer">
               <div className="footer-cta">
@@ -980,7 +872,7 @@ export default function Home() {
               </div>
             </footer>
           </CinematicReveal>
-        </section>
+        </div>
       </main>
     </>
   );
@@ -1062,23 +954,6 @@ function LayersIcon() {
   );
 }
 
-function CatalogIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-3.5 w-3.5 fill-none stroke-current"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-    >
-      <rect x="4" y="4" width="16" height="16" rx="2.1" />
-      <path d="M8 8h8M8 12h8M8 16h6" />
-    </svg>
-  );
-}
-
 function LabIcon() {
   return (
     <svg
@@ -1093,26 +968,6 @@ function LabIcon() {
       <path d="M8 7h8M9 3h6" />
       <path d="m10 7-4.7 8.1A3 3 0 0 0 7.9 20h8.2a3 3 0 0 0 2.6-4.9L14 7" />
       <path d="M9.4 14h5.2" />
-    </svg>
-  );
-}
-
-function PaletteIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-3.5 w-3.5 fill-none stroke-current"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-    >
-      <circle cx="13.5" cy="6.5" r="0.5" fill="currentColor" />
-      <circle cx="17.5" cy="10.5" r="0.5" fill="currentColor" />
-      <circle cx="8.5" cy="7.5" r="0.5" fill="currentColor" />
-      <circle cx="6.5" cy="12.5" r="0.5" fill="currentColor" />
-      <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.1-.7-.4-1-.2-.3-.4-.6-.4-1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9-10-9Z" />
     </svg>
   );
 }
@@ -1149,25 +1004,6 @@ function VideoIcon() {
     >
       <rect x="3" y="6" width="13" height="12" rx="2" />
       <path d="m16 10 5-3v10l-5-3z" />
-    </svg>
-  );
-}
-
-function SkillsIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-3.5 w-3.5 fill-none stroke-current"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-    >
-      <path d="M15 5h4v4M5 19h4v-4" />
-      <path d="m9 15 6-6" />
-      <circle cx="7" cy="7" r="3" />
-      <circle cx="17" cy="17" r="3" />
     </svg>
   );
 }
@@ -1241,23 +1077,6 @@ function GraduationIcon() {
   );
 }
 
-function ScrollDownIcon() {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 24 24"
-      className="h-3.5 w-3.5 fill-none stroke-current"
-      strokeWidth="1.9"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      focusable="false"
-    >
-      <rect x="7.2" y="2.8" width="9.6" height="15.4" rx="4.8" />
-      <path d="M12 6.8v4.2" />
-      <path d="m8 18 4 3 4-3" />
-    </svg>
-  );
-}
 
 function GlobeIcon() {
   return (
