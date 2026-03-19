@@ -268,7 +268,7 @@ export function MiniDemos() {
           <GameStat label="Best" value={String(bestScore)} spark={spark} />
           <GameStat label="Fun Meter" value={`${excitement}%`} spark={spark} />
         </div>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/55">
+        <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/10">
           <div
             className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-blue-400 to-blue-500 transition-all duration-500"
             style={{ width: `${excitement}%` }}
@@ -379,7 +379,7 @@ export function MiniDemos() {
             {schedulerTasks.map((task) => (
               <li
                 key={task.id}
-                className="grid items-center gap-2 rounded-xl border border-white/8 bg-[var(--surface-alt)] px-3 py-2 text-sm sm:grid-cols-[88px_1fr_92px_92px_30px]"
+                className="grid items-center gap-2 rounded-xl border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-2 text-sm sm:grid-cols-[88px_1fr_92px_92px_30px]"
               >
                 <span className="font-[family-name:var(--font-mono)] text-xs uppercase text-[var(--text-muted)]">
                   {task.id}
@@ -455,7 +455,7 @@ export function MiniDemos() {
                   setFailedNode(leader);
                   addScore(18, "Failure injected. Watch automatic leader recovery.");
                 }}
-                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide !text-white hover:bg-blue-700"
+                className="rounded-full bg-[var(--accent-orange)] px-3 py-2 text-xs font-semibold uppercase tracking-wide !text-white hover:bg-amber-700"
                 disabled={failedNode !== null}
               >
                 Inject Failure

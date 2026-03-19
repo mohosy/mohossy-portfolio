@@ -212,7 +212,7 @@ export default function Home() {
               className="relative z-10 lg:self-end lg:justify-self-end lg:w-[70%]"
             >
               <figure className="hero-figure group relative mx-auto h-[27rem] max-w-[380px] overflow-hidden rounded-none bg-[var(--surface-alt)] shadow-[var(--card-shadow)] sm:h-[29rem]">
-                <div className="hero-figure-glow absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(37,99,235,0.06),transparent_54%)]" />
+                <div className="hero-figure-glow absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(217,119,6,0.05),transparent_54%)]" />
                 <Image
                   src="/images/me-in-suit.png"
                   alt="Mo Shirmohammadi in a suit"

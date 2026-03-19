@@ -112,7 +112,7 @@ export function TopNav() {
   const linksGap = useTransform(depth, [0, 1], [12, 7.5]);
   const navBgOpacity = useTransform(depth, [0, 1], [0.84, 0.94]);
   const navBorderOpacity = useTransform(depth, [0, 1], [0.1, 0.16]);
-  const navBg = useMotionTemplate`rgba(255, 255, 255, ${navBgOpacity})`;
+  const navBg = useMotionTemplate`rgba(250, 247, 240, ${navBgOpacity})`;
   const navBorder = useMotionTemplate`rgba(0, 0, 0, ${navBorderOpacity})`;
   const bubbleAOffsetY = useTransform(depth, [0, 1], [0, -9]);
   const bubbleBOffsetY = useTransform(depth, [0, 1], [0, -7]);
@@ -253,7 +253,7 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute -left-6 -top-8 h-20 w-20 rounded-full bg-[rgba(37,99,235,0.08)] blur-2xl"
+          className="absolute -left-6 -top-8 h-20 w-20 rounded-full bg-[rgba(217,119,6,0.07)] blur-2xl"
           style={
             reducedMotion
               ? undefined
@@ -285,7 +285,7 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute right-[22%] top-[-34px] h-16 w-16 rounded-full bg-[rgba(37,99,235,0.06)] blur-2xl"
+          className="absolute right-[22%] top-[-34px] h-16 w-16 rounded-full bg-[rgba(37,99,235,0.05)] blur-2xl"
           style={
             reducedMotion
               ? undefined
@@ -317,7 +317,7 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute bottom-[-22px] left-[38%] h-14 w-14 rounded-full bg-[rgba(37,99,235,0.05)] blur-2xl"
+          className="absolute bottom-[-22px] left-[38%] h-14 w-14 rounded-full bg-[rgba(180,83,9,0.04)] blur-2xl"
           style={reducedMotion ? undefined : { opacity: bubbleCOpacity }}
           animate={
             reducedMotion
@@ -340,7 +340,7 @@ export function TopNav() {
         />
         <motion.span
           aria-hidden="true"
-          className="absolute left-1/2 top-0 h-px -translate-x-1/2 bg-gradient-to-r from-transparent via-white/50 to-transparent"
+          className="absolute left-1/2 top-0 h-px -translate-x-1/2 bg-gradient-to-r from-transparent via-black/8 to-transparent"
           style={reducedMotion ? undefined : { width: underlineWidth }}
         />
 

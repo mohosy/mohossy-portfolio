@@ -23,7 +23,7 @@ export function ProjectVisualCarousel({ projects }: ProjectVisualCarouselProps) 
               href={project.repoUrl}
               eventName={`visual_feed_click_${project.slug}`}
               target="_blank"
-              className="group block overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--card-shadow)] transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(37,99,235,0.2)] focus-visible:border-[rgba(37,99,235,0.3)]"
+              className="group block overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] shadow-[var(--card-shadow)] transition-all duration-300 hover:-translate-y-1 hover:border-[rgba(28,24,20,0.16)] focus-visible:border-[rgba(28,24,20,0.22)]"
             >
               <div className="relative h-60 overflow-hidden sm:h-64">
                 <ProjectCover project={project} animated priority="high" />
