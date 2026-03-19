@@ -44,38 +44,47 @@ main {
 .profile-banner {
   position: relative;
   width: 100%;
-  height: clamp(14rem, 22vw, 22rem);
+  height: clamp(16rem, 26vw, 24rem);
   overflow: hidden;
   border-radius: 0 0 1.5rem 1.5rem;
 }
 
-.profile-banner-photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top center;
-}
-
-.profile-banner-overlay {
+.profile-banner-bg {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 120% 80% at 75% 20%, rgba(37, 99, 235, 0.08), transparent 60%),
-    radial-gradient(ellipse 100% 70% at 20% 80%, rgba(217, 119, 6, 0.06), transparent 50%),
-    linear-gradient(to right, rgba(28, 24, 20, 0.6), rgba(28, 24, 20, 0.2));
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(217, 119, 6, 0.06), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgba(37, 99, 235, 0.05), transparent 50%),
+    linear-gradient(135deg, var(--surface-alt) 0%, var(--surface) 50%, var(--surface-alt) 100%);
 }
 
 .profile-banner-grid {
   position: absolute;
   inset: 0;
-  opacity: 0.14;
+  opacity: 0.22;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
   background-size: 44px 44px;
   pointer-events: none;
+}
+
+.profile-banner-photo-wrap {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 115%;
+  pointer-events: none;
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 0.9) 20%, rgba(0, 0, 0, 0.3) 60%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0.9) 20%, rgba(0, 0, 0, 0.3) 60%, transparent 85%);
+}
+
+@media (max-width: 640px) {
+  .profile-banner-photo-wrap {
+    height: 110%;
+    mask-image: linear-gradient(to left, rgba(0, 0, 0, 0.7) 10%, rgba(0, 0, 0, 0.2) 50%, transparent 75%);
+    -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 0.7) 10%, rgba(0, 0, 0, 0.2) 50%, transparent 75%);
+  }
 }
 
 .profile-avatar-ring {

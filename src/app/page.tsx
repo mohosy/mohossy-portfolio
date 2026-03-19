@@ -12,7 +12,7 @@ import { CinematicReveal } from "@/components/cinematic-reveal";
 import { ProjectCard } from "@/components/project-card";
 import { ProjectVisualCarousel } from "@/components/project-visual-carousel";
 import { ScrollProgress } from "@/components/scroll-progress";
-import { ScrollScene } from "@/components/scroll-scene";
+import { Reveal } from "@/components/reveal";
 import { TopNav } from "@/components/top-nav";
 import { TrackedLink } from "@/components/tracked-link";
 import { TypewriterKicker } from "@/components/typewriter-kicker";
@@ -110,25 +110,27 @@ export default function Home() {
     <>
       <TopNav />
       <ScrollProgress />
-      <main id="main-content" className="pb-0 pt-16">
+      <main id="main-content" className="pb-20 pt-24 sm:pt-28">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
         />
 
-        <ScrollScene id="hero" scrollHeight="180vh">
+        <section id="hero">
           {/* Banner */}
           <div className="profile-banner">
-            <Image
-              src="/images/me-in-suit.png"
-              alt="Mo Shirmohammadi"
-              width={668}
-              height={1480}
-              priority
-              className="profile-banner-photo"
-            />
-            <div className="profile-banner-overlay" />
+            <div className="profile-banner-bg" />
             <div aria-hidden="true" className="profile-banner-grid" />
+            <div className="profile-banner-photo-wrap">
+              <Image
+                src="/images/me-in-suit.png"
+                alt="Mo Shirmohammadi"
+                width={668}
+                height={1480}
+                priority
+                className="h-full w-auto object-cover object-top"
+              />
+            </div>
           </div>
 
           {/* Profile Card */}
@@ -245,10 +247,10 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="featured" scrollHeight="120vh">
-          <div className="section-shell">
+        <section id="featured" className="section-shell section-gap">
+          <Reveal intensity="low">
             <p className="editorial-kicker kicker-with-icon">
               <GridIcon />
               Project Visual Feed
@@ -259,11 +261,10 @@ export default function Home() {
             <div className="mt-7">
               <ProjectVisualCarousel projects={visualFeedProjects} />
             </div>
-          </div>
-        </ScrollScene>
+          </Reveal>
+        </section>
 
-        <ScrollScene id="spotlight" scrollHeight="160vh">
-          <div className="section-shell">
+        <section id="spotlight" className="section-shell section-gap">
             <p className="editorial-kicker kicker-with-icon">
               <StarIcon />
               Flagship Spotlight
@@ -333,11 +334,10 @@ export default function Home() {
                 </ul>
               </div>
             </div>
-          </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="catalog" scrollHeight="150vh">
-          <div className="section-shell">
+        <section id="catalog" className="section-shell section-gap">
+          <Reveal intensity="low">
             <p className="editorial-kicker kicker-with-icon">
               <LayersIcon />
               Project Catalog
@@ -379,16 +379,15 @@ export default function Home() {
                 </article>
               ))}
             </div>
-            <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              {deepCatalog.map((project) => (
-                <ProjectCard key={project.slug} project={project} compact />
-              ))}
-            </div>
+          </Reveal>
+          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {deepCatalog.map((project) => (
+              <ProjectCard key={project.slug} project={project} compact />
+            ))}
           </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="products" scrollHeight="180vh">
-          <div className="section-shell">
+        <section id="products" className="section-shell section-gap">
             <p className="editorial-kicker kicker-with-icon">
               <RocketIcon />
               Product Showcases
@@ -574,11 +573,9 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="lab" scrollHeight="130vh">
-          <div className="section-shell">
+        <section id="lab" className="section-shell section-gap">
             <CinematicReveal variant="lab-heading" className="lab-heading-cinematic">
               <p className="editorial-kicker kicker-with-icon">
                 <LabIcon />
@@ -591,11 +588,9 @@ export default function Home() {
             <div className="mt-7">
               <MiniDemos />
             </div>
-          </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="experience" scrollHeight="150vh">
-          <div className="section-shell">
+        <section id="experience" className="section-shell section-gap">
             <p className="editorial-kicker kicker-with-icon">
               <BriefcaseIcon />
               Experience
@@ -650,11 +645,9 @@ export default function Home() {
                 </article>
               ))}
             </div>
-          </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="about" scrollHeight="140vh">
-          <div className="section-shell">
+        <section id="about" className="section-shell section-gap">
             <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
               <figure className="group overflow-hidden rounded-[1.8rem] border border-[var(--line)] bg-[var(--surface)] p-3 shadow-[var(--card-shadow)]">
                 <Image
@@ -708,10 +701,9 @@ export default function Home() {
                 </div>
               </div>
             </div>
-          </div>
-        </ScrollScene>
+        </section>
 
-        <ScrollScene id="contact" static>
+        <section id="contact">
           <div className="section-shell section-gap">
             <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--card-shadow)] sm:p-8">
               <p className="editorial-kicker kicker-with-icon">
@@ -774,7 +766,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </ScrollScene>
+        </section>
 
         <div className="section-shell section-gap">
           <CinematicReveal variant="footer" className="footer-cinematic">
