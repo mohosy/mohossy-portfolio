@@ -67,13 +67,13 @@ export default function Home() {
       <div className="photo-grid mt-12">
         <div className="photo-card">
           <Image
-            src="/images/about-me-pic.png"
-            alt="Mo portrait"
+            src="/images/presentationpic.png"
+            alt="Mo presenting"
             width={600}
-            height={600}
+            height={400}
             className="h-auto w-full rounded object-cover"
           />
-          <p className="photo-caption">Portrait</p>
+          <p className="photo-caption">Presenting</p>
         </div>
         <div className="photo-card">
           <Image
@@ -185,17 +185,17 @@ export default function Home() {
         </li>
       </ul>
 
-      {/* Photo pair — presenting */}
+      {/* Photo pair — bottom */}
       <div className="photo-grid mt-12">
         <div className="photo-card">
           <Image
-            src="/images/presentationpic.png"
-            alt="Mo presenting"
+            src="/images/about-me-pic.png"
+            alt="Mo portrait"
             width={600}
-            height={400}
+            height={600}
             className="h-auto w-full rounded object-cover"
           />
-          <p className="photo-caption">Presenting</p>
+          <p className="photo-caption">Portrait</p>
         </div>
         <div className="photo-card">
           <Image
