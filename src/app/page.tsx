@@ -16,51 +16,6 @@ const personSchema = {
   alumniOf: "University of Southern California",
 };
 
-const photos = [
-  { src: "/images/about-me-pic.png", caption: "About me" },
-  { src: "/images/me-in-suit.png", caption: "Professional" },
-  { src: "/images/me-speaking-mic.png", caption: "Speaking" },
-  { src: "/images/presentationpic.png", caption: "Presenting" },
-];
-
-const projects = [
-  {
-    name: "Picasso Visual AI",
-    url: "https://picasso-eta.vercel.app",
-    description: "AI that draws and narrates visual answers in real-time",
-  },
-  {
-    name: "IRL",
-    url: "https://github.com/mohosy/irl-official",
-    description: "Social video app with React Native, Socket.IO, and AWS media",
-  },
-  {
-    name: "Surgical Data Mesh Platform",
-    url: "https://github.com/mohosy/surgical-data-mesh-platform",
-    description: "Production data platform for robotic surgery telemetry",
-  },
-  {
-    name: "Distributed Task Queue",
-    url: "https://github.com/mohosy/distributed-task-queue",
-    description: "Production-grade queue with WAL persistence and DAG scheduling",
-  },
-  {
-    name: "Database Replication Engine",
-    url: "https://github.com/mohosy/database-replication-engine",
-    description: "PostgreSQL-inspired replication with leader election and failover",
-  },
-  {
-    name: "Transformer LM from Scratch",
-    url: "https://github.com/mohosy/transformer-lm-from-scratch",
-    description: "GPT-style decoder with manual backpropagation",
-  },
-  {
-    name: "OpenEvals",
-    url: "https://github.com/mohosy/OpenEvals",
-    description: "Open-source eval studio for LLM prompt testing",
-  },
-];
-
 export default function Home() {
   return (
     <main className="mx-auto max-w-2xl px-6 py-16 sm:py-24">
@@ -108,39 +63,150 @@ export default function Home() {
         </a>
       </p>
 
+      {/* Photo pair — profile shots */}
+      <div className="photo-grid mt-12">
+        <div className="photo-card">
+          <Image
+            src="/images/about-me-pic.png"
+            alt="Mo portrait"
+            width={600}
+            height={600}
+            className="h-auto w-full rounded object-cover"
+          />
+          <p className="photo-caption">Portrait</p>
+        </div>
+        <div className="photo-card">
+          <Image
+            src="/images/me-in-suit.png"
+            alt="Mo in a suit"
+            width={600}
+            height={900}
+            className="h-auto w-full rounded object-cover"
+          />
+          <p className="photo-caption">Professional</p>
+        </div>
+      </div>
+
       {/* Projects */}
       <h2 className="mt-14 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem]">
         Projects
       </h2>
       <ul className="mt-4 space-y-1.5">
-        {projects.map((p) => (
-          <li key={p.name} className="text-base leading-relaxed">
-            <span className="text-[var(--text-muted)]">•</span>{" "}
-            <a href={p.url} target="_blank" rel="noopener noreferrer">
-              {p.name}
-            </a>
-            <span className="text-[var(--text-secondary)]"> — {p.description}</span>
-          </li>
-        ))}
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://picasso-eta.vercel.app" target="_blank" rel="noopener noreferrer">
+            Picasso Visual AI
+          </a>
+          <span className="text-[var(--text-secondary)]"> — AI that draws and narrates visual answers in real-time</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/irl-official" target="_blank" rel="noopener noreferrer">
+            IRL
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Social video app with React Native, Socket.IO, and AWS media</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/surgical-data-mesh-platform" target="_blank" rel="noopener noreferrer">
+            Surgical Data Mesh Platform
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Production data platform for robotic surgery telemetry</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/distributed-task-queue" target="_blank" rel="noopener noreferrer">
+            Distributed Task Queue
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Production-grade queue with WAL persistence and DAG scheduling</span>
+        </li>
       </ul>
 
-      {/* Photography / Photos */}
+      {/* Photo — speaking */}
+      <div className="mt-12">
+        <div className="photo-card">
+          <Image
+            src="/images/me-speaking-mic.png"
+            alt="Mo speaking with a microphone"
+            width={800}
+            height={500}
+            className="h-auto w-full rounded object-cover"
+          />
+          <p className="photo-caption">Speaking</p>
+        </div>
+      </div>
+
+      {/* More Projects */}
       <h2 className="mt-14 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem]">
-        Photography
+        More Projects
       </h2>
-      <div className="photo-grid mt-6">
-        {photos.map((photo) => (
-          <div key={photo.src} className="photo-card">
-            <Image
-              src={photo.src}
-              alt={photo.caption}
-              width={600}
-              height={600}
-              className="h-auto w-full rounded object-cover"
-            />
-            <p className="photo-caption">{photo.caption}</p>
-          </div>
-        ))}
+      <ul className="mt-4 space-y-1.5">
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/database-replication-engine" target="_blank" rel="noopener noreferrer">
+            Database Replication Engine
+          </a>
+          <span className="text-[var(--text-secondary)]"> — PostgreSQL-inspired replication with leader election and failover</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/transformer-lm-from-scratch" target="_blank" rel="noopener noreferrer">
+            Transformer LM from Scratch
+          </a>
+          <span className="text-[var(--text-secondary)]"> — GPT-style decoder with manual backpropagation</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/OpenEvals" target="_blank" rel="noopener noreferrer">
+            OpenEvals
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Open-source eval studio for LLM prompt testing</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/kv-store-engine" target="_blank" rel="noopener noreferrer">
+            KV Store Engine
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Custom hash table, TTL eviction, and atomic snapshot persistence</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/load-balancer-from-scratch" target="_blank" rel="noopener noreferrer">
+            Load Balancer from Scratch
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Six routing algorithms with health checks and concurrency controls</span>
+        </li>
+        <li className="text-base leading-relaxed">
+          <span className="text-[var(--text-muted)]">•</span>{" "}
+          <a href="https://github.com/mohosy/raft-consensus-simulator" target="_blank" rel="noopener noreferrer">
+            Raft Consensus Simulator
+          </a>
+          <span className="text-[var(--text-secondary)]"> — Deterministic leader election and log replication</span>
+        </li>
+      </ul>
+
+      {/* Photo pair — presenting */}
+      <div className="photo-grid mt-12">
+        <div className="photo-card">
+          <Image
+            src="/images/presentationpic.png"
+            alt="Mo presenting"
+            width={600}
+            height={400}
+            className="h-auto w-full rounded object-cover"
+          />
+          <p className="photo-caption">Presenting</p>
+        </div>
+        <div className="photo-card">
+          <Image
+            src="/images/me-working-desk.png"
+            alt="Mo working at desk"
+            width={600}
+            height={400}
+            className="h-auto w-full rounded object-cover"
+          />
+          <p className="photo-caption">Building</p>
+        </div>
       </div>
 
       {/* Footer */}
