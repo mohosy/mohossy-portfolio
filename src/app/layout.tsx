@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
-import { Inter } from "next/font/google";
+import { Lato } from "next/font/google";
 import "./globals.css";
 
-const sans = Inter({
+const sans = Lato({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "700", "900"],
 });
 
 export const metadata: Metadata = {
