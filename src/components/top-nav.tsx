@@ -102,8 +102,9 @@ export function TopNav() {
   const navShadow = useTransform(
     depth,
     [0, 1],
-    ["0 14px 34px rgba(0,0,0,0.06)", "0 20px 46px rgba(0,0,0,0.1)"],
+    ["0 14px 34px rgba(0,0,0,0)", "0 20px 46px rgba(0,0,0,0.1)"],
   );
+  const navBlur = useTransform(depth, [0, 1], [0, 20]);
   const islandWidth = useTransform(depth, [0, 1], ["53rem", "40.5rem"]);
   const islandPadX = useTransform(depth, [0, 1], [12, 7]);
   const islandPadY = useTransform(depth, [0, 1], [7, 4.5]);
@@ -111,8 +112,8 @@ export function TopNav() {
   const linksScale = useTransform(depth, [0, 1], [1, 0.93]);
   const actionsScale = useTransform(depth, [0, 1], [1, 0.9]);
   const linksGap = useTransform(depth, [0, 1], [12, 7.5]);
-  const navBgOpacity = useTransform(depth, [0, 1], [0.84, 0.94]);
-  const navBorderOpacity = useTransform(depth, [0, 1], [0.1, 0.16]);
+  const navBgOpacity = useTransform(depth, [0, 1], [0, 0.94]);
+  const navBorderOpacity = useTransform(depth, [0, 1], [0, 0.16]);
   const navBg = useMotionTemplate`rgba(250, 247, 240, ${navBgOpacity})`;
   const navBorder = useMotionTemplate`rgba(0, 0, 0, ${navBorderOpacity})`;
   const bubbleAOffsetY = useTransform(depth, [0, 1], [0, -9]);
@@ -184,7 +185,7 @@ export function TopNav() {
     >
       <motion.nav
         className={[
-          "pointer-events-auto nav-shell relative flex w-full items-center overflow-hidden rounded-full border border-[var(--line)] bg-[color:var(--surface-glass)] backdrop-blur-xl",
+          "pointer-events-auto nav-shell relative flex w-full items-center overflow-hidden rounded-full border border-[var(--line)]",
           navState === "scrolling"
             ? "nav-shell-scrolling"
             : navState === "settling"
@@ -200,6 +201,8 @@ export function TopNav() {
                 boxShadow: navShadow,
                 backgroundColor: navBg,
                 borderColor: navBorder,
+                backdropFilter: useMotionTemplate`blur(${navBlur}px)`,
+                WebkitBackdropFilter: useMotionTemplate`blur(${navBlur}px)`,
                 maxWidth: islandWidth,
                 paddingLeft: islandPadX,
                 paddingRight: islandPadX,
