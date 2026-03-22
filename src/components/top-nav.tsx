@@ -105,6 +105,7 @@ export function TopNav() {
     ["0 14px 34px rgba(0,0,0,0)", "0 20px 46px rgba(0,0,0,0.1)"],
   );
   const navBlur = useTransform(depth, [0, 1], [0, 20]);
+  const navTextColor = useTransform(depth, [0, 1], ["rgba(255,255,255,1)", "rgba(28,24,20,1)"]);
   const islandWidth = useTransform(depth, [0, 1], ["53rem", "40.5rem"]);
   const islandPadX = useTransform(depth, [0, 1], [12, 7]);
   const islandPadY = useTransform(depth, [0, 1], [7, 4.5]);
@@ -203,6 +204,7 @@ export function TopNav() {
                 borderColor: navBorder,
                 backdropFilter: useMotionTemplate`blur(${navBlur}px)`,
                 WebkitBackdropFilter: useMotionTemplate`blur(${navBlur}px)`,
+                color: navTextColor,
                 maxWidth: islandWidth,
                 paddingLeft: islandPadX,
                 paddingRight: islandPadX,
