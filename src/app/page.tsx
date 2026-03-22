@@ -118,19 +118,15 @@ export default function Home() {
 
         <section id="hero">
           {/* Banner */}
-          <div className="profile-banner">
-            <div className="profile-banner-bg" />
-            <div aria-hidden="true" className="profile-banner-grid" />
-            <div className="profile-banner-photo-wrap">
-              <Image
-                src="/images/me-in-suit.png"
-                alt="Mo Shirmohammadi"
-                width={668}
-                height={1480}
-                priority
-                className="h-full w-auto object-cover object-top"
-              />
-            </div>
+          <div className="profile-banner overflow-hidden">
+            <Image
+              src="/images/banner.png"
+              alt="Mo Shirmohammadi banner"
+              width={1200}
+              height={400}
+              priority
+              className="h-full w-full object-cover"
+            />
           </div>
 
           {/* Profile Card */}
