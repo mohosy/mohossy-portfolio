@@ -140,7 +140,7 @@ export default function Home() {
                   width={400}
                   height={400}
                   priority
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover scale-110 translate-x-[5%]"
                 />
               </div>
             </div>
