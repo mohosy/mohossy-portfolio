@@ -125,7 +125,7 @@ export default function Home() {
               width={1200}
               height={400}
               priority
-              className="h-full w-full object-cover"
+              className="h-auto w-full"
             />
           </div>
 
