@@ -24,6 +24,18 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
       />
 
+      {/* Banner */}
+      <div className="-mx-6 -mt-16 sm:-mt-24 mb-12">
+        <Image
+          src="/images/banner.png"
+          alt="Banner"
+          width={1200}
+          height={400}
+          priority
+          className="h-auto w-full object-cover"
+        />
+      </div>
+
       {/* Name */}
       <h1 className="text-[2.25rem] font-bold leading-tight tracking-tight sm:text-[2.75rem]">
         {siteProfile.name}
