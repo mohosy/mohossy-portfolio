@@ -110,7 +110,7 @@ export default function Home() {
     <>
       <TopNav />
       <ScrollProgress />
-      <main id="main-content" className="pb-20 pt-24 sm:pt-28">
+      <main id="main-content" className="pb-20">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personSchema) }}
@@ -140,7 +140,7 @@ export default function Home() {
                   width={400}
                   height={400}
                   priority
-                  className="h-full w-full object-cover scale-110 translate-x-[5%]"
+                  className="h-full w-full object-cover scale-125 translate-x-[10%]"
                 />
               </div>
             </div>
