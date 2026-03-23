@@ -228,7 +228,8 @@ export default function Home() {
               <iframe
                 src="https://picasso-eta.vercel.app"
                 title="Picasso Visual AI Demo"
-                className="h-[400px] w-[120%] origin-top-left scale-[83%] border-0 -mt-[40px]"
+                className="w-[120%] border-0"
+                style={{ height: "500px", transform: "scale(0.83)", transformOrigin: "top left", marginBottom: "-100px" }}
                 loading="lazy"
                 allow="microphone"
               />
