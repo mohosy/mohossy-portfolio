@@ -9,6 +9,7 @@ import {
 import { TopNav } from "@/components/top-nav";
 import { TrackedLink } from "@/components/tracked-link";
 import { AutoPlayVideo } from "@/components/auto-play-video";
+import { ScrollReveal } from "@/components/scroll-reveal";
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -39,12 +40,24 @@ const proofMetrics = [
   { value: "99.9%", label: "Uptime", icon: "🟢" },
 ];
 
+const projectIcons: Record<string, string> = {
+  "surgical-data-mesh-platform": "🏥",
+  "surggraph-pipeline": "📊",
+  "distributed-task-queue": "📋",
+  "database-replication-engine": "🔄",
+  "kv-store-engine": "🗄️",
+  "load-balancer-from-scratch": "⚖️",
+  "raft-consensus-simulator": "🤝",
+  "transformer-lm-from-scratch": "🧠",
+};
+
 const systemsProjects = flagshipProjects.map((p) => ({
   slug: p.slug,
   name: p.name,
   url: p.repoUrl,
   summary: p.summary,
   stack: p.stack.slice(0, 4),
+  icon: projectIcons[p.slug] || "⚙️",
 }));
 
 const moreProjects = secondaryProjects.map((p) => ({
@@ -149,7 +162,7 @@ export default function Home() {
         </section>
 
         {/* ═══════════ METRICS ═══════════ */}
-        <div className="section-shell mt-10">
+        <ScrollReveal className="section-shell mt-10">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {proofMetrics.map((m) => (
               <div
@@ -163,9 +176,10 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* ═══════════ PRODUCTS ═══════════ */}
+        <ScrollReveal>
         <section id="products" className="section-shell mt-20">
           <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
             <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -210,11 +224,11 @@ export default function Home() {
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
               </TrackedLink>
             </div>
-            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)]">
+            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden">
               <iframe
                 src="https://picasso-eta.vercel.app"
                 title="Picasso Visual AI Demo"
-                className="h-[320px] w-full border-0"
+                className="h-[280px] w-[120%] origin-top-left scale-[83%] border-0"
                 loading="lazy"
                 allow="microphone"
               />
@@ -279,8 +293,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+        </ScrollReveal>
 
         {/* ═══════════ SMALL PHOTO ACCENT ═══════════ */}
+        <ScrollReveal>
         <div className="section-shell mt-14">
           <div className="grid grid-cols-3 gap-3">
             <div className="overflow-hidden rounded-lg aspect-[4/3]">
@@ -289,7 +305,7 @@ export default function Home() {
                 alt="Mo portrait"
                 width={400}
                 height={300}
-                className="h-full w-full object-cover object-top"
+                className="h-full w-full object-cover object-[50%_20%] scale-[85%]"
               />
             </div>
             <div className="overflow-hidden rounded-lg aspect-[4/3]">
@@ -298,7 +314,7 @@ export default function Home() {
                 alt="Mo speaking"
                 width={400}
                 height={300}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-[50%_55%] scale-[85%]"
               />
             </div>
             <div className="overflow-hidden rounded-lg aspect-[4/3]">
@@ -307,13 +323,15 @@ export default function Home() {
                 alt="Mo presenting"
                 width={400}
                 height={300}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover scale-[85%]"
               />
             </div>
           </div>
         </div>
+        </ScrollReveal>
 
         {/* ═══════════ PROJECTS ═══════════ */}
+        <ScrollReveal>
         <section id="projects" className="section-shell mt-20">
           <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
             <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
@@ -329,9 +347,12 @@ export default function Home() {
                 target="_blank"
               >
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-base font-semibold text-[var(--text-strong)] group-hover:text-[var(--accent-fresh)] transition-colors">
-                    {project.name}
-                  </h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg" aria-hidden="true">{project.icon}</span>
+                    <h3 className="text-base font-semibold text-[var(--text-strong)] group-hover:text-[var(--accent-fresh)] transition-colors">
+                      {project.name}
+                    </h3>
+                  </div>
                   <svg className="h-4 w-4 shrink-0 mt-0.5 text-[var(--text-muted)] group-hover:text-[var(--accent-fresh)] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
                 </div>
                 <p className="mt-1.5 text-sm leading-relaxed text-[var(--text-soft)]">
@@ -378,8 +399,10 @@ export default function Home() {
             ))}
           </div>
         </section>
+        </ScrollReveal>
 
         {/* ═══════════ EXPERIENCE ═══════════ */}
+        <ScrollReveal>
         <section id="experience" className="section-shell mt-20">
           <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
             <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m12 0H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2z"/></svg>
@@ -428,8 +451,10 @@ export default function Home() {
             ))}
           </div>
         </section>
+        </ScrollReveal>
 
         {/* ═══════════ ABOUT — with photo beside text ═══════════ */}
+        <ScrollReveal>
         <section id="about" className="section-shell mt-20">
           <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
             <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
@@ -476,8 +501,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+        </ScrollReveal>
 
         {/* ═══════════ CONTACT ═══════════ */}
+        <ScrollReveal>
         <section id="contact" className="section-shell mt-20">
           <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-8 text-center">
             <h2 className="text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
@@ -490,7 +517,7 @@ export default function Home() {
               <TrackedLink
                 href={`mailto:${siteProfile.email}`}
                 eventName="contact_email_click"
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--text-strong)] px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent-fresh)] px-5 py-2.5 text-sm font-medium text-white hover:opacity-90 transition-opacity"
               >
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 Email Me
@@ -514,6 +541,7 @@ export default function Home() {
             </div>
           </div>
         </section>
+        </ScrollReveal>
 
         {/* Footer */}
         <footer className="section-shell mt-16 border-t border-[var(--line)] pt-6 pb-4 flex flex-wrap items-center justify-between gap-2">
