@@ -296,9 +296,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* BabyGuard — WiFi Breathing Monitor */}
-          <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto] rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5">
-            <div>
+          {/* BabyGuard — WiFi Breathing Monitor (large layout like Picasso) */}
+          <div className="mt-5 grid gap-6 lg:grid-cols-[1fr_1fr] rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+            <div className="p-6 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-2xl" aria-hidden="true">📡</span>
                 <h3 className="text-lg font-semibold text-[var(--text-strong)]">
@@ -318,25 +318,23 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-              <div className="mt-3 flex gap-4">
-                <TrackedLink
-                  href="https://github.com/mohosy/baby-monitor-wifi-csi"
-                  eventName="babyguard_repo_click"
-                  target="_blank"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
-                >
-                  Repository
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-                </TrackedLink>
-              </div>
+              <TrackedLink
+                href="https://github.com/mohosy/baby-monitor-wifi-csi"
+                eventName="babyguard_repo_click"
+                target="_blank"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
+              >
+                Repository
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </TrackedLink>
             </div>
-            <div className="flex items-center">
+            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden flex items-center justify-center p-4">
               <Image
                 src="/images/projects/babyguard.png"
                 alt="BabyGuard WiFi breathing monitor visualization"
-                width={300}
-                height={200}
-                className="w-[12rem] overflow-hidden rounded-xl object-cover"
+                width={600}
+                height={400}
+                className="w-full h-auto rounded-xl object-cover"
               />
             </div>
           </div>
