@@ -41,6 +41,7 @@ const proofMetrics = [
 ];
 
 const projectIcons: Record<string, string> = {
+  "baby-monitor-wifi-csi": "📡",
   "surgical-data-mesh-platform": "🏥",
   "surggraph-pipeline": "📊",
   "distributed-task-queue": "📋",
