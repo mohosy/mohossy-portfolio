@@ -226,14 +226,14 @@ export default function Home() {
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
               </TrackedLink>
             </div>
-            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden">
+            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden relative">
               <iframe
                 src="https://picasso-eta.vercel.app"
                 title="Picasso Visual AI Demo"
-                className="w-[120%] border-0"
+                className="w-[120%] border-0 pointer-events-none"
                 style={{ height: "500px", transform: "scale(0.83)", transformOrigin: "top left", marginBottom: "-100px" }}
                 loading="lazy"
-                allow="microphone"
+                tabIndex={-1}
               />
             </div>
           </div>
@@ -328,13 +328,13 @@ export default function Home() {
                 <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
               </TrackedLink>
             </div>
-            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden flex items-center justify-center p-4">
+            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface)] overflow-hidden flex items-center justify-center p-4">
               <Image
                 src="/images/projects/babyguard.png"
                 alt="BabyGuard WiFi breathing monitor visualization"
                 width={600}
                 height={400}
-                className="w-full h-auto rounded-xl object-cover"
+                className="w-full h-auto rounded-xl object-contain"
               />
             </div>
           </div>
