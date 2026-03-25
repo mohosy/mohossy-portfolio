@@ -51,39 +51,6 @@ export const credibility: CredibilityItem[] = [
 
 export const flagshipProjects: ProjectEntry[] = [
   {
-    slug: "baby-monitor-wifi-csi",
-    name: "BabyGuard — WiFi Breathing Monitor",
-    repoUrl: "https://github.com/mohosy/baby-monitor-wifi-csi",
-    tier: "flagship",
-    domains: ["systems", "data", "ml"],
-    summary:
-      "Contactless baby breathing monitor that turns a $4 ESP32 and any WiFi router into a real-time infant apnea detection system. No wearables, no cameras — just physics.",
-    stack: [
-      "Python",
-      "C",
-      "ESP-IDF",
-      "NumPy",
-      "SciPy",
-      "Flask",
-      "WebSockets",
-      "Three.js",
-    ],
-    architecture: [
-      "ESP32 firmware captures WiFi CSI at 50 Hz with real-time gain compensation.",
-      "Python DSP pipeline: Hampel filter → bandpass → PCA subcarrier fusion → FFT/autocorrelation breathing estimation.",
-      "Apnea detector with alert system: push notifications, audible alarm, and watchdog for silent failure prevention.",
-    ],
-    metrics: [
-      { label: "Signal", value: "64 subcarriers × 50 Hz" },
-      { label: "Detection", value: "<12s apnea alarm" },
-      { label: "Tests", value: "32 passing" },
-    ],
-    image: "/images/projects/babyguard.png",
-    visual: { template: "pipeline", seed: 42, density: 3 },
-    recruiterHook:
-      "Full-stack IoT system: embedded C firmware, real-time DSP pipeline, alert infrastructure, and 3D visualization.",
-  },
-  {
     slug: "surgical-data-mesh-platform",
     name: "Surgical Data Mesh Platform",
     repoUrl: "https://github.com/mohosy/surgical-data-mesh-platform",

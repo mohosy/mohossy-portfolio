@@ -59,6 +59,7 @@ const systemsProjects = flagshipProjects.map((p) => ({
   summary: p.summary,
   stack: p.stack.slice(0, 4),
   icon: projectIcons[p.slug] || "⚙️",
+  image: p.image,
 }));
 
 const moreProjects = secondaryProjects.map((p) => ({
@@ -291,6 +292,51 @@ export default function Home() {
                 poster="/images/irl/mainpic.png"
                 captionsSrc="/videos/irl-app-launch-captions.vtt"
                 className="w-[10rem] overflow-hidden rounded-xl"
+              />
+            </div>
+          </div>
+
+          {/* BabyGuard — WiFi Breathing Monitor */}
+          <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto] rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="text-2xl" aria-hidden="true">📡</span>
+                <h3 className="text-lg font-semibold text-[var(--text-strong)]">
+                  BabyGuard
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed text-[var(--text-soft)]">
+                Contactless baby breathing monitor that turns a $4 ESP32 and any WiFi router into a real-time infant apnea detection system. No wearables, no cameras — just physics.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {["Python", "C", "ESP-IDF", "NumPy", "SciPy", "Three.js"].map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-3 flex gap-4">
+                <TrackedLink
+                  href="https://github.com/mohosy/baby-monitor-wifi-csi"
+                  eventName="babyguard_repo_click"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
+                >
+                  Repository
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                </TrackedLink>
+              </div>
+            </div>
+            <div className="flex items-center">
+              <Image
+                src="/images/projects/babyguard.png"
+                alt="BabyGuard WiFi breathing monitor visualization"
+                width={300}
+                height={200}
+                className="w-[12rem] overflow-hidden rounded-xl object-cover"
               />
             </div>
           </div>
