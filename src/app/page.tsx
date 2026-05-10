@@ -333,58 +333,8 @@ export default function Home() {
             Products
           </h2>
 
-          {/* Picasso — description + small iframe side by side */}
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_1fr] rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
-            <div className="p-6 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-3">
-                <Image
-                  src="/images/picasso/rabbit.png"
-                  alt="Picasso mascot"
-                  width={120}
-                  height={120}
-                  className="h-9 w-9 object-contain"
-                />
-                <h3 className="text-lg font-semibold text-[var(--text-strong)]">
-                  Picasso Visual AI
-                </h3>
-              </div>
-              <p className="text-sm leading-relaxed text-[var(--text-soft)]">
-                AI that draws and narrates visual answers in real-time with animated SVG illustrations, voice narration, and web search integration.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {["Next.js", "Claude API", "ElevenLabs", "SVG", "Google Search"].map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-              <TrackedLink
-                href="https://picasso-eta.vercel.app"
-                eventName="picasso_live_click"
-                target="_blank"
-                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
-              >
-                Try it live
-                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-              </TrackedLink>
-            </div>
-            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden relative">
-              <iframe
-                src="https://picasso-eta.vercel.app"
-                title="Picasso Visual AI Demo"
-                className="w-[120%] border-0 pointer-events-none"
-                style={{ height: "500px", transform: "scale(0.83)", transformOrigin: "top left", marginBottom: "-100px" }}
-                loading="lazy"
-                tabIndex={-1}
-              />
-            </div>
-          </div>
-
           {/* IRL */}
-          <div className="mt-5 grid gap-6 md:grid-cols-[1fr_minmax(0,22rem)] md:items-center rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 sm:p-6">
+          <div className="mt-8 grid gap-6 md:grid-cols-[1fr_minmax(0,22rem)] md:items-center rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 sm:p-6">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <Image
@@ -437,6 +387,56 @@ export default function Home() {
                 poster="/images/irl/mainpic.png"
                 captionsSrc="/videos/irl-app-launch-captions.vtt"
                 className="w-full max-w-[22rem] overflow-hidden rounded-xl"
+              />
+            </div>
+          </div>
+
+          {/* Picasso — description + small iframe side by side */}
+          <div className="mt-5 grid gap-6 lg:grid-cols-[1fr_1fr] rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+            <div className="p-6 flex flex-col justify-center">
+              <div className="flex items-center gap-3 mb-3">
+                <Image
+                  src="/images/picasso/rabbit.png"
+                  alt="Picasso mascot"
+                  width={120}
+                  height={120}
+                  className="h-9 w-9 object-contain"
+                />
+                <h3 className="text-lg font-semibold text-[var(--text-strong)]">
+                  Picasso Visual AI
+                </h3>
+              </div>
+              <p className="text-sm leading-relaxed text-[var(--text-soft)]">
+                AI that draws and narrates visual answers in real-time with animated SVG illustrations, voice narration, and web search integration.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {["Next.js", "Claude API", "ElevenLabs", "SVG", "Google Search"].map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <TrackedLink
+                href="https://picasso-eta.vercel.app"
+                eventName="picasso_live_click"
+                target="_blank"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
+              >
+                Try it live
+                <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+              </TrackedLink>
+            </div>
+            <div className="border-t lg:border-t-0 lg:border-l border-[var(--line)] bg-[var(--surface-alt)] overflow-hidden relative">
+              <iframe
+                src="https://picasso-eta.vercel.app"
+                title="Picasso Visual AI Demo"
+                className="w-[120%] border-0 pointer-events-none"
+                style={{ height: "500px", transform: "scale(0.83)", transformOrigin: "top left", marginBottom: "-100px" }}
+                loading="lazy"
+                tabIndex={-1}
               />
             </div>
           </div>
