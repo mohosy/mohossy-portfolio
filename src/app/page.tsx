@@ -514,7 +514,7 @@ export default function Home() {
                 alt="Mo presenting"
                 width={400}
                 height={300}
-                className="h-full w-full object-cover scale-[85%]"
+                className="h-full w-full object-cover object-[50%_25%] scale-[85%]"
               />
             </div>
           </div>
