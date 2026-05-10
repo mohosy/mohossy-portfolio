@@ -505,7 +505,7 @@ export default function Home() {
                 alt="Mo speaking"
                 width={400}
                 height={300}
-                className="h-full w-full object-cover object-[50%_55%] scale-[85%]"
+                className="h-full w-full object-cover object-[50%_25%] scale-[85%]"
               />
             </div>
             <div className="overflow-hidden rounded-lg aspect-[4/3]">
