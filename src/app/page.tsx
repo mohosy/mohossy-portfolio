@@ -383,8 +383,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* IRL — compact with small video */}
-          <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto] rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5">
+          {/* IRL */}
+          <div className="mt-5 grid gap-6 md:grid-cols-[1fr_minmax(0,22rem)] md:items-center rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-5 sm:p-6">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <Image
@@ -431,12 +431,12 @@ export default function Home() {
                 </TrackedLink>
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center justify-center md:justify-end">
               <AutoPlayVideo
                 src="/videos/irl-app-launch-v2.mp4"
                 poster="/images/irl/mainpic.png"
                 captionsSrc="/videos/irl-app-launch-captions.vtt"
-                className="w-[10rem] overflow-hidden rounded-xl"
+                className="w-full max-w-[22rem] overflow-hidden rounded-xl"
               />
             </div>
           </div>
