@@ -188,60 +188,72 @@ export default function Home() {
             Speaking
           </h2>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_1fr] rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
-            <div className="relative bg-black overflow-hidden">
-              <Image
-                src="/images/tedx/tedx-stage.jpg"
-                alt="Mo Shirmohammadi delivering a TEDx talk at La Sierra University, on stage beside the slide reading 'What if we measured the wrong thing?'"
-                width={1500}
-                height={1000}
-                className="h-full w-full object-cover"
-              />
-              <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-[#E62B1E] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                TEDx
-              </span>
-              <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                Video coming soon
-              </span>
-            </div>
-            <div className="p-6 flex flex-col justify-center">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
-                TEDxLaSierraUniversity &middot; 2026
-              </p>
-              <h3 className="mt-1.5 text-lg font-semibold text-[var(--text-strong)]">
-                What if we measured the wrong thing?
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">
-                Selected as 1 of 9 speakers from 400+ applicants. The argument:
-                what we&apos;ve called &ldquo;intelligence&rdquo; for a hundred years was
-                mostly obedience to machine logic &mdash; read this, output that,
-                follow the steps. AI started doing all of it better than us, and
-                the students I&apos;ve taught for four years at Code Can Bridge,
-                the ones written off as &ldquo;not cut out for coding,&rdquo; were
-                already showing us something different. We didn&apos;t have a
-                talent shortage. We had a measurement problem.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {["AI & cognition", "Education", "Neurodiversity", "Code Can Bridge"].map((t) => (
-                  <span
-                    key={t}
-                    className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]"
+          {/* Hero photo — let it breathe */}
+          <div className="relative mt-8 overflow-hidden rounded-2xl border border-[var(--line)] bg-black">
+            <Image
+              src="/images/tedx/tedx-stage.jpg"
+              alt="Mo Shirmohammadi delivering a TEDx talk at La Sierra University, on stage beside the slide reading 'What if we measured the wrong thing?'"
+              width={2400}
+              height={1600}
+              priority
+              className="h-auto w-full object-cover"
+              sizes="(max-width: 1280px) 100vw, 78rem"
+            />
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-[#E62B1E] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg sm:left-5 sm:top-5">
+              TEDx
+            </span>
+            <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm sm:right-5 sm:top-5">
+              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+              Video coming soon
+            </span>
+          </div>
+
+          {/* Talk details */}
+          <div className="mt-5 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 sm:p-8">
+            <div className="grid gap-6 lg:grid-cols-[2fr_1fr] lg:items-start">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  TEDxLaSierraUniversity &middot; 2026
+                </p>
+                <h3 className="mt-1.5 text-[1.25rem] font-semibold leading-tight text-[var(--text-strong)] sm:text-[1.4rem]">
+                  What if we measured the wrong thing?
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)] sm:text-[0.95rem]">
+                  Selected as 1 of 9 speakers from 400+ applicants. The argument:
+                  what we&apos;ve called &ldquo;intelligence&rdquo; for a hundred
+                  years was mostly obedience to machine logic &mdash; read this,
+                  output that, follow the steps. AI started doing all of it better
+                  than us, and the students I&apos;ve taught for four years at
+                  Code Can Bridge, the ones written off as &ldquo;not cut out for
+                  coding,&rdquo; were already showing us something different. We
+                  didn&apos;t have a talent shortage. We had a measurement problem.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <TrackedLink
+                    href="https://www.linkedin.com/in/mohossy/"
+                    eventName="tedx_linkedin_click"
+                    target="_blank"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
                   >
-                    {t}
-                  </span>
-                ))}
+                    Read the announcement
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                  </TrackedLink>
+                </div>
               </div>
-              <div className="mt-4 flex flex-wrap gap-4">
-                <TrackedLink
-                  href="https://www.linkedin.com/in/mohossy/"
-                  eventName="tedx_linkedin_click"
-                  target="_blank"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
-                >
-                  Read the announcement
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-                </TrackedLink>
+              <div className="lg:border-l lg:border-[var(--line)] lg:pl-6">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Themes
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {["AI & cognition", "Education", "Neurodiversity", "Code Can Bridge"].map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2.5 py-1 text-[11px] text-[var(--text-muted)]"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
