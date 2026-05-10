@@ -490,7 +490,7 @@ export default function Home() {
         <ScrollReveal>
         <div className="section-shell mt-14">
           <div className="grid grid-cols-3 gap-3">
-            <div className="overflow-hidden rounded-lg aspect-[4/5]">
+            <div className="overflow-hidden rounded-lg aspect-[2/3]">
               <Image
                 src="/images/me-in-suit.png"
                 alt="Mo portrait"
@@ -499,7 +499,7 @@ export default function Home() {
                 className="h-full w-full object-cover object-[50%_20%] scale-[85%]"
               />
             </div>
-            <div className="overflow-hidden rounded-lg aspect-[4/5]">
+            <div className="overflow-hidden rounded-lg aspect-[2/3]">
               <Image
                 src="/images/me-speaking-mic.png"
                 alt="Mo speaking"
@@ -508,7 +508,7 @@ export default function Home() {
                 className="h-full w-full object-cover object-[50%_25%] scale-[85%]"
               />
             </div>
-            <div className="overflow-hidden rounded-lg aspect-[4/5]">
+            <div className="overflow-hidden rounded-lg aspect-[2/3]">
               <Image
                 src="/images/presentationpic.png"
                 alt="Mo presenting"
