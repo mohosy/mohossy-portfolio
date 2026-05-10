@@ -180,6 +180,74 @@ export default function Home() {
           </div>
         </ScrollReveal>
 
+        {/* ═══════════ SPEAKING ═══════════ */}
+        <ScrollReveal>
+        <section id="speaking" className="section-shell mt-20">
+          <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
+            <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
+            Speaking
+          </h2>
+
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_1fr] rounded-2xl border border-[var(--line)] bg-[var(--surface)] overflow-hidden">
+            <div className="relative bg-black overflow-hidden">
+              <Image
+                src="/images/tedx/tedx-stage.jpg"
+                alt="Mo Shirmohammadi delivering a TEDx talk at La Sierra University, on stage beside the slide reading 'What if we measured the wrong thing?'"
+                width={1500}
+                height={1000}
+                className="h-full w-full object-cover"
+              />
+              <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-[#E62B1E] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                TEDx
+              </span>
+              <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                Video coming soon
+              </span>
+            </div>
+            <div className="p-6 flex flex-col justify-center">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                TEDxLaSierraUniversity &middot; 2026
+              </p>
+              <h3 className="mt-1.5 text-lg font-semibold text-[var(--text-strong)]">
+                What if we measured the wrong thing?
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)]">
+                Selected as 1 of 9 speakers from 400+ applicants. The argument:
+                what we&apos;ve called &ldquo;intelligence&rdquo; for a hundred years was
+                mostly obedience to machine logic &mdash; read this, output that,
+                follow the steps. AI started doing all of it better than us, and
+                the students I&apos;ve taught for four years at Code Can Bridge,
+                the ones written off as &ldquo;not cut out for coding,&rdquo; were
+                already showing us something different. We didn&apos;t have a
+                talent shortage. We had a measurement problem.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {["AI & cognition", "Education", "Neurodiversity", "Code Can Bridge"].map((t) => (
+                  <span
+                    key={t}
+                    className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]"
+                  >
+                    {t}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-4">
+                <TrackedLink
+                  href="https://www.linkedin.com/in/mohossy/"
+                  eventName="tedx_linkedin_click"
+                  target="_blank"
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
+                >
+                  Read the announcement
+                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                </TrackedLink>
+              </div>
+            </div>
+          </div>
+        </section>
+        </ScrollReveal>
+
         {/* ═══════════ PRODUCTS ═══════════ */}
         <ScrollReveal>
         <section id="products" className="section-shell mt-20">
