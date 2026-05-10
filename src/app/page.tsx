@@ -260,6 +260,98 @@ export default function Home() {
         </section>
         </ScrollReveal>
 
+        {/* ═══════════ HACKATHONS ═══════════ */}
+        <ScrollReveal>
+        <section id="hackathons" className="section-shell mt-20">
+          <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
+            <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+            Hackathons
+          </h2>
+
+          {/* Hero photo */}
+          <div className="relative mt-8 overflow-hidden rounded-2xl border border-[var(--line)] bg-black">
+            <Image
+              src="/images/hacktech/hacktech-winners.jpg"
+              alt="Mo Shirmohammadi with the Recruit team standing in front of the projected '1st Place YCombinator Challenge Winner' screen at Hacktech 2026 at Caltech"
+              width={2400}
+              height={2000}
+              className="h-auto w-full object-cover"
+              sizes="(max-width: 1280px) 100vw, 78rem"
+            />
+            <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-[#FF6B00] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg sm:left-5 sm:top-5">
+              Hacktech 2026
+            </span>
+            <span className="absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm sm:right-5 sm:top-5">
+              <span className="text-base leading-none">&#127942;</span>
+              1st place &middot; YC track
+            </span>
+          </div>
+
+          {/* Details */}
+          <div className="mt-5 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 sm:p-8">
+            <div className="grid gap-6 lg:grid-cols-[2fr_1fr] lg:items-start">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Hacktech 2026 &middot; Caltech
+                </p>
+                <h3 className="mt-1.5 text-[1.25rem] font-semibold leading-tight text-[var(--text-strong)] sm:text-[1.4rem]">
+                  Recruit &mdash; a fully autonomous job application agent
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-[var(--text-soft)] sm:text-[0.95rem]">
+                  You tell it what roles you&apos;re looking for, and it spins up
+                  numerous AI agents that work in parallel &mdash; each one running
+                  the full application pipeline: finding jobs, tailoring your
+                  resume, submitting, and reaching out to recruiters. All running
+                  while you sleep. Built on top of Ashby, with a chat-style
+                  onboarding where the agents literally wake up one by one as you
+                  set your preferences. Shipped with Om Sanan, Owen Fisher, and
+                  Jimin Bang.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-4">
+                  <TrackedLink
+                    href="https://www.linkedin.com/in/mohossy/"
+                    eventName="hacktech_linkedin_click"
+                    target="_blank"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
+                  >
+                    Read the announcement
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                  </TrackedLink>
+                </div>
+              </div>
+              <div className="lg:border-l lg:border-[var(--line)] lg:pl-6">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Awards
+                </p>
+                <ul className="mt-2 space-y-2 text-sm text-[var(--text-soft)]">
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 text-base leading-none">&#129351;</span>
+                    <span><span className="font-medium text-[var(--text-strong)]">1st place</span> &mdash; Y Combinator track</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="mt-0.5 text-base leading-none">&#129353;</span>
+                    <span><span className="font-medium text-[var(--text-strong)]">3rd place</span> &mdash; Sideshift track</span>
+                  </li>
+                </ul>
+                <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Stack
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {["AI agents", "Ashby API", "Parallel agents", "Chat onboarding"].map((t) => (
+                    <span
+                      key={t}
+                      className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2.5 py-1 text-[11px] text-[var(--text-muted)]"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        </ScrollReveal>
+
         {/* ═══════════ PRODUCTS ═══════════ */}
         <ScrollReveal>
         <section id="products" className="section-shell mt-20">
