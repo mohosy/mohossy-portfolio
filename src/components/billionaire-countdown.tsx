@@ -54,9 +54,7 @@ export function BillionaireCountdown() {
         <span className="cd-overlay-sep" aria-hidden="true">:</span>
         <span aria-hidden="true">{ss}</span>
       </div>
-      <div className="cd-overlay-foot">
-        d : h : m : s · ends {DEADLINE_LABEL}
-      </div>
+      <div className="cd-overlay-foot">ends {DEADLINE_LABEL}</div>
     </aside>
   );
 }
