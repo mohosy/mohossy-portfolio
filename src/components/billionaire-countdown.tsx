@@ -38,11 +38,11 @@ export function BillionaireCountdown() {
   return (
     <aside
       className="cd-overlay"
-      aria-label="1000-day billionaire challenge countdown"
+      aria-label={`Countdown ending ${DEADLINE_LABEL}`}
     >
       <div className="cd-overlay-ribbon">
         <span className="cd-overlay-dot" aria-hidden="true">●</span>
-        1000-Day Billionaire Challenge
+        Countdown
       </div>
       <div className="cd-overlay-digits" suppressHydrationWarning>
         <span className="sr-only">{`${r.days} days, ${r.hours} hours, ${r.minutes} minutes, ${r.seconds} seconds remaining`}</span>
