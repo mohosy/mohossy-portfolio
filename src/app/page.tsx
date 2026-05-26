@@ -91,6 +91,7 @@ export default function Home() {
               priority
               className="h-auto w-full"
             />
+            <BillionaireCountdown />
           </div>
 
           <div className="section-shell relative">
@@ -163,9 +164,6 @@ export default function Home() {
             </p>
           </div>
         </section>
-
-        {/* ═══════════ 1000-DAY BILLIONAIRE COUNTDOWN ═══════════ */}
-        <BillionaireCountdown />
 
         {/* ═══════════ METRICS ═══════════ */}
         <ScrollReveal className="section-shell mt-10">
