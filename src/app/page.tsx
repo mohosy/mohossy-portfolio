@@ -10,6 +10,7 @@ import { TopNav } from "@/components/top-nav";
 import { TrackedLink } from "@/components/tracked-link";
 import { AutoPlayVideo } from "@/components/auto-play-video";
 import { ScrollReveal } from "@/components/scroll-reveal";
+import { BillionaireCountdown } from "@/components/billionaire-countdown";
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -162,6 +163,9 @@ export default function Home() {
             </p>
           </div>
         </section>
+
+        {/* ═══════════ 1000-DAY BILLIONAIRE COUNTDOWN ═══════════ */}
+        <BillionaireCountdown />
 
         {/* ═══════════ METRICS ═══════════ */}
         <ScrollReveal className="section-shell mt-10">
