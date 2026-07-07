@@ -182,6 +182,40 @@ export default function Home() {
           </div>
         </ScrollReveal>
 
+        {/* ═══════════ CURRENTLY WORKING ON ═══════════ */}
+        <ScrollReveal>
+        <section id="working-on" className="section-shell mt-20">
+          <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
+            <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+            Currently working on
+          </h2>
+
+          <div className="mt-6 grid gap-6 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6 sm:p-8 lg:grid-cols-[1fr_auto] lg:items-center">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-fresh)] animate-pulse" />
+                In progress
+              </span>
+              <h3 className="mt-3 text-[1.25rem] font-semibold leading-tight text-[var(--text-strong)] sm:text-[1.4rem]">
+                Building in public
+              </h3>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--text-soft)] sm:text-[0.95rem]">
+                A behind-the-scenes look at what I&apos;m building right now &mdash;
+                raw, unfiltered, straight from the bench. I&apos;ll refresh this clip
+                as the work moves forward.
+              </p>
+            </div>
+            <div className="flex justify-center lg:justify-end">
+              <AutoPlayVideo
+                src="/videos/currently-working-on.mp4"
+                poster="/images/working-on-poster.jpg"
+                className="w-full max-w-[18rem] overflow-hidden rounded-2xl border border-[var(--line)] bg-black"
+              />
+            </div>
+          </div>
+        </section>
+        </ScrollReveal>
+
         {/* ═══════════ SPEAKING ═══════════ */}
         <ScrollReveal>
         <section id="speaking" className="section-shell mt-20">
