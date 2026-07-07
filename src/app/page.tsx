@@ -200,9 +200,9 @@ export default function Home() {
                 Building in public
               </h3>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-[var(--text-soft)] sm:text-[0.95rem]">
-                A behind-the-scenes look at what I&apos;m building right now &mdash;
-                raw, unfiltered, straight from the bench. I&apos;ll refresh this clip
-                as the work moves forward.
+                A behind the scenes look at what I&apos;m building right now. Raw,
+                unfiltered, straight from the bench. I&apos;ll refresh this clip as
+                the work moves forward.
               </p>
             </div>
             <div className="flex justify-center lg:justify-end">
