@@ -10,7 +10,7 @@ import { TopNav } from "@/components/top-nav";
 import { TrackedLink } from "@/components/tracked-link";
 import { AutoPlayVideo } from "@/components/auto-play-video";
 import { ScrollReveal } from "@/components/scroll-reveal";
-import { BillionaireCountdown } from "@/components/billionaire-countdown";
+// import { BillionaireCountdown } from "@/components/billionaire-countdown";
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -91,7 +91,7 @@ export default function Home() {
               priority
               className="h-auto w-full"
             />
-            <BillionaireCountdown />
+            {/* <BillionaireCountdown /> hidden per request — uncomment this and the import above to restore */}
           </div>
 
           <div className="section-shell relative">

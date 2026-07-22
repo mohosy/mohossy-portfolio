@@ -45,6 +45,7 @@ export function TopNav() {
         </a>
 
         <div className="flex items-center gap-5">
+          {/* Resume button hidden per request — uncomment to restore
           <a
             href={siteProfile.resumeUrl}
             download="Mo-Shirmohammadi-Resume.pdf"
@@ -53,6 +54,7 @@ export function TopNav() {
           >
             Resume
           </a>
+          */}
           <a
             href={`mailto:${siteProfile.email}`}
             className="text-sm font-medium opacity-80 hover:opacity-100 transition-opacity"
