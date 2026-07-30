@@ -1,66 +1,137 @@
-                                 Mo Shirmohammadi
-Forbes-Featured Engineer • mshirmoh@usc.edu •  mohossy.com
+Mo Shirmohammadi
+Los Angeles, CA | mshirmoh@usc.edu | github.com/mohosy | mohossy.com
 
-             Education
-University of Southern California (USC)                                                                                                Expected: B.S. Dec 2027, M.S. Jun 2029
-B.S./M.S., Computer Science (Accelerated Program), Viterbi School of Engineering | GPA: 3.92
-• Relevant Coursework: Principles of Software Development, Algorithms & Theory of Computing, Discrete Methods in Computer Science, Probability Theory, Cognitive Science, Advanced Writing for Engineers
+
+EDUCATION
+
+University of Southern California (USC)                    Expected: B.S. Dec 2027
+Computer Science | Presidential Scholar | GPA: 3.90 | Upper Division: 4.0 | Dean's List
+- Accepted into USC's Progressive Degree Program (PDP), an optional path to an
+  accelerated M.S. in Computer Science
+- Coursework: Computer Networks, Distributed Systems, Operating Systems, Computer
+  Architecture, Algorithms, Probability Theory, Discrete Methods, Software Engineering,
+  Advanced Internetworking (upcoming, Fall 2026)
+
 Pasadena City College (PCC)
-A.S., Science, Computer Science | GPA: 3.83 | Coursework: Data Structures C++, Assembly, Linear Algebra, Multivariable Calc, Diff Eq                                                                                                                             
-
-       
-
+A.S., Science, Computer Science | GPA: 3.83
+Courses: Data Structures, Linear Algebra, Multivariable Calc, Differential Equations
 
 
+EXPERIENCE
 
-             Experience
-Founding Software Engineer, Pasadena City College 
-                                                               December 2024 - August 2025
+Network Engineer, Access Tech Security                    January 2025 - June 2026
+- Led network and security deployments at 9+ major client sites (La Salle, Flintridge,
+  Lake Elsinore) as primary liaison between Access Tech and Verkada, owning client
+  relationships, multi-vendor coordination, and end-to-end delivery from site survey
+  to cutover.
+- Segmented 45+ client networks (20 to 500 endpoints) with VLANs, inter-VLAN routing,
+  and ACLs across Cisco Catalyst, Ubiquiti UniFi, and FortiGate, isolating
+  cloud-connected IoT security devices from corporate traffic while maintaining a
+  99.9% uptime SLA.
+- Automated configuration backups and inventory tracking via Python (Netmiko) and
+  Excel macros, reducing manual audit time by 15 hours weekly and eliminating
+  configuration drift across 80+ managed switches.
+- Implemented SNMP-based monitoring (PRTG) across 35 client sites, establishing
+  proactive alerting that reduced emergency dispatch calls by 60% and cut average
+  incident response time to 45 minutes.
+- Managed structured cabling deployments across 23 commercial sites (medical, retail,
+  warehouse), completing 15,000+ ft of Cat6/Cat6a and fiber runs at 100% Fluke
+  DSX-5000 certification pass rate.
+- Diagnosed coverage gaps and co-channel interference across 18 high-density sites
+  using Ekahau/AirMagnet surveys, then optimized channel plans and repositioned APs
+  to lift average client signal from -72 dBm to -58 dBm and clear persistent dead zones.
+- Standardized rack build procedures and documentation templates, cutting average
+  deployment time from 12 to 6.5 hours per site and post-install support tickets by 40%.
 
-• Shipped a full-stack generative AI chatbot serving 30,000+ students, handling 640+ daily queries, centralizing campus resources.
-• Engineered a resilient Node.js/Express backend for OpenAI GPT-4 API integration, implementing custom rate limiting and caching that reduced response time by 50%.
-• Leveraged MongoDB interaction logs for prompt iteration, boosting answer accuracy from 38% to 66%.
-• Established a CI/CD pipeline with GitHub Actions, ESLint, and 50+ automated test cases across unit and integration suites, reducing deployment errors by 60% and enabling same-day feature releases.
-• Deployed centralized error logging with Sentry, enabling sub-hour incident response and 99.9% uptime.
-• Developed a RAG pipeline using vector embeddings and k-NN semantic search, indexing 900+ documents with sub-100ms retrieval and reducing hallucinations by 40%.
-• Created agentic mode using Browserbase, Playwright, and Manus AI for automated tasks like checking real-time class availability.
-• Built an intent classification layer that dynamically routes queries between agentic execution and direct LLM inference.
-• Introduced cross-session memory by storing conversation summaries and injecting relevant context into prompts, enabling personalized multi-turn interactions.
-• Integrated Redis for session caching and response memoization, reducing API costs by 36% and improving p95 latency.
-• Designed a responsive React frontend that streamed responses in real time, rendered markdown, and displayed conversation history, which improved user engagement and reduced page‑load time.
-• Added student ID authentication with session persistence, enabling secure access to personalized chat history.
+Software Engineering Intern, Intuitive Surgical                        Summer 2026
+- Building cloud-native data infrastructure on AWS and Kubernetes, with distributed
+  pipelines, microservices, and APIs ingesting high-volume telemetry from da Vinci
+  surgical robots and manufacturing systems for downstream analytics and ML.
+- Engineering a real-time Kafka/Flink service that flattens high-volume data streams
+  with low latency and low cost, generalizing it into a reusable transformer for other
+  business domains where data flattening is critical.
+- Implementing observability and infrastructure as code; hardening services through
+  unit/integration testing, code reviews, and security fixes in an Agile workflow.
 
-Verkada Systems Technician, Access Tech Security 
-April 2023 - Present
+Founder & Lead Engineer, LansoAI (Pasadena City College)   April 2023 - March 2025
+- Shipped full-stack AI chatbot serving 30,000+ students with 640+ daily queries;
+  centralized fragmented campus resources into a single conversational interface.
+- Engineered Node.js/Express backend for OpenAI GPT-4 integration with custom rate
+  limiting and request caching, cutting response time 50%.
+- Built RAG pipeline (vector embeddings, k-NN semantic search) indexing 900+ documents
+  with sub-100ms retrieval; reduced hallucinations 40%.
+- Iterated prompts using MongoDB interaction logs as ground truth, boosting answer
+  accuracy from 38% to 66%.
+- Established CI/CD pipeline (GitHub Actions, 50+ unit/integration tests) and Redis
+  session caching, cutting deployment errors 60% and API costs 36%.
+- Integrated Sentry error logging enabling sub-hour incident response and 99.9% uptime.
 
-• Diagnosed and resolved complex hardware-software integration failures across 150+ client sites, achieving a 90% first-visit resolution rate through systematic root cause analysis.
-• Configured enterprise networks (VLANs, subnets, static IPs) for cloud-based IoT connectivity, improving reliability and uptime.
-• Orchestrated deployment of 30+ integrated security systems, validating API endpoints and device interoperability among cameras, access control units, and the cloud dashboard, which delivered seamless security monitoring with zero integration errors.
-• Wrote Python scripts integrating Sonar, ROE, and GraphQL APIs to automate data sync across management systems.
-Lead Sensei of Curriculum Engagement, Code Ninjas 
-                                                                January 2023 - February 2025
+Founder, Code Can Bridge                              December 2021 - June 2023
+- Founded nonprofit teaching coding to students with learning disabilities; scaled to
+  3 branches and 80+ students; featured in Forbes Magazine.
+- Designed adaptive curriculum and recruited/mentored 10+ volunteer instructors;
+  iterated lesson plans based on student learning outcomes across multiple schools.
 
-• Designed a parent-teacher conference web system for 80+ families and instructed 12+ camps on Python/C# game development.
-Founder and CEO, Code Can Bridge Nonprofit                                                                                                           December 2021 - June 2023
 
-• Taught coding to students with learning disabilities; partnered with Pasadena schools, and improved learning outcomes by 60%.
+PROJECTS
 
-                 Projects
-Founder and Lead Engineer, IRL Social App 
-                                                                   March 2024 - January 2026
+TradeNet Fabric, Low-Latency Software-Defined Trading Network Simulator
+                                                        January 2026 - Present
+- Self-initiated project modeling multi-site trading infrastructure with BGP (iBGP
+  route reflectors, eBGP peering) and OSPF routing across 3 data centers and exchange
+  colocations in EVE-NG.
+- Built Python SDN controller ingesting real-time telemetry, calculating optimal paths
+  via latency metrics, and dynamically pushing BGP policy changes.
+- Instrumented eBPF-based traffic analysis for per-flow latency measurement with 10us
+  precision, jitter detection, and packet loss tracking feeding real-time metrics to
+  the SDN control plane for path optimization.
+- Developed chaos engineering framework with automated fault injection (link failures,
+  BGP hijacks, route flaps) achieving sub-100ms failover convergence and validating
+  automated recovery.
+- Streamlined multi-vendor configuration management (Cisco, Arista, Juniper) with
+  Ansible/Nornir and Jinja2 templates; version-controlled with CI validation.
+- Integrated RPKI validation pipeline checking ROA records against BGP announcements;
+  automated alerting and prefix filtering on origin violations.
+- Simulated market data distribution via PIM-SM multicast with IGMP snooping; measured
+  jitter variance across redundant paths to optimize feed delivery.
 
-• Launched a real-time social video platform with ephemeral DMs, live presence indicators, synchronized virtual hangouts, and in-chat multiplayer games to 470+ high school beta users.
-• Architected hybrid real-time layer combining Agora WebRTC (50ms voice/data) with Socket.io for presence and typing indicators.
-• Programmed real-time Battle Royale game with projectile physics, distance-based damage, knockback, and shrinking storm zones.
-• Implemented ephemeral messaging with Vision Camera capture, FFmpeg transcoding to H.264, view-once tracking with replay limits, sub-second screenshot detection with push alerts, and MongoDB TTL auto-expiration after 24 hours.
-• Crafted Bitmoji-style avatar layer with draggable characters, dance animations, and cross-device position sync at 50ms latency.
-AI-Powered Predator Detection Drone, 1st Place, 2024 HTCC Honors Conference	                             December 2023 - April 2024
-• Fine-tuned a TensorFlow/PyTorch computer vision model on 300+ labeled images, achieving ~80% validation accuracy for real-time coyote detection to protect outdoor pets in residential areas.
-• Deployed model on a Jetson Nano for edge inference, optimizing for real-time processing while considering the drone's battery.
-• Engineered an end-to-end alert pipeline triggering WhatsApp notifications to a neighborhood group upon predator detection.
+NetShield, eBPF/XDP Stateful Packet Filter                             May 2026
+- Engineered high-performance Linux firewall using XDP for line-rate packet processing,
+  achieving sub-microsecond filtering before kernel stack entry.
+- Programmed stateful connection tracking with BPF maps for TCP/UDP session management,
+  supporting allowlist/denylist policies and rate limiting.
+- Created declarative YAML policy engine that compiles rules to eBPF bytecode, enabling
+  version-controlled firewall configurations.
+- Exported Prometheus metrics for real-time visibility into drop rates, connection
+  states, and per-rule hit counts.
+- Benchmarked against iptables, demonstrating 3x throughput improvement under
+  synthetic load.
+- Tested with synthetic DDoS traffic patterns (SYN floods, UDP amplification)
+  validating filtering correctness under adversarial conditions.
 
-                                    Skills
-Languages: Python, JavaScript, TypeScript, Java, C++, C#, Swift, SQL, Bash, HTML/CSS
-Technologies: React, React Native, Node.js, Express, Django, Spring Boot, MongoDB, PostgreSQL, AWS, Docker, Git, Socket.io, Redis
-AI/ML: TensorFlow, PyTorch, OpenAI API, LangChain, RAG pipelines, vector embeddings, semantic search, prompt engineering
+IRL Social App, Founder & Lead Engineer, Real-Time Video Platform (470+ Users)
+                                                     March 2024 - January 2026
+- Solo-built and self-funded a video-first social platform ($26K earned working 3
+  minimum-wage jobs simultaneously), pivoting core features from user interviews to
+  scale school-by-school to 470+ users.
+- Architected hybrid real-time layer combining Agora WebRTC (50ms voice/data) with
+  Socket.io for presence and typing indicators.
+- Configured NGINX reverse proxy with SSL termination, WebSocket upgrades, and load
+  balancing across multiple Node.js application instances.
+- Implemented connection health monitoring with automatic reconnection logic handling
+  network transitions and latency spikes across mobile clients.
 
+
+SKILLS
+
+Networking & Protocols: ARP, BGP, OSPF, TCP/IP, VLANs, ACLs, SNMP, eBPF, WebRTC
+Infrastructure & Tools: Linux (*nix CLI), Cisco IOS/IOS-XE, Arista, Juniper, EVE-NG,
+  Docker, Wireshark, tcpdump, Ansible, Nornir, Netmiko, AWS
+Programming: Python, C++, Bash, Git, JSON, GraphQL
+
+Awards: TEDx Speaker (May 2026), Top 10 OpenAI Parameter Competition (2026), 1st Place
+  (Y Combinator Track) at Caltech Hackathon (2026), 1st Place HTCC Honors Conference
+  (2024), 2x Gold PVSA
+
+Publications Featured In: Forbes Magazine, POCIT (People of Color in Tech),
+  PCC Courier, USC SHINE Research

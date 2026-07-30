@@ -24,17 +24,21 @@ const mono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mohossy.com"),
   title: {
-    default: "Mo Shirmohammadi | Software Engineer Portfolio",
+    default: "Mo Shirmohammadi | Network & Systems Engineer",
     template: "%s | Mo Shirmohammadi",
   },
   description:
-    "Software engineer portfolio focused on distributed systems, data infrastructure, and applied ML. Includes interactive systems demos and flagship engineering projects.",
+    "Network and systems engineer working across BGP/OSPF routing fabrics, eBPF data planes, and cloud infrastructure, plus the automation and observability that keep them online.",
   keywords: [
     "Mo Shirmohammadi",
+    "Network Engineer",
+    "Systems Engineer",
+    "BGP",
+    "OSPF",
+    "eBPF",
+    "XDP",
+    "Network Automation",
     "Software Engineer",
-    "Distributed Systems",
-    "Data Infrastructure",
-    "Applied ML",
     "Portfolio",
     "USC",
   ],
@@ -44,24 +48,24 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "https://mohossy.com",
-    title: "Mo Shirmohammadi | Software Engineer Portfolio",
+    title: "Mo Shirmohammadi | Network & Systems Engineer",
     description:
-      "Production-minded systems, data, and ML engineering projects with interactive demos.",
+      "Routing fabrics, eBPF data planes, and cloud infrastructure, with the automation and observability that keep them online.",
     images: [
       {
-        url: "/images/touchless-ops-copilot.png",
-        width: 1200,
-        height: 630,
-        alt: "Surgical data mesh dashboard preview",
+        url: "/images/tedx/tedx-stage.jpg",
+        width: 2400,
+        height: 1600,
+        alt: "Mo Shirmohammadi speaking on the TEDx stage",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mo Shirmohammadi | Software Engineer Portfolio",
+    title: "Mo Shirmohammadi | Network & Systems Engineer",
     description:
-      "Production-minded systems, data, and ML engineering projects with interactive demos.",
-    images: ["/images/touchless-ops-copilot.png"],
+      "Routing fabrics, eBPF data planes, and cloud infrastructure, with the automation and observability that keep them online.",
+    images: ["/images/tedx/tedx-stage.jpg"],
   },
   robots: {
     index: true,

@@ -16,7 +16,7 @@ const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: siteProfile.name,
-  jobTitle: "Software Engineer",
+  jobTitle: "Network and Systems Engineer",
   email: `mailto:${siteProfile.email}`,
   url: "https://mohossy.com",
   sameAs: [
@@ -35,13 +35,15 @@ const personSchema = {
 };
 
 const proofMetrics = [
+  { value: "45+", label: "Networks Segmented", icon: "🌐" },
+  { value: "99.9%", label: "Uptime SLA", icon: "🟢" },
   { value: "30,000+", label: "Students Served", icon: "👥" },
-  { value: "640+", label: "Daily Queries", icon: "⚡" },
-  { value: "50%", label: "Latency Reduction", icon: "🚀" },
-  { value: "99.9%", label: "Uptime", icon: "🟢" },
+  { value: "60%", label: "Fewer Dispatches", icon: "⚡" },
 ];
 
 const projectIcons: Record<string, string> = {
+  "tradenet-fabric": "🌐",
+  netshield: "🛡️",
   "baby-monitor-wifi-csi": "📡",
   "surgical-data-mesh-platform": "🏥",
   "surggraph-pipeline": "📊",
@@ -114,9 +116,10 @@ export default function Home() {
               Mo Shirmohammadi
             </h1>
             <p className="mt-3 max-w-2xl text-base leading-relaxed text-[var(--text-soft)]">
-              Software Engineer building production-minded distributed systems,
-              data infrastructure, and applied ML. Passionate about software at
-              the intersection of reliability and social impact.
+              Network and systems engineer working across BGP/OSPF fabrics, eBPF
+              data planes, and cloud infrastructure &mdash; plus the automation
+              and observability that keep them online. Passionate about
+              engineering at the intersection of reliability and social impact.
             </p>
 
             {/* Social links with icons */}
@@ -160,7 +163,7 @@ export default function Home() {
 
             <p className="mt-3 flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              Los Angeles, CA &middot; B.S./M.S. Computer Science, USC Viterbi
+              Los Angeles, CA &middot; B.S. Computer Science, USC (Dec 2027)
             </p>
           </div>
         </section>
@@ -361,6 +364,122 @@ export default function Home() {
         </section>
         </ScrollReveal>
 
+        {/* ═══════════ EDUCATION & RECOGNITION ═══════════ */}
+        <ScrollReveal>
+        <section id="education" className="section-shell mt-20">
+          <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
+            <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1.66 2.69 3 6 3s6-1.34 6-3v-5"/></svg>
+            Education &amp; Recognition
+          </h2>
+
+          <div className="mt-6 grid gap-4 lg:grid-cols-2">
+            {/* Education */}
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                Education
+              </p>
+              <div className="mt-3 space-y-4">
+                <div>
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 className="text-base font-semibold text-[var(--text-strong)]">
+                      University of Southern California
+                    </h3>
+                    <span className="text-[11px] font-medium text-[var(--text-muted)]">
+                      B.S. expected Dec 2027
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--text-soft)]">
+                    B.S. Computer Science &middot; GPA 3.90 &middot; Upper
+                    Division 4.0
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {[
+                      "Presidential Scholar",
+                      "Dean's List",
+                      "Progressive Degree Program (PDP)",
+                    ].map((t) => (
+                      <span
+                        key={t}
+                        className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2.5 py-1 text-[11px] text-[var(--text-muted)]"
+                      >
+                        {t}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="border-t border-[var(--line)] pt-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 className="text-base font-semibold text-[var(--text-strong)]">
+                      Pasadena City College
+                    </h3>
+                    <span className="text-[11px] font-medium text-[var(--text-muted)]">
+                      A.S. Computer Science
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-[var(--text-soft)]">
+                    GPA 3.83 &middot; Data Structures, Linear Algebra,
+                    Multivariable Calc, Differential Equations
+                  </p>
+                </div>
+                <div className="border-t border-[var(--line)] pt-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                    Coursework
+                  </p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-[var(--text-soft)]">
+                    Computer Networks, Distributed Systems, Operating Systems,
+                    Computer Architecture, Algorithms, Probability Theory,
+                    Discrete Methods, Software Engineering, Advanced
+                    Internetworking (Fall 2026)
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Awards + press */}
+            <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-6">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                Awards
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-[var(--text-soft)]">
+                {[
+                  "TEDx Speaker (May 2026)",
+                  "Top 10 — OpenAI Parameter Competition (2026)",
+                  "1st Place, Y Combinator Track — Caltech Hackathon (2026)",
+                  "1st Place — HTCC Honors Conference (2024)",
+                  "2x Gold Presidential Volunteer Service Award",
+                ].map((award) => (
+                  <li key={award} className="flex items-start gap-2">
+                    <svg className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg>
+                    {award}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-5 border-t border-[var(--line)] pt-4">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+                  Featured In
+                </p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {[
+                    "Forbes Magazine",
+                    "POCIT (People of Color in Tech)",
+                    "PCC Courier",
+                    "USC SHINE Research",
+                  ].map((pub) => (
+                    <span
+                      key={pub}
+                      className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2.5 py-1 text-[11px] text-[var(--text-muted)]"
+                    >
+                      {pub}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        </ScrollReveal>
+
         {/* ═══════════ PRODUCTS ═══════════ */}
         <ScrollReveal>
         <section id="products" className="section-shell mt-20">
@@ -385,10 +504,20 @@ export default function Home() {
                 </h3>
               </div>
               <p className="text-sm leading-relaxed text-[var(--text-soft)]">
-                Social video app with real-time interactions, media capture, and push workflows. Full-stack React Native + Node.js.
+                Video-first social platform I solo-built and self-funded
+                &mdash; $26K earned working three minimum-wage jobs at once
+                &mdash; pivoting core features from user interviews to scale
+                school-by-school to 470+ users. Hybrid real-time layer pairing
+                Agora WebRTC (50ms voice/data) with Socket.io for presence and
+                typing indicators, behind an NGINX reverse proxy handling SSL
+                termination, WebSocket upgrades, and load balancing across
+                multiple Node.js instances.
+              </p>
+              <p className="mt-2 text-xs text-[var(--text-muted)]">
+                Founder &amp; Lead Engineer &middot; March 2024 &ndash; January 2026
               </p>
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {["React Native", "TypeScript", "Node.js", "Socket.IO", "MongoDB", "AWS"].map((t) => (
+                {["React Native", "TypeScript", "Node.js", "Agora WebRTC", "Socket.IO", "NGINX", "MongoDB", "AWS"].map((t) => (
                   <span
                     key={t}
                     className="rounded-full border border-[var(--line)] bg-[var(--surface-alt)] px-2 py-0.5 text-[11px] text-[var(--text-muted)]"
@@ -397,25 +526,9 @@ export default function Home() {
                   </span>
                 ))}
               </div>
-              <div className="mt-3 flex gap-4">
-                <TrackedLink
-                  href="https://github.com/mohosy/irl-official"
-                  eventName="irl_repo_click"
-                  target="_blank"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-fresh)] hover:underline"
-                >
-                  Repository
-                  <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
-                </TrackedLink>
-                <TrackedLink
-                  href="https://theirlapp.com"
-                  eventName="irl_web_click"
-                  target="_blank"
-                  className="text-sm text-[var(--text-muted)] hover:underline"
-                >
-                  Web profiles
-                </TrackedLink>
-              </div>
+              {/* Repository and theirlapp.com links removed: the repo is not
+                  public (404) and the domain no longer resolves. Restore here
+                  if the repo is opened up or the domain comes back. */}
             </div>
             <div className="flex items-center justify-center md:justify-end">
               <AutoPlayVideo
@@ -562,7 +675,7 @@ export default function Home() {
         <section id="projects" className="section-shell mt-20">
           <h2 className="flex items-center gap-2 text-[1.5rem] font-bold tracking-tight sm:text-[1.75rem] text-[var(--text-strong)]">
             <svg className="h-6 w-6 text-[var(--accent-fresh)]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
-            Systems &amp; Infrastructure
+            Networking &amp; Systems
           </h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             {systemsProjects.map((project) => (
@@ -699,12 +812,16 @@ export default function Home() {
             </div>
             <div>
               <p className="text-sm leading-relaxed text-[var(--text-soft)]">
-                I&apos;m in USC&apos;s accelerated B.S./M.S. Computer Science track.
-                My engineering style is pragmatic: design for reliability first,
+                I&apos;m a Computer Science major at USC (B.S. expected Dec 2027),
+                a Presidential Scholar, and accepted into USC&apos;s Progressive
+                Degree Program &mdash; an optional path to an accelerated M.S. My
+                engineering style is pragmatic: design for reliability first,
                 instrument every critical path, and let measurable outcomes drive
-                iteration. Outside class and internships, I build from-scratch
-                engines and simulators to sharpen systems intuition — replication,
-                scheduling, storage internals, consensus, and model pipelines.
+                iteration. Most of what I know came from production networks
+                &mdash; segmenting client sites, chasing co-channel interference,
+                automating the audits nobody wants to do by hand. Outside class
+                and internships I build routing fabrics, packet filters, and
+                from-scratch engines to sharpen that intuition.
               </p>
               <div className="mt-5 space-y-3">
                 {skillGroups.map((group) => (

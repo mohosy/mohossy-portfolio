@@ -9,7 +9,7 @@ import type {
 export const siteProfile: SiteProfile = {
   name: "Mo Shirmohammadi",
   tagline:
-    "Software Engineer building production-minded distributed systems, data infrastructure, and applied ML.",
+    "Network and systems engineer building low-latency routed networks, eBPF data planes, and the automation that keeps them running.",
   email: "mohoshirmo@gmail.com",
   linkedinUrl: "https://linkedin.com/in/mohossy",
   githubUrl: "https://github.com/mohosy",
@@ -33,23 +33,26 @@ export const navItems = [
 export const credibility: CredibilityItem[] = [
   {
     label: "Education",
-    value: "USC Viterbi B.S./M.S. (Computer Science, Spring 2029)",
+    value: "USC B.S. Computer Science (Dec 2027) · Presidential Scholar · GPA 3.90",
   },
   {
     label: "Scale",
-    value: "AI student-support chatbot used by 30,000+ students",
+    value: "45+ client networks segmented across 9+ major sites",
   },
   {
     label: "Impact",
-    value: "640+ daily queries, 50% lower latency, 99.9% uptime",
+    value: "99.9% uptime SLA, 60% fewer emergency dispatches",
   },
   {
     label: "Recognition",
-    value: "Forbes-featured · 1st Place HTCC 2024",
+    value: "TEDx speaker · Forbes-featured · 1st Place YC Track, Caltech Hackathon",
   },
 ];
 
-export const flagshipProjects: ProjectEntry[] = [
+// Self-directed systems builds. Kept on the site as a depth catalog, but the
+// resume leads with the networking work below, so these render in the compact
+// "More Projects" list rather than the featured grid.
+const systemsCatalog: ProjectEntry[] = [
   {
     slug: "surgical-data-mesh-platform",
     name: "Surgical Data Mesh Platform",
@@ -249,7 +252,61 @@ export const flagshipProjects: ProjectEntry[] = [
   },
 ];
 
-export const secondaryProjects: ProjectEntry[] = [
+export const flagshipProjects: ProjectEntry[] = [
+  {
+    slug: "tradenet-fabric",
+    name: "TradeNet Fabric",
+    repoUrl: "https://github.com/mohosy/tradenet-fabric",
+    tier: "flagship",
+    domains: ["systems"],
+    summary:
+      "Low-latency software-defined trading network simulator modeling multi-site trading infrastructure with BGP and OSPF routing across 3 data centers and exchange colocations in EVE-NG.",
+    stack: ["Python", "BGP", "OSPF", "eBPF", "Ansible", "Nornir", "EVE-NG"],
+    architecture: [
+      "iBGP route reflectors and eBGP peering across 3 data centers and exchange colos",
+      "Python SDN controller ingesting real-time telemetry and pushing BGP policy changes by latency metric",
+      "eBPF per-flow latency measurement at 10μs precision with jitter detection and packet-loss tracking",
+      "Chaos engineering framework with automated fault injection (link failures, BGP hijacks, route flaps)",
+      "RPKI validation pipeline checking ROA records with automated prefix filtering on origin violations",
+    ],
+    metrics: [
+      { label: "Measurement", value: "10μs per-flow precision" },
+      { label: "Failover", value: "Sub-100ms convergence" },
+      { label: "Multi-vendor", value: "Cisco / Arista / Juniper" },
+    ],
+    image: "/images/profile-circular.png",
+    visual: { template: "network", seed: 12, density: 3 },
+    recruiterHook:
+      "SDN control plane with eBPF latency telemetry and chaos-validated BGP failover.",
+  },
+  {
+    slug: "netshield",
+    name: "NetShield",
+    repoUrl: "https://github.com/mohosy/netshield",
+    tier: "flagship",
+    domains: ["systems"],
+    summary:
+      "High-performance Linux firewall using eBPF/XDP for line-rate packet processing, filtering in sub-microsecond time before packets enter the kernel stack.",
+    stack: ["eBPF", "XDP", "C", "Linux", "Prometheus", "YAML"],
+    architecture: [
+      "XDP hook filtering at line rate before kernel stack entry",
+      "Stateful TCP/UDP connection tracking in BPF maps with allowlist/denylist policies and rate limiting",
+      "Declarative YAML policy engine compiling rules to eBPF bytecode for version-controlled firewalls",
+      "Prometheus metrics for drop rates, connection states, and per-rule hit counts",
+    ],
+    metrics: [
+      { label: "Throughput", value: "3x iptables under load" },
+      { label: "Latency", value: "Sub-microsecond filtering" },
+      { label: "Validation", value: "SYN flood / UDP amplification" },
+    ],
+    image: "/images/profile-circular.png",
+    visual: { template: "network", seed: 13, density: 3 },
+    recruiterHook:
+      "Line-rate XDP packet filter benchmarked at 3x iptables throughput.",
+  },
+];
+
+const smallProjects: ProjectEntry[] = [
   {
     slug: "lsm-tree-storage-engine",
     name: "LSM-Tree Storage Engine",
@@ -424,6 +481,11 @@ export const secondaryProjects: ProjectEntry[] = [
   },
 ];
 
+export const secondaryProjects: ProjectEntry[] = [
+  ...systemsCatalog,
+  ...smallProjects,
+];
+
 export const demos: DemoEntry[] = [
   {
     id: "scheduler-lab",
@@ -481,26 +543,49 @@ export const demos: DemoEntry[] = [
 
 export const experience: ExperienceEntry[] = [
   {
-    org: "Pasadena City College",
-    role: "Founding Software Engineer",
-    dateRange: "Dec 2024 - Aug 2025",
+    org: "Intuitive Surgical",
+    role: "Software Engineering Intern",
+    dateRange: "Summer 2026",
     bullets: [
-      "Shipped a full-stack generative AI chatbot serving 30,000+ students and handling 640+ daily queries.",
-      "Cut response latency by 50% with backend rate limiting, caching, and optimized OpenAI API orchestration.",
-      "Improved answer accuracy from 38% to 66% through interaction-log-driven prompt iteration.",
-      "Built CI/CD with GitHub Actions and 50+ automated tests, reducing deployment errors by 60%.",
-      "Launched RAG with vector search over 900+ documents and reduced hallucinations by 40%.",
-      "Sustained 99.9% uptime with centralized Sentry error telemetry and sub-hour incident response.",
+      "Building cloud-native data infrastructure on AWS and Kubernetes, with distributed pipelines, microservices, and APIs ingesting high-volume telemetry from da Vinci surgical robots and manufacturing systems for downstream analytics and ML.",
+      "Engineering a real-time Kafka/Flink service that flattens high-volume data streams with low latency and low cost, generalizing it into a reusable transformer for other business domains where data flattening is critical.",
+      "Implementing observability and infrastructure as code; hardening services through unit/integration testing, code reviews, and security fixes in an Agile workflow.",
     ],
   },
   {
     org: "Access Tech Security",
-    role: "Verkada Systems Technician",
-    dateRange: "Apr 2023 - Present",
+    role: "Network Engineer",
+    dateRange: "January 2025 - June 2026",
     bullets: [
-      "Resolved hardware-software integration failures across 150+ client sites with a 90% first-visit resolution rate.",
-      "Configured enterprise VLAN/subnet/static-IP network setups for reliable IoT cloud connectivity.",
-      "Automated cross-platform data synchronization with Python against Sonar, ROE, and GraphQL APIs.",
+      "Led network and security deployments at 9+ major client sites (La Salle, Flintridge, Lake Elsinore) as primary liaison between Access Tech and Verkada, owning client relationships, multi-vendor coordination, and end-to-end delivery from site survey to cutover.",
+      "Segmented 45+ client networks (20 to 500 endpoints) with VLANs, inter-VLAN routing, and ACLs across Cisco Catalyst, Ubiquiti UniFi, and FortiGate, isolating cloud-connected IoT security devices from corporate traffic while maintaining a 99.9% uptime SLA.",
+      "Automated configuration backups and inventory tracking via Python (Netmiko) and Excel macros, reducing manual audit time by 15 hours weekly and eliminating configuration drift across 80+ managed switches.",
+      "Implemented SNMP-based monitoring (PRTG) across 35 client sites, establishing proactive alerting that reduced emergency dispatch calls by 60% and cut average incident response time to 45 minutes.",
+      "Managed structured cabling deployments across 23 commercial sites (medical, retail, warehouse), completing 15,000+ ft of Cat6/Cat6a and fiber runs at a 100% Fluke DSX-5000 certification pass rate.",
+      "Diagnosed coverage gaps and co-channel interference across 18 high-density sites using Ekahau/AirMagnet surveys, then optimized channel plans and repositioned APs to lift average client signal from -72 dBm to -58 dBm and clear persistent dead zones.",
+      "Standardized rack build procedures and documentation templates, cutting average deployment time from 12 to 6.5 hours per site and post-install support tickets by 40%.",
+    ],
+  },
+  {
+    org: "LansoAI (Pasadena City College)",
+    role: "Founder & Lead Engineer",
+    dateRange: "April 2023 - March 2025",
+    bullets: [
+      "Shipped a full-stack AI chatbot serving 30,000+ students with 640+ daily queries; centralized fragmented campus resources into a single conversational interface.",
+      "Engineered a Node.js/Express backend for OpenAI GPT-4 integration with custom rate limiting and request caching, cutting response time 50%.",
+      "Built a RAG pipeline (vector embeddings, k-NN semantic search) indexing 900+ documents with sub-100ms retrieval; reduced hallucinations 40%.",
+      "Iterated prompts using MongoDB interaction logs as ground truth, boosting answer accuracy from 38% to 66%.",
+      "Established a CI/CD pipeline (GitHub Actions, 50+ unit/integration tests) and Redis session caching, cutting deployment errors 60% and API costs 36%.",
+      "Integrated Sentry error logging enabling sub-hour incident response and 99.9% uptime.",
+    ],
+  },
+  {
+    org: "Code Can Bridge",
+    role: "Founder",
+    dateRange: "December 2021 - June 2023",
+    bullets: [
+      "Founded a nonprofit teaching coding to students with learning disabilities; scaled to 3 branches and 80+ students; featured in Forbes Magazine.",
+      "Designed an adaptive curriculum and recruited/mentored 10+ volunteer instructors; iterated lesson plans based on student learning outcomes across multiple schools.",
     ],
   },
   {
@@ -516,50 +601,55 @@ export const experience: ExperienceEntry[] = [
 
 export const skillGroups = [
   {
-    category: "Languages",
+    category: "Networking & Protocols",
     items: [
-      "Python",
-      "JavaScript",
-      "TypeScript",
-      "Java",
-      "C++",
-      "Swift",
-      "SQL",
-      "Bash",
+      "ARP",
+      "BGP",
+      "OSPF",
+      "TCP/IP",
+      "VLANs",
+      "ACLs",
+      "SNMP",
+      "eBPF",
+      "WebRTC",
     ],
   },
   {
-    category: "Backend & APIs",
-    items: ["Node.js", "Express", "Django", "Spring Boot", "FastAPI", "GraphQL"],
-  },
-  {
-    category: "Data & Infra",
+    category: "Infrastructure & Tools",
     items: [
-      "PostgreSQL",
-      "MongoDB",
-      "Cassandra",
-      "Elasticsearch",
-      "Redis",
-      "Kafka",
-      "Spark",
-      "Iceberg",
-      "Airflow",
-      "dbt",
+      "Linux (*nix CLI)",
+      "Cisco IOS/IOS-XE",
+      "Arista",
+      "Juniper",
+      "EVE-NG",
       "Docker",
-      "Kubernetes",
-      "Terraform",
+      "Wireshark",
+      "tcpdump",
+      "Ansible",
+      "Nornir",
+      "Netmiko",
       "AWS",
     ],
   },
   {
-    category: "AI/ML",
+    category: "Programming",
+    items: ["Python", "C++", "Bash", "Git", "JSON", "GraphQL"],
+  },
+  {
+    category: "Also Build With",
     items: [
+      "JavaScript",
+      "TypeScript",
+      "Java",
+      "Node.js",
+      "React Native",
+      "PostgreSQL",
+      "MongoDB",
+      "Redis",
+      "Kafka",
+      "Kubernetes",
       "OpenAI API",
       "RAG Pipelines",
-      "Vector Embeddings",
-      "TensorFlow",
-      "PyTorch",
-      "Prompt Engineering",
     ],
   },
 ];
