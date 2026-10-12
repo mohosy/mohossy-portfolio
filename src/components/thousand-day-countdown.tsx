@@ -377,6 +377,8 @@ type PreparedArt = Art & {
   isEdge: (c: number, r: number) => boolean;
   fillRows: number[];
   fillTotal: number;
+  // For each column, the rows whose cells hold gold.
+  fillCols: number[][];
   // Top and bottom (in frame pixels) of the area that can hold gold.
   fillTop: number;
   fillBottom: number;
@@ -393,6 +395,9 @@ function prepare(art: Art): PreparedArt {
     for (let c = 0; c < cols; c++) if (isBody(c, r) && !isEdge(c, r) && !ink[r * cols + c]) count++;
     return count;
   });
+  const fillCols = Array.from({ length: cols }, (_, c) =>
+    Array.from({ length: rows }, (_, r) => r).filter((r) => isBody(c, r) && !isEdge(c, r) && !ink[r * cols + c]),
+  );
   const firstRow = fillRows.findIndex((n) => n > 0);
   const lastRow = fillRows.length - 1 - [...fillRows].reverse().findIndex((n) => n > 0);
   return {
@@ -401,6 +406,7 @@ function prepare(art: Art): PreparedArt {
     isEdge,
     fillRows,
     fillTotal: fillRows.reduce((sum, n) => sum + n, 0),
+    fillCols,
     fillTop: art.top + firstRow * art.cell,
     fillBottom: art.top + (lastRow + 1) * art.cell,
   };
@@ -430,33 +436,56 @@ function goldLevel(art: PreparedArt, fraction: number) {
   return top + firstRow * cell;
 }
 
+// Surface height for each column, wave included, such that the gold covers exactly `fraction`
+// of the fillable area. The gold's area only shrinks as the surface moves down, so a quick
+// bisection pins it to well under a millionth of a cell, every frame.
+function solveSurfaces(art: PreparedArt, fraction: number, offsets: number[]) {
+  const { cell, top, fillCols, fillTotal } = art;
+  const target = clamp01(fraction) * fillTotal;
+  const area = (base: number) => {
+    let sum = 0;
+    fillCols.forEach((rowsInCol, c) => {
+      const surface = base + offsets[c];
+      for (const r of rowsInCol) sum += clamp01((top + (r + 1) * cell - surface) / cell);
+    });
+    return sum;
+  };
+  let lo = art.fillTop - cell * 2;
+  let hi = art.fillBottom + cell * 2;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (area(mid) > target) lo = mid;
+    else hi = mid;
+  }
+  const base = (lo + hi) / 2;
+  return offsets.map((o) => base + o);
+}
+
 function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: number, seconds: number, waveMs: number) {
   const { cols, rows, cell, left, top, ink, isBody, isEdge } = art;
   const level = goldLevel(art, fraction);
-  // The wave's crests and dips cancel out, so it doesn't change how much gold shows. Near
-  // full or empty it shrinks so it never runs past the top or bottom, which would break that.
+  // A gentle wave on the surface. Near full or empty it shrinks so it never runs past the top
+  // or bottom of the shape.
   const amplitude = Math.max(0, Math.min(cell * 0.45, (level - art.fillTop) / 2, (art.fillBottom - level) / 2));
   const offsets = Array.from(
     { length: cols },
     (_, c) => amplitude * Math.sin(((left + c * cell) / 260) * Math.PI * 2 + (waveMs / 1600) * Math.PI * 2),
   );
-  // Re-center the wave on the columns that hold gold at this height, so in every frame its
-  // crests add exactly as much gold as its dips remove.
-  const levelRow = Math.min(rows - 1, Math.max(0, Math.floor((level - top) / cell)));
-  const holdsGold = (c: number) => isBody(c, levelRow) && !isEdge(c, levelRow) && !ink[levelRow * cols + c];
-  const goldCols = offsets.filter((_, c) => holdsGold(c));
-  const shift = goldCols.length ? goldCols.reduce((sum, o) => sum + o, 0) / goldCols.length : 0;
-  const surfaces = offsets.map((o) => level + o - shift);
+  const surfaces = solveSurfaces(art, fraction, offsets);
   // Each colour is collected into one path and filled once, so neighbouring cells never show
-  // hairline seams, even when the clip zooms in. Gold bleeds a hair sideways and down, where it
-  // always runs under an outline, never up past its surface.
+  // hairline seams, even when the clip zooms in.
   const gold = new Path2D();
   const shine = new Path2D();
   const inkPath = new Path2D();
   const bleed = 0.5;
+  const under = (cc: number, rr: number) => ink[rr * cols + cc] === 1 || isEdge(cc, rr);
   for (let c = 0; c < cols; c++) {
     const x = left + c * cell;
     const surface = surfaces[c];
+    // The light band just under the surface, then plain gold below it. They sit side by side
+    // (the band reaches 1 px under the gold so their shared edge has no gap), never stacked, so
+    // the soft top edge shows exactly as much gold as is really there.
+    const shineEnd = surface + cell * 0.5;
     for (let r = 0; r < rows; r++) {
       const y = top + r * cell;
       if (ink[r * cols + c] || isEdge(c, r)) {
@@ -465,14 +494,23 @@ function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: numb
       }
       if (!isBody(c, r) || y + cell <= surface) continue;
       const from = Math.max(y, surface);
-      gold.rect(x - bleed, from, cell + bleed * 2, y + cell - from + bleed);
-      if (surface > y - cell * 0.5) shine.rect(x, from, cell, Math.min(cell * 0.5, y + cell - from));
+      const bottom = y + cell;
+      // Bleed only under an outline, so it hides the seam without adding any visible gold.
+      const bl = under(c - 1, r) ? bleed : 0;
+      const br = under(c + 1, r) ? bleed : 0;
+      const bb = under(c, r + 1) ? bleed : 0;
+      if (from < shineEnd) {
+        const end = Math.min(bottom, shineEnd + 1);
+        shine.rect(x - bl, from, cell + bl + br, end - from + (end === bottom ? bb : 0));
+      }
+      const goldFrom = Math.max(from, shineEnd);
+      if (goldFrom < bottom) gold.rect(x - bl, goldFrom, cell + bl + br, bottom - goldFrom + bb);
     }
   }
-  ctx.fillStyle = GOLD;
-  ctx.fill(gold);
   ctx.fillStyle = GOLD_LIGHT;
   ctx.fill(shine);
+  ctx.fillStyle = GOLD;
+  ctx.fill(gold);
   ctx.fillStyle = INK;
   ctx.fill(inkPath);
 
