@@ -597,7 +597,8 @@ const INTRO = {
   spinStart: 0.15,
   firstStop: 1.55,
   stopGap: 0.25,
-  drainStart: 0.35,
+  drainStart: 0.3,
+  drainEnd: 1.3,
   typeGap: 0.55,
   typeStep: 0.04,
   hookGap: 0.2,
@@ -733,21 +734,37 @@ function drawFrame(
 
 // The clip opens full of gold and drains to the countdown's true level, landing together
 // with the spinning day number; from then on every frame shows the real value.
-const CLOSE_UP = 3;
-const ZOOM_OUT_S = 1;
+// How close the opening shot gets: close enough that today's drop covers ~240 px on screen.
+// Early on the gold only falls a few pixels, so the camera goes in tighter (up to 24x);
+// once the drop is big it stays at 3x so the whole pour is in view.
+const DROP_ON_SCREEN = 240;
+const MIN_CLOSE_UP = 3;
+const MAX_CLOSE_UP = 24;
 
 function withIntro(state: FrameState, clipSeconds: number): FrameState {
+  const art = getArt();
   const { landed } = introTimes(String(state.day).length);
-  const p = easeInOut(clamp01((clipSeconds - INTRO.drainStart) / (landed - INTRO.drainStart)));
+  // The gold drains first, while the camera is in close, and holds a beat at its new level.
+  const p = easeInOut(clamp01((clipSeconds - INTRO.drainStart) / (INTRO.drainEnd - INTRO.drainStart)));
   const fraction = 1 + (state.fraction - 1) * p;
-  // The camera opens close on the gold's surface (kept in the upper part of the shot) and
-  // follows it down; it eases back out to the whole frame as the day number lands.
-  const follow = goldLevel(getArt(), fraction) + (FRAME_H / CLOSE_UP) * 0.22;
-  const out = easeInOut(clamp01((clipSeconds - (landed - ZOOM_OUT_S / 2)) / ZOOM_OUT_S));
-  const camera =
-    out >= 1
-      ? undefined
-      : { zoom: CLOSE_UP + (1 - CLOSE_UP) * out, cx: FRAME_W / 2, cy: follow + (FRAME_H / 2 - follow) * out };
+  const drop = goldLevel(art, state.fraction) - goldLevel(art, 1);
+  const closeUp = Math.min(MAX_CLOSE_UP, Math.max(MIN_CLOSE_UP, DROP_ON_SCREEN / Math.max(drop, 0.01)));
+
+  // The shot opens with the surface a quarter of the way down and holds still, so you watch the
+  // gold drop. If the drop would run past half the screen, the camera follows part of the way
+  // (in step with the gold, so it never jerks) to keep the surface in view. Then it pulls back
+  // to the whole frame as the day number locks in. The zoom changes at an even rate (log scale)
+  // and the centre slides with the size of the view, so even a 24x pull-back feels smooth.
+  const zoomStart = INTRO.drainEnd + 0.15;
+  const out = easeInOut(clamp01((clipSeconds - zoomStart) / (landed + 0.25 - zoomStart)));
+  if (out >= 1) return { ...state, introS: clipSeconds, fraction };
+  const zoom = closeUp ** (1 - out);
+  const travel = drop * closeUp;
+  const followShare = travel > FRAME_H * 0.5 ? 1 - (FRAME_H * 0.5) / travel : 0;
+  const startLevel = goldLevel(art, 1);
+  const follow = startLevel + (FRAME_H / closeUp) * 0.25 + followShare * (goldLevel(art, fraction) - startLevel);
+  const widen = (1 / zoom - 1 / closeUp) / (1 - 1 / closeUp);
+  const camera = { zoom, cx: FRAME_W / 2, cy: follow + (FRAME_H / 2 - follow) * widen };
   return { ...state, introS: clipSeconds, fraction, camera };
 }
 
@@ -787,7 +804,7 @@ async function renderClipAudio(startMs: number) {
   const liquid = ctx.createGain();
   liquid.gain.value = 0.3 + 0.7 * clamp01(drained / 0.1);
   liquid.connect(out);
-  playVoice(ctx, pour(INTRO.drainStart, landed), 0, liquid);
+  playVoice(ctx, pour(INTRO.drainStart, INTRO.drainEnd), 0, liquid);
   for (const [text, start] of [[ABOUT, typeStart], [HOOK, hookStart], [TALK, talkStart]] as const) {
     [...text].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, start + i * INTRO.typeStep, out));
   }
