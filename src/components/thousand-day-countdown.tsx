@@ -105,11 +105,28 @@ function watchTick(detune = 1, gain = 1): Voice {
   };
 }
 
+// A small gold coin clink: a quick click and a few bright, inharmonic rings.
+function coinClink(detune = 1, at = 0): Voice {
+  return {
+    noise: [{ filter: "bandpass", freq: 6000 * detune, q: 1.5, gain: 0.2, decay: 0.006, at }],
+    tones: [
+      { freq: 2950 * detune, gain: 0.09, decay: 0.35, at },
+      { freq: 4210 * detune, gain: 0.075, decay: 0.26, at },
+      { freq: 5680 * detune, gain: 0.05, decay: 0.18, at },
+      { freq: 7390 * detune, gain: 0.035, decay: 0.12, at },
+    ],
+  };
+}
+
 const SOUNDS = {
   tick: watchTick(),
   tock: watchTick(0.88),
   minute: watchTick(0.8, 1.25),
-  lock: knock(560, { gain: 1.1, decay: 0.08 }),
+  ratchet: {
+    noise: [{ filter: "bandpass", freq: 2600, q: 2, gain: 0.3, decay: 0.006 }],
+    tones: [{ freq: 1900, gain: 0.03, decay: 0.012 }],
+  },
+  chaChing: combine(coinClink(0.9), coinClink(1, 0.085)),
   type: knock(1500, { gain: 0.3, decay: 0.03 }),
   start: combine(knock(820), knock(600, { at: 0.08 })),
   reset: combine(knock(600), knock(820, { at: 0.08 })),
@@ -567,8 +584,16 @@ const INTRO = {
 function introTimes(digits: number) {
   const landed = INTRO.firstStop + (digits - 1) * INTRO.stopGap;
   const typeStart = landed + INTRO.typeGap;
-  const hookStart = typeStart + ABOUT.length * INTRO.typeStep + INTRO.hookGap;
-  return { landed, typeStart, hookStart };
+  const typeEnd = typeStart + ABOUT.length * INTRO.typeStep;
+  const hookStart = typeEnd + INTRO.hookGap;
+  return { landed, typeStart, typeEnd, hookStart };
+}
+
+// How far reel `i` still has to roll (in digits) at clip time `t`; 0 once it has landed.
+function reelOffset(i: number, t: number) {
+  const stop = INTRO.firstStop + i * INTRO.stopGap;
+  const u = clamp01((t - INTRO.spinStart) / (stop - INTRO.spinStart));
+  return (2 + i) * 10 * (1 - backOut(u));
 }
 
 const easeInOut = (p: number) => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
@@ -583,9 +608,7 @@ function drawSlotNumber(ctx: CanvasRenderingContext2D, number: string, x: number
   ctx.textAlign = "center";
   [...number].forEach((char, i) => {
     const w = ctx.measureText(char).width;
-    const stop = INTRO.firstStop + i * INTRO.stopGap;
-    const u = clamp01((t - INTRO.spinStart) / (stop - INTRO.spinStart));
-    const reel = Number(char) + (2 + i) * 10 * (1 - backOut(u));
+    const reel = Number(char) + reelOffset(i, t);
     const k = Math.floor(reel);
     const f = reel - k;
     ctx.save();
@@ -676,14 +699,30 @@ async function renderClipAudio(startMs: number) {
   const out = ctx.createGain();
   out.gain.value = 1.8;
   out.connect(ctx.destination);
-  if (startMs === 0) playVoice(ctx, SOUNDS.start, 0, out);
   const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
-  const { typeStart } = introTimes(digits);
-  for (let i = 0; i < digits; i++) playVoice(ctx, SOUNDS.lock, INTRO.firstStop + i * INTRO.stopGap, out);
+  const { landed, typeStart, typeEnd } = introTimes(digits);
+
+  // A ratchet click each time the last reel rolls past a digit (at most ~40 a second),
+  // so it races, slows and settles with the picture; then a cha-ching as it lands.
+  let lastClick = -1;
+  let lastDigit = Math.floor(reelOffset(digits - 1, INTRO.spinStart));
+  for (let t = INTRO.spinStart; t <= landed + 0.3; t += 0.001) {
+    const digit = Math.floor(reelOffset(digits - 1, t));
+    if (digit !== lastDigit && t - lastClick >= 0.025) {
+      playVoice(ctx, SOUNDS.ratchet, t, out);
+      lastClick = t;
+    }
+    lastDigit = digit;
+  }
+  playVoice(ctx, SOUNDS.chaChing, landed, out);
   [...ABOUT].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, typeStart + i * INTRO.typeStep, out));
+
+  // The timer keeps counting, but its tick stays quiet until the intro sounds are done.
+  const ticksFrom = typeEnd + 0.1;
   for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + CLIP_MS; t += 1000) {
+    const at = (t - startMs) / 1000;
     const left = secondsLeftAt(t);
-    if (left < secondsLeftAt(t - 1)) playVoice(ctx, SOUNDS[soundFor(left)], (t - startMs) / 1000, out);
+    if (at >= ticksFrom && left < secondsLeftAt(t - 1)) playVoice(ctx, SOUNDS[soundFor(left)], at, out);
   }
   return ctx.startRendering();
 }
