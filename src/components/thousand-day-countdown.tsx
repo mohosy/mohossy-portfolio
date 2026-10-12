@@ -178,32 +178,7 @@ const COLLAPSE_MS = 300;
 const backOut = (p: number) => 1 + 2.70158 * (p - 1) ** 3 + 1.70158 * (p - 1) ** 2;
 const easeOut = (p: number) => 1 - (1 - p) ** 2;
 
-export type Design =
-  | "bag"
-  | "watch"
-  | "champagne"
-  | "bars"
-  | "jet"
-  | "crown"
-  | "diamond"
-  | "car"
-  | "yacht"
-  | "mansion"
-  | "cash"
-  | "chest"
-  | "coin"
-  | "piggy"
-  | "briefcase"
-  | "safe"
-  | "trophy"
-  | "tower"
-  | "rocket"
-  | "heli"
-  | "bitcoin"
-  | "card"
-  | "chain"
-  | "island"
-  | "stocks";
+export type Design = "watch" | "champagne";
 
 type Point = [number, number];
 
@@ -312,47 +287,6 @@ function centered(cols: number, rows: number, cell: number) {
   return { cols, rows, cell, left: (FRAME_W - cols * cell) / 2, top: 955 - (rows * cell) / 2 };
 }
 
-function buildBag(): Art {
-  const cols = 64;
-  const rows = 64;
-  const family = minecraft.style.fontFamily;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.moveTo(25, 21);
-    c.bezierCurveTo(11, 27, 5, 40, 7, 50);
-    c.bezierCurveTo(8.5, 58, 18, 61.5, 32, 61.5);
-    c.bezierCurveTo(46, 61.5, 55.5, 58, 57, 50);
-    c.bezierCurveTo(59, 40, 53, 27, 39, 21);
-    c.closePath();
-    c.fill();
-    c.fillRect(25, 14, 14, 8);
-    c.beginPath();
-    c.moveTo(26, 16);
-    c.lineTo(19, 7);
-    c.quadraticCurveTo(22.5, 4, 26, 7.5);
-    c.quadraticCurveTo(29, 3.5, 32, 7);
-    c.quadraticCurveTo(35, 3.5, 38, 7.5);
-    c.quadraticCurveTo(41.5, 4, 45, 7);
-    c.lineTo(38, 16);
-    c.closePath();
-    c.fill();
-    c.fillRect(22, 14, 20, 5);
-  });
-  const ink = inkGrid(cols, rows, [
-    [[22, 14], [41, 14], [41, 18], [22, 18], [22, 14]],
-    [[29, 9], [29, 13]],
-    [[35, 9], [35, 13]],
-  ]);
-  const sign = rasterize(cols, rows, (c) => {
-    c.font = `24px ${family}`;
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillText("$", 32, 42);
-  });
-  sign.forEach((on, i) => (ink[i] ||= on));
-  return { ...centered(cols, rows, 13), body, ink };
-}
-
 // A gold watch: the band and case drain, the white dial keeps ticking.
 function buildWatch(): Art {
   const cols = 64;
@@ -449,686 +383,65 @@ function buildChampagne(): Art {
   };
 }
 
-// A pyramid of gold bars; the top bar runs out first.
-function buildBars(): Art {
-  const cols = 72;
-  const rows = 46;
-  const bars: Point[][] = [];
-  for (let row = 0; row < 4; row++) {
-    const count = 4 - row;
-    const y = 36 - row * 10;
-    for (let i = 0; i < count; i++) {
-      const x = 4 + row * 8 + i * 16;
-      bars.push([[x, y + 9], [x + 16, y + 9], [x + 13, y], [x + 3, y]]);
-    }
-  }
-  const body = rasterize(cols, rows, (c) => bars.forEach((bar) => polygon(c, bar)));
-  const ink = inkGrid(cols, rows, [
-    ...bars.map((bar): Point[] => [...bar, bar[0]]),
-    ...bars.map(([, , , [x, y]]): Point[] => [[x + 3, y + 4], [x + 7, y + 4]]),
-  ]);
-  return { ...centered(cols, rows, 12), body, ink };
-}
-
-// A private jet in profile, windows and all.
-function buildJet(): Art {
-  const cols = 100;
-  const rows = 40;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.moveTo(18, 13);
-    c.lineTo(80, 13);
-    c.quadraticCurveTo(96, 15, 97.5, 21);
-    c.quadraticCurveTo(95, 27.5, 84, 28);
-    c.lineTo(28, 28);
-    c.quadraticCurveTo(14, 27, 6, 19);
-    c.lineTo(8, 16);
-    c.quadraticCurveTo(12, 13, 18, 13);
-    c.fill();
-    polygon(c, [[7, 17], [4, 2], [10, 2], [23, 13]]);
-    c.fillRect(1, 1, 15, 3);
-    disc(c, 27, 11, 7.5, 3.4);
-    polygon(c, [[42, 26], [57, 26], [47, 35], [38, 35]]);
-    erase(c, () => {
-      for (let x = 34; x <= 70; x += 6) c.fillRect(x, 17, 2, 3);
-      polygon(c, [[85, 16.5], [90, 16.5], [93, 20], [85, 20]]);
-    });
-  });
-  const ink = inkGrid(cols, rows, [
-    [[75, 16], [75, 26]],
-    [[79, 16], [79, 26]],
-    [[75, 16], [79, 16]],
-    [[21, 11], [33, 11]],
-  ]);
-  return { ...centered(cols, rows, 9), body, ink };
-}
-
-// A king's crown with gem holes in the band and the center spike.
-function buildCrown(): Art {
-  const cols = 64;
-  const rows = 48;
-  const tips: Point[] = [[6, 11], [19, 8], [32, 5], [45, 8], [58, 11]];
-  const body = rasterize(cols, rows, (c) => {
-    polygon(c, [[8, 36], tips[0], [12.5, 25], tips[1], [25.5, 25], tips[2], [38.5, 25], tips[3], [51.5, 25], tips[4], [56, 36]]);
-    tips.forEach(([x, y], i) => disc(c, x, y - 2, i === 2 ? 3 : 2.5));
-    c.fillRect(7, 35, 50, 11);
-    erase(c, () => {
-      disc(c, 20, 40.5, 2.4);
-      disc(c, 32, 40.5, 3);
-      disc(c, 44, 40.5, 2.4);
-      disc(c, 32, 18, 2.4);
-    });
-  });
-  const ink = inkGrid(cols, rows, [[[8, 35], [56, 35]]]);
-  return { ...centered(cols, rows, 13), body, ink };
-}
-
-// A cut diamond with facet lines; this one fills with icy blue instead of gold.
-function buildDiamond(): Art {
-  const cols = 64;
-  const rows = 54;
-  const body = rasterize(cols, rows, (c) => polygon(c, [[18, 3], [46, 3], [61, 17], [32, 52], [3, 17]]));
-  const ink = inkGrid(cols, rows, [
-    [[3, 17], [61, 17]],
-    [[18, 3], [11, 17]],
-    [[18, 3], [25, 17]],
-    [[32, 3], [25, 17]],
-    [[32, 3], [39, 17]],
-    [[46, 3], [39, 17]],
-    [[46, 3], [53, 17]],
-    [[11, 17], [32, 52]],
-    [[25, 17], [32, 52]],
-    [[39, 17], [32, 52]],
-    [[53, 17], [32, 52]],
-  ]);
-  return { ...centered(cols, rows, 13), body, ink, fill: "#7FD3F0", shine: "#CDF2FF" };
-}
-
-// A low supercar in profile; the wheels and windows stay out of the fill.
-function buildCar(): Art {
-  const cols = 100;
-  const rows = 36;
-  const wheels: Point[] = [[21, 27], [79, 27]];
-  const body = rasterize(cols, rows, (c) => {
-    polygon(c, [[3, 28], [3, 20], [11, 16.5], [31, 14.5], [41, 8], [58, 7], [71, 14.5], [91, 18.5], [97.5, 22.5], [96.5, 28]]);
-    c.fillRect(2, 12.5, 9, 2.5);
-    c.fillRect(7, 14, 2, 3);
-    erase(c, () => {
-      wheels.forEach(([x, y]) => disc(c, x, y, 7.6));
-      polygon(c, [[41, 10.5], [57, 9.5], [66.5, 15], [36.5, 15.5]]);
-    });
-  });
-  const ink = inkGrid(
-    cols,
-    rows,
-    [
-      [[50, 10], [50, 15]],
-      [[48, 16], [47, 26]],
-      [[33, 20], [41, 20]],
-      [[92, 21], [95, 21]],
-    ],
-    (plot) =>
-      wheels.forEach(([x, y]) => {
-        ring(plot, x, y, 6);
-        ring(plot, x, y, 5.3);
-        ring(plot, x, y, 2);
-        plot(x, y);
-      }),
-  );
-  return { ...centered(cols, rows, 9), body, ink };
-}
-
-// A three-deck superyacht.
-function buildYacht(): Art {
-  const cols = 100;
-  const rows = 46;
-  const body = rasterize(cols, rows, (c) => {
-    polygon(c, [[5, 30], [92, 30], [99, 27], [88, 42], [14, 42], [5, 36]]);
-    polygon(c, [[17, 30.5], [20, 21], [70, 21], [81, 30.5]]);
-    polygon(c, [[29, 21.5], [32, 14], [60, 14], [67, 21.5]]);
-    polygon(c, [[40, 14.5], [42, 9], [54, 9], [57, 14.5]]);
-    erase(c, () => {
-      c.fillRect(24, 24, 48, 3);
-      c.fillRect(36, 16, 23, 2.5);
-      for (let x = 28; x <= 80; x += 8) disc(c, x, 35, 1.3);
-    });
-  });
-  const ink = inkGrid(cols, rows, [
-    [[48, 9], [48, 3]],
-    [[45, 4], [51, 4]],
-    [[5, 30], [92, 30]],
-  ]);
-  return { ...centered(cols, rows, 9), body, ink };
-}
-
-// A columned mansion.
-function buildMansion(): Art {
-  const cols = 80;
-  const rows = 56;
-  const body = rasterize(cols, rows, (c) => {
-    c.fillRect(8, 24, 64, 31);
-    c.fillRect(6, 21, 68, 4);
-    polygon(c, [[23, 22], [40, 7], [57, 22]]);
-    c.fillRect(13, 13, 5, 9);
-    c.fillRect(62, 13, 5, 9);
-    erase(c, () => {
-      for (const x of [11, 18, 57, 64]) for (const y of [29, 41]) c.fillRect(x, y, 5, 7);
-      c.fillRect(36, 41, 8, 14);
-      disc(c, 40, 41, 4);
-      disc(c, 40, 16, 2.5);
-    });
-  });
-  const ink = inkGrid(cols, rows, [
-    ...[26, 29, 32, 48, 51, 54].map((x): Point[] => [[x, 25], [x, 51]]),
-    [[24, 25], [56, 25]],
-    [[22, 52], [58, 52]],
-    [[20, 54], [60, 54]],
-    [[8, 25], [72, 25]],
-  ]);
-  return { ...centered(cols, rows, 11), body, ink };
-}
-
-// A thick stack of $100 bills with a paper band; this one fills with cash green.
-function buildCash(): Art {
-  const cols = 64;
-  const rows = 60;
-  const family = minecraft.style.fontFamily;
-  const body = rasterize(cols, rows, (c) => {
-    polygon(c, [[8, 14], [14, 5], [62, 5], [56, 14]]);
-    c.fillRect(8, 14, 49, 44);
-    polygon(c, [[56, 14], [62, 5], [62, 49], [56, 58]]);
-  });
-  const ink = inkGrid(cols, rows, [
-    ...Array.from({ length: 14 }, (_, i): Point[] => [[9, 17 + i * 3], [27, 17 + i * 3]]),
-    ...Array.from({ length: 14 }, (_, i): Point[] => [[37, 17 + i * 3], [55, 17 + i * 3]]),
-    [[28, 14], [28, 57]],
-    [[36, 14], [36, 57]],
-    [[56, 14], [56, 58]],
-    [[8, 14], [56, 14]],
-    [[17, 7], [57, 7], [53, 12], [13, 12], [17, 7]],
-  ]);
-  const sign = rasterize(cols, rows, (c) => {
-    c.font = `10px ${family}`;
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillText("$", 32, 33);
-  });
-  sign.forEach((on, i) => (ink[i] ||= on));
-  return { ...centered(cols, rows, 13), body, ink, fill: "#5DBB63", shine: "#A9E5A6" };
-}
-
-// A treasure chest with iron bands and a lock.
-function buildChest(): Art {
-  const cols = 72;
-  const rows = 56;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.moveTo(8, 28);
-    c.lineTo(8, 17);
-    c.quadraticCurveTo(36, 1, 64, 17);
-    c.lineTo(64, 28);
-    c.closePath();
-    c.fill();
-    c.fillRect(8, 28, 57, 26);
-    erase(c, () => c.fillRect(33, 31, 1, 3));
-  });
-  const ink = inkGrid(cols, rows, [
-    [[8, 28], [64, 28]],
-    [[16, 12], [16, 53]],
-    [[19, 11], [19, 53]],
-    [[53, 11], [53, 53]],
-    [[56, 12], [56, 53]],
-    [[31, 25], [41, 25], [41, 35], [31, 35], [31, 25]],
-    [[36, 29], [36, 32]],
-  ]);
-  return { ...centered(cols, rows, 12), body, ink };
-}
-
-// A big gold coin with a milled rim.
-function buildCoin(): Art {
-  const cols = 64;
-  const rows = 64;
-  const family = minecraft.style.fontFamily;
-  const body = rasterize(cols, rows, (c) => disc(c, 32, 32, 30));
-  const ink = inkGrid(cols, rows, [], (plot) => {
-    ring(plot, 32, 32, 24.5);
-    for (let a = 0; a < 360; a += 12) {
-      const r = (a * Math.PI) / 180;
-      plot(32 + Math.cos(r) * 27.5, 32 + Math.sin(r) * 27.5);
-    }
-  });
-  const sign = rasterize(cols, rows, (c) => {
-    c.font = `30px ${family}`;
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillText("$", 32, 33);
-  });
-  sign.forEach((on, i) => (ink[i] ||= on));
-  return { ...centered(cols, rows, 13), body, ink };
-}
-
-function signGrid(cols: number, rows: number, text: string, size: number, x: number, y: number) {
-  const family = minecraft.style.fontFamily;
-  return rasterize(cols, rows, (c) => {
-    c.font = `${size}px ${family}`;
-    c.textAlign = "center";
-    c.textBaseline = "middle";
-    c.fillText(text, x, y);
-  });
-}
-
-function merge(target: Uint8Array, ...grids: Uint8Array[]) {
-  grids.forEach((grid) => grid.forEach((on, i) => (target[i] ||= on)));
-  return target;
-}
-
-// A gold piggy bank with a coin slot.
-function buildPiggy(): Art {
-  const cols = 72;
-  const rows = 56;
-  const body = rasterize(cols, rows, (c) => {
-    disc(c, 34, 30, 26, 18.5);
-    disc(c, 62, 30, 5.5);
-    polygon(c, [[43, 15], [49, 4], [54, 16]]);
-    c.fillRect(15, 42, 7, 12);
-    c.fillRect(24, 44, 7, 10);
-    c.fillRect(41, 44, 7, 10);
-    c.fillRect(50, 42, 7, 12);
-    disc(c, 7, 27, 2.5);
-    erase(c, () => c.fillRect(29, 12.5, 11, 2));
-  });
-  const ink = inkGrid(cols, rows, [[[47, 13], [50, 8]]], (plot) => {
-    ring(plot, 62, 30, 4.6);
-    plot(61, 29);
-    plot(63, 31);
-    plot(52, 24);
-    plot(53, 24);
-  });
-  return { ...centered(cols, rows, 12), body, ink };
-}
-
-// A briefcase of cash.
-function buildBriefcase(): Art {
-  const cols = 72;
-  const rows = 56;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.roundRect(5, 16, 62, 37, 4);
-    c.fill();
-    c.fillRect(25, 5, 22, 12);
-    erase(c, () => c.fillRect(29.5, 9, 13, 8));
-  });
-  const ink = merge(
-    inkGrid(cols, rows, [
-      [[5, 25], [66, 25]],
-      [[16, 22], [21, 22], [21, 28], [16, 28], [16, 22]],
-      [[51, 22], [56, 22], [56, 28], [51, 28], [51, 22]],
-    ]),
-    signGrid(cols, rows, "$", 16, 36, 39),
-  );
-  return { ...centered(cols, rows, 12), body, ink };
-}
-
-// A bank safe with a vault wheel.
-function buildSafe(): Art {
-  const cols = 64;
-  const rows = 66;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.roundRect(5, 3, 54, 55, 3);
-    c.fill();
-    c.fillRect(10, 57, 7, 7);
-    c.fillRect(47, 57, 7, 7);
-  });
-  const ink = inkGrid(
-    cols,
-    rows,
-    [
-      [[11, 9], [53, 9], [53, 52], [11, 52], [11, 9]],
-      [[7, 15], [7, 22]],
-      [[7, 39], [7, 46]],
-      [[32, 18], [32, 44]],
-      [[19, 31], [45, 31]],
-      [[23, 22], [41, 40]],
-      [[41, 22], [23, 40]],
-    ],
-    (plot) => {
-      ring(plot, 32, 31, 9.5);
-      ring(plot, 32, 31, 4);
-      [[32, 18], [32, 44], [19, 31], [45, 31]].forEach(([x, y]) => {
-        plot(x - 1, y);
-        plot(x + 1, y);
-        plot(x, y - 1);
-        plot(x, y + 1);
-      });
-    },
-  );
-  return { ...centered(cols, rows, 13), body, ink };
-}
-
-// A winner's trophy cup.
-function buildTrophy(): Art {
-  const cols = 64;
-  const rows = 80;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.moveTo(14, 4);
-    c.lineTo(50, 4);
-    c.bezierCurveTo(50, 26, 44, 36, 36, 40);
-    c.lineTo(28, 40);
-    c.bezierCurveTo(20, 36, 14, 26, 14, 4);
-    c.fill();
-    c.lineWidth = 3.4;
-    c.beginPath();
-    c.arc(14, 16, 7.5, Math.PI / 2, Math.PI * 1.5);
-    c.stroke();
-    c.beginPath();
-    c.arc(50, 16, 7.5, -Math.PI / 2, Math.PI / 2);
-    c.stroke();
-    c.fillRect(29, 39, 6, 16);
-    polygon(c, [[22, 54], [42, 54], [46, 62], [18, 62]]);
-    c.fillRect(14, 61, 36, 13);
-  });
-  const ink = merge(
-    inkGrid(cols, rows, [
-      [[14, 8], [50, 8]],
-      [[20, 65], [43, 65], [43, 70], [20, 70], [20, 65]],
-    ]),
-    signGrid(cols, rows, "1", 18, 32, 22),
-  );
-  return { ...centered(cols, rows, 11), body, ink };
-}
-
-// Your own skyscraper.
-function buildTower(): Art {
-  const cols = 64;
-  const rows = 100;
-  const body = rasterize(cols, rows, (c) => {
-    c.fillRect(20, 14, 24, 85);
-    c.fillRect(24, 6, 16, 9);
-    c.fillRect(31, 0, 2, 7);
-    c.fillRect(8, 50, 13, 49);
-    c.fillRect(43, 40, 13, 59);
-    erase(c, () => {
-      for (let y = 18; y <= 86; y += 5) for (let x = 23; x <= 39; x += 4) c.fillRect(x, y, 2, 2);
-      for (let y = 54; y <= 92; y += 5) for (const x of [11, 15]) c.fillRect(x, y, 2, 2);
-      for (let y = 44; y <= 92; y += 5) for (const x of [46, 50]) c.fillRect(x, y, 2, 2);
-      for (let x = 27; x <= 35; x += 4) c.fillRect(x, 9, 2, 2);
-      c.fillRect(29, 91, 6, 8);
-    });
-  });
-  const ink = inkGrid(cols, rows, []);
-  return { ...centered(cols, rows, 9), body, ink };
-}
-
-// A rocket with a flickering flame, for the billionaire space race.
-function buildRocket(): Art {
-  const cols = 56;
-  const rows = 100;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.moveTo(18, 30);
-    c.quadraticCurveTo(18, 12, 28, 2);
-    c.quadraticCurveTo(38, 12, 38, 30);
-    c.fill();
-    c.fillRect(18, 29, 20, 50);
-    polygon(c, [[18.5, 56], [6, 78], [6, 88], [18.5, 80]]);
-    polygon(c, [[37.5, 56], [50, 78], [50, 88], [37.5, 80]]);
-    polygon(c, [[21, 78], [35, 78], [37, 85], [19, 85]]);
-    erase(c, () => disc(c, 28, 38, 4.5));
-  });
-  const ink = inkGrid(
-    cols,
-    rows,
-    [
-      [[18, 29], [37, 29]],
-      [[18, 66], [37, 66]],
-    ],
-    (plot) => ring(plot, 28, 38, 6),
-  );
-  return {
-    ...centered(cols, rows, 9),
-    body,
-    ink,
-    overlay: ({ fillCell, waveMs }) => {
-      const flicker = (waveMs / 90) | 0;
-      for (let r = 86; r < 99; r++) {
-        const half = Math.max(0, 7 - (r - 86) * 0.55 + (((flicker + r) % 3) - 1) * 0.8);
-        for (let c = Math.round(28 - half); c <= Math.round(27 + half); c++) {
-          fillCell(c, r, Math.abs(c - 27.5) < half * 0.45 ? "#FFE27A" : "#FF8A1F");
-        }
-      }
-    },
-  };
-}
-
-// A helicopter whose main rotor keeps spinning.
-function buildHeli(): Art {
-  const cols = 100;
-  const rows = 48;
-  const body = rasterize(cols, rows, (c) => {
-    disc(c, 60, 27, 20, 11);
-    polygon(c, [[42, 22], [8, 24.5], [8, 28.5], [44, 31]]);
-    polygon(c, [[4, 14], [11, 14], [12, 30], [5, 30]]);
-    c.fillRect(57.5, 10, 5, 7);
-    erase(c, () => {
-      polygon(c, [[67, 18], [77, 21], [79.5, 27], [67, 27]]);
-      c.fillRect(51, 20, 10, 6);
-    });
-  });
-  const ink = inkGrid(cols, rows, [
-    [[44, 44], [82, 44], [84, 42]],
-    [[51, 38], [51, 44]],
-    [[71, 38], [71, 44]],
-    [[8, 26], [42, 26]],
-  ]);
-  return {
-    ...centered(cols, rows, 9),
-    body,
-    ink,
-    overlay: ({ fillCell, waveMs }) => {
-      // Seen from the side, a spinning rotor looks like a bar that grows and shrinks.
-      const half = Math.round(4 + 34 * Math.abs(Math.cos(waveMs / 120)));
-      for (let c = 60 - half; c <= 60 + half; c++) fillCell(c, 8, INK);
-      for (let r = 9; r < 10; r++) fillCell(60, r, INK);
-      const tail = Math.round(1 + 4 * Math.abs(Math.sin(waveMs / 80)));
-      for (let r = 22 - tail; r <= 22 + tail; r++) fillCell(8, r, INK);
-    },
-  };
-}
-
-// A bitcoin, in bitcoin orange.
-function buildBitcoin(): Art {
-  const cols = 64;
-  const rows = 64;
-  const body = rasterize(cols, rows, (c) => disc(c, 32, 32, 30));
-  const ink = merge(
-    inkGrid(
-      cols,
-      rows,
-      [
-        [[29, 12], [29, 16]],
-        [[34, 12], [34, 16]],
-        [[29, 48], [29, 52]],
-        [[34, 48], [34, 52]],
-      ],
-      (plot) => ring(plot, 32, 32, 25),
-    ),
-    signGrid(cols, rows, "B", 26, 32, 32),
-  );
-  return { ...centered(cols, rows, 13), body, ink, fill: "#F7931A", shine: "#FFC46B" };
-}
-
-// A gold credit card.
-function buildCard(): Art {
-  const cols = 80;
-  const rows = 52;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.roundRect(4, 6, 72, 44, 4);
-    c.fill();
-  });
-  const dots = (plot: (x: number, y: number) => void) => {
-    for (let g = 0; g < 4; g++) for (let d = 0; d < 4; d++) plot(11 + g * 16 + d * 3, 36);
-  };
-  const ink = merge(
-    inkGrid(
-      cols,
-      rows,
-      [
-        [[11, 17], [22, 17], [22, 27], [11, 27], [11, 17]],
-        [[11, 22], [22, 22]],
-        [[16, 17], [16, 27]],
-      ],
-      dots,
-    ),
-    signGrid(cols, rows, "MO", 8, 16, 44),
-  );
-  return { ...centered(cols, rows, 11), body, ink };
-}
-
-// A gold chain with a big $ pendant.
-function buildChain(): Art {
-  const cols = 64;
-  const rows = 84;
-  const body = rasterize(cols, rows, (c) => {
-    c.lineWidth = 3.5;
-    c.beginPath();
-    c.moveTo(10, 2);
-    c.quadraticCurveTo(14, 44, 32, 44);
-    c.quadraticCurveTo(50, 44, 54, 2);
-    c.stroke();
-    c.fillRect(29, 43, 6, 6);
-    disc(c, 32, 64, 17);
-  });
-  const ink = merge(
-    inkGrid(cols, rows, [], (plot) => {
-      for (let t = 0.04; t < 1; t += 0.07) {
-        const x = (1 - t) ** 2 * 10 + 2 * (1 - t) * t * 14 + t * t * 32;
-        const y = (1 - t) ** 2 * 2 + 2 * (1 - t) * t * 44 + t * t * 44;
-        plot(x, y);
-        plot(64 - x, y);
-      }
-      ring(plot, 32, 64, 13.5);
-    }),
-    signGrid(cols, rows, "$", 20, 32, 65),
-  );
-  return { ...centered(cols, rows, 11), body, ink };
-}
-
-// A private island with a palm tree, on gently moving water.
-function buildIsland(): Art {
-  const cols = 100;
-  const rows = 64;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.ellipse(50, 52, 36, 11, 0, Math.PI, 0);
-    c.fill();
-    c.lineWidth = 3.4;
-    c.beginPath();
-    c.moveTo(46, 46);
-    c.quadraticCurveTo(46, 26, 56, 14);
-    c.stroke();
-    // Drooping palm fronds.
-    c.lineWidth = 3;
-    for (const [cx, cy, x, y] of [[44, 6, 34, 22], [68, 6, 78, 22], [46, 2, 38, 10], [66, 2, 74, 10], [56, 2, 58, 4]]) {
-      c.beginPath();
-      c.moveTo(56, 14);
-      c.quadraticCurveTo(cx, cy, x, y);
-      c.stroke();
-    }
-    disc(c, 54, 18, 2.4);
-    disc(c, 58.5, 18.5, 2.4);
-  });
-  const ink = inkGrid(cols, rows, [[[14, 52], [86, 52]]]);
-  return {
-    ...centered(cols, rows, 9),
-    body,
-    ink,
-    overlay: ({ fillCell, waveMs }) => {
-      for (let row = 0; row < 3; row++) {
-        const r = 55 + row * 3;
-        const shift = Math.floor(waveMs / 250 + row * 3) % 8;
-        for (let c = 4 + ((shift + row * 2) % 8); c < 96; c += 8) {
-          fillCell(c, r, INK);
-          fillCell(c + 1, r - 1, INK);
-          fillCell(c + 2, r, INK);
-        }
-      }
-    },
-  };
-}
-
-// A stock chart going up, gold under the line.
-function buildStocks(): Art {
-  const cols = 80;
-  const rows = 64;
-  const line: Point[] = [[7, 52], [19, 43], [29, 47], [41, 31], [51, 36], [63, 18], [72, 9]];
-  const body = rasterize(cols, rows, (c) => polygon(c, [...line, [72, 57], [7, 57]]));
-  const ink = inkGrid(cols, rows, [
-    [[5, 3], [5, 58], [77, 58]],
-    line,
-    [[66, 9], [73, 8], [72, 15]],
-  ]);
-  return { ...centered(cols, rows, 11), body, ink };
-}
-
 const builders: Record<Design, () => Art> = {
-  bag: buildBag,
   watch: buildWatch,
   champagne: buildChampagne,
-  bars: buildBars,
-  jet: buildJet,
-  crown: buildCrown,
-  diamond: buildDiamond,
-  car: buildCar,
-  yacht: buildYacht,
-  mansion: buildMansion,
-  cash: buildCash,
-  chest: buildChest,
-  coin: buildCoin,
-  piggy: buildPiggy,
-  briefcase: buildBriefcase,
-  safe: buildSafe,
-  trophy: buildTrophy,
-  tower: buildTower,
-  rocket: buildRocket,
-  heli: buildHeli,
-  bitcoin: buildBitcoin,
-  card: buildCard,
-  chain: buildChain,
-  island: buildIsland,
-  stocks: buildStocks,
+}
+
+type PreparedArt = Art & {
+  isBody: (c: number, r: number) => boolean;
+  isEdge: (c: number, r: number) => boolean;
+  fillRows: number[];
+  fillTotal: number;
 };
 
-const artCache = new Map<Design, Art>();
+function prepare(art: Art): PreparedArt {
+  const { cols, rows, body, ink } = art;
+  const isBody = (c: number, r: number) => c >= 0 && r >= 0 && c < cols && r < rows && body[r * cols + c] === 1;
+  const isEdge = (c: number, r: number) =>
+    isBody(c, r) && (!isBody(c - 1, r) || !isBody(c + 1, r) || !isBody(c, r - 1) || !isBody(c, r + 1));
+  // A cell holds gold if it is inside the shape and not part of an outline or detail line.
+  const fillRows = Array.from({ length: rows }, (_, r) => {
+    let count = 0;
+    for (let c = 0; c < cols; c++) if (isBody(c, r) && !isEdge(c, r) && !ink[r * cols + c]) count++;
+    return count;
+  });
+  return { ...art, isBody, isEdge, fillRows, fillTotal: fillRows.reduce((sum, n) => sum + n, 0) };
+}
+
+const artCache = new Map<Design, PreparedArt>();
 
 function getArt(design: Design) {
   let art = artCache.get(design);
   if (!art) {
-    art = builders[design]();
+    art = prepare(builders[design]());
     artCache.set(design, art);
   }
   return art;
 }
 
-// The fill covers `fraction` of the art's height; its surface waves column by column.
-function drawArt(ctx: CanvasRenderingContext2D, art: Art, fraction: number, seconds: number, waveMs: number) {
-  const { cols, rows, cell, left, top, body, ink, fill = GOLD, shine = GOLD_LIGHT } = art;
+// Where the gold surface sits so that the gold covers exactly `fraction` of the fillable area.
+// Measuring area, not height, keeps it honest for shapes that are wider in some places
+// (the watch case vs its band, the top of the flute vs its narrow bottom).
+function goldLevel(art: PreparedArt, fraction: number) {
+  const { rows, cell, top, fillRows, fillTotal } = art;
+  let remaining = Math.min(1, Math.max(0, fraction)) * fillTotal;
   let firstRow = rows;
-  let lastRow = 0;
-  for (let i = 0; i < body.length; i++) {
-    if (!body[i]) continue;
-    firstRow = Math.min(firstRow, Math.floor(i / cols));
-    lastRow = Math.max(lastRow, Math.floor(i / cols));
+  for (let r = rows - 1; r >= 0; r--) {
+    const n = fillRows[r];
+    if (!n) continue;
+    firstRow = r;
+    if (remaining <= n) return top + (r + 1 - remaining / n) * cell;
+    remaining -= n;
   }
-  const artTop = top + firstRow * cell;
-  const artHeight = (lastRow - firstRow + 1) * cell;
-  const level = artTop + (1 - fraction) * artHeight;
+  return top + firstRow * cell;
+}
+
+function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: number, seconds: number, waveMs: number) {
+  const { cols, rows, cell, left, top, ink, fill = GOLD, shine = GOLD_LIGHT, isBody, isEdge } = art;
+  const level = goldLevel(art, fraction);
+  // The wave averages out across the width, so it doesn't change how much gold shows.
   const amplitude = fraction > 0 && fraction < 1 ? cell * 0.45 : 0;
-  const isBody = (c: number, r: number) => c >= 0 && r >= 0 && c < cols && r < rows && body[r * cols + c] === 1;
-  const isEdge = (c: number, r: number) =>
-    isBody(c, r) && (!isBody(c - 1, r) || !isBody(c + 1, r) || !isBody(c, r - 1) || !isBody(c, r + 1));
   const surfaces = Array.from(
     { length: cols },
     (_, c) => level + amplitude * Math.sin(((left + c * cell) / 260) * Math.PI * 2 + (waveMs / 1600) * Math.PI * 2),
@@ -1242,23 +555,42 @@ function drawRollingRow(
   });
 }
 
-type FrameState = { seconds: number; before: number; sinceMs: number | null; waveMs: number };
+type FrameState = {
+  seconds: number;
+  before: number;
+  sinceMs: number | null;
+  waveMs: number;
+  // Share of the 1000 days still left (1 = full gold) and the day shown in the headline.
+  fraction: number;
+  day: number;
+};
 
 function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
   const tick = Math.floor(Math.max(0, elapsedMs) / 1000);
   const seconds = secondsLeftAt(elapsedMs);
   const before = tick > 0 ? secondsLeftAt(tick * 1000 - 1) : seconds;
-  return { seconds, before, sinceMs: animate && before !== seconds ? elapsedMs - tick * 1000 : null, waveMs: elapsedMs };
+  return {
+    seconds,
+    before,
+    sinceMs: animate && before !== seconds ? elapsedMs - tick * 1000 : null,
+    waveMs: elapsedMs,
+    fraction: seconds / TOTAL_SECONDS,
+    day: dayNumber(seconds),
+  };
 }
 
-function drawFrame(ctx: CanvasRenderingContext2D, design: Design, { seconds, before, sinceMs, waveMs }: FrameState) {
+function drawFrame(
+  ctx: CanvasRenderingContext2D,
+  design: Design,
+  { seconds, before, sinceMs, waveMs, fraction, day }: FrameState,
+) {
   const family = minecraft.style.fontFamily;
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
   ctx.textBaseline = "alphabetic";
 
   const { days, about, hook, hms } = LAYOUT;
-  const dayCount = dayNumber(seconds);
+  const dayCount = day;
   ctx.font = `${days.size}px ${family}`;
   const number = String(dayCount);
   const rest = dayCount === 1 ? " DAY LEFT" : " DAYS LEFT";
@@ -1274,11 +606,24 @@ function drawFrame(ctx: CanvasRenderingContext2D, design: Design, { seconds, bef
   ctx.fillStyle = "#6b6b6b";
   drawSpaced(ctx, "(OR SOMETHING HUGE WILL HAPPEN)", FRAME_W / 2, hook.y, hook.spacing);
 
-  drawArt(ctx, getArt(design), seconds / TOTAL_SECONDS, seconds, waveMs);
+  drawArt(ctx, getArt(design), fraction, seconds, waveMs);
 
   ctx.fillStyle = INK;
   ctx.font = `${hms.size}px ${family}`;
   drawRollingRow(ctx, hmsText(seconds), hmsText(before), sinceMs, hms.y);
+}
+
+const INTRO_HOLD_S = 0.6;
+const INTRO_DRAIN_S = 3;
+const easeInOut = (p: number) => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
+
+// The clip opens full of gold and drains to where the countdown really is, the day
+// counting down with it, so the last frame of the intro matches the true level exactly.
+function withIntro(state: FrameState, clipSeconds: number): FrameState {
+  const p = easeInOut(Math.min(1, Math.max(0, (clipSeconds - INTRO_HOLD_S) / INTRO_DRAIN_S)));
+  if (p >= 1) return state;
+  const fraction = 1 + (state.fraction - 1) * p;
+  return { ...state, fraction, day: dayNumber(Math.round(fraction * TOTAL_SECONDS)) };
 }
 
 // "Last 10 seconds": ends just before the latest tick, so the clip has 10 evenly spaced ticks.
@@ -1332,7 +677,7 @@ async function renderClip(design: Design, startMs: number, onProgress: (fraction
 
   const frames = (CLIP_FPS * CLIP_MS) / 1000;
   for (let i = 0; i < frames; i++) {
-    drawFrame(ctx, design, frameStateAt(startMs + (i * 1000) / CLIP_FPS, true));
+    drawFrame(ctx, design, withIntro(frameStateAt(startMs + (i * 1000) / CLIP_FPS, true), i / CLIP_FPS));
     await video.add(i / CLIP_FPS, 1 / CLIP_FPS);
     if (i % 10 === 0) onProgress(i / frames);
   }
@@ -1399,31 +744,8 @@ function canvasToFile(canvas: HTMLCanvasElement, name: string) {
 }
 
 const DESIGNS: { id: Design; label: string }[] = [
-  { id: "bag", label: "MONEY BAG" },
-  { id: "watch", label: "1 WATCH" },
-  { id: "champagne", label: "2 CHAMPAGNE" },
-  { id: "bars", label: "3 GOLD BARS" },
-  { id: "jet", label: "4 JET" },
-  { id: "crown", label: "5 CROWN" },
-  { id: "diamond", label: "6 DIAMOND" },
-  { id: "car", label: "7 SUPERCAR" },
-  { id: "yacht", label: "8 YACHT" },
-  { id: "mansion", label: "9 MANSION" },
-  { id: "cash", label: "10 CASH" },
-  { id: "chest", label: "11 TREASURE" },
-  { id: "coin", label: "12 COIN" },
-  { id: "piggy", label: "13 PIGGY BANK" },
-  { id: "briefcase", label: "14 BRIEFCASE" },
-  { id: "safe", label: "15 SAFE" },
-  { id: "trophy", label: "16 TROPHY" },
-  { id: "tower", label: "17 SKYSCRAPER" },
-  { id: "rocket", label: "18 ROCKET" },
-  { id: "heli", label: "19 HELICOPTER" },
-  { id: "bitcoin", label: "20 BITCOIN" },
-  { id: "card", label: "21 GOLD CARD" },
-  { id: "chain", label: "22 GOLD CHAIN" },
-  { id: "island", label: "23 ISLAND" },
-  { id: "stocks", label: "24 STOCKS" },
+  { id: "watch", label: "WATCH" },
+  { id: "champagne", label: "CHAMPAGNE" },
 ];
 
 type ExportState =
