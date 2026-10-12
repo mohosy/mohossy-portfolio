@@ -105,19 +105,6 @@ function watchTick(detune = 1, gain = 1): Voice {
   };
 }
 
-// A small gold coin clink: a quick click and a few bright, inharmonic rings.
-function coinClink(detune = 1, at = 0): Voice {
-  return {
-    noise: [{ filter: "bandpass", freq: 6000 * detune, q: 1.5, gain: 0.2, decay: 0.006, at }],
-    tones: [
-      { freq: 2950 * detune, gain: 0.09, decay: 0.35, at },
-      { freq: 4210 * detune, gain: 0.075, decay: 0.26, at },
-      { freq: 5680 * detune, gain: 0.05, decay: 0.18, at },
-      { freq: 7390 * detune, gain: 0.035, decay: 0.12, at },
-    ],
-  };
-}
-
 const SOUNDS = {
   tick: watchTick(),
   tock: watchTick(0.88),
@@ -126,7 +113,6 @@ const SOUNDS = {
     noise: [{ filter: "bandpass", freq: 2600, q: 2, gain: 0.3, decay: 0.006 }],
     tones: [{ freq: 1900, gain: 0.03, decay: 0.012 }],
   },
-  chaChing: combine(coinClink(0.9), coinClink(1, 0.085)),
   type: knock(1500, { gain: 0.3, decay: 0.03 }),
   start: combine(knock(820), knock(600, { at: 0.08 })),
   reset: combine(knock(600), knock(820, { at: 0.08 })),
@@ -692,18 +678,9 @@ function clipStartMs(elapsedMs: number) {
   return Math.max(0, Math.floor(elapsedMs / 1000) * 1000 - 500 - CLIP_MS);
 }
 
-async function renderClipAudio(startMs: number) {
-  const rate = 48_000;
-  const ctx = new OfflineAudioContext(2, (rate * CLIP_MS) / 1000, rate);
-  // Louder than the live page so the ticks carry on a phone speaker.
-  const out = ctx.createGain();
-  out.gain.value = 1.8;
-  out.connect(ctx.destination);
-  const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
-  const { landed, typeStart, typeEnd } = introTimes(digits);
-
-  // A ratchet click each time the last reel rolls past a digit (at most ~40 a second),
-  // so it races, slows and settles with the picture; then a cha-ching as it lands.
+// A ratchet click each time the last reel rolls past a digit (at most ~40 a second), so it
+// races, slows and settles with the picture. The number lands without an extra sound.
+function playRatchet(ctx: BaseAudioContext, out: AudioNode, digits: number, landed: number) {
   let lastClick = -1;
   let lastDigit = Math.floor(reelOffset(digits - 1, INTRO.spinStart));
   for (let t = INTRO.spinStart; t <= landed + 0.3; t += 0.001) {
@@ -714,7 +691,19 @@ async function renderClipAudio(startMs: number) {
     }
     lastDigit = digit;
   }
-  playVoice(ctx, SOUNDS.chaChing, landed, out);
+}
+
+async function renderClipAudio(startMs: number) {
+  const rate = 48_000;
+  const ctx = new OfflineAudioContext(2, (rate * CLIP_MS) / 1000, rate);
+  // Louder than the live page so the ticks carry on a phone speaker.
+  const out = ctx.createGain();
+  out.gain.value = 1.8;
+  out.connect(ctx.destination);
+  const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
+  const { landed, typeStart, typeEnd } = introTimes(digits);
+
+  playRatchet(ctx, out, digits, landed);
   [...ABOUT].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, typeStart + i * INTRO.typeStep, out));
 
   // The timer keeps counting, but its tick stays quiet until the intro sounds are done.
