@@ -462,10 +462,6 @@ function drawSpacedFrom(ctx: CanvasRenderingContext2D, text: string, x: number, 
   }
 }
 
-function drawSpaced(ctx: CanvasRenderingContext2D, text: string, cx: number, y: number, spacing: number) {
-  drawSpacedFrom(ctx, text, cx - spacedWidth(ctx, text, spacing) / 2, y, spacing);
-}
-
 type Slot = { x: number; w: number };
 
 // Each character sits in its own clipped slot; a changed digit rolls down into place.
@@ -609,6 +605,44 @@ function drawSlotNumber(ctx: CanvasRenderingContext2D, number: string, x: number
   ctx.textAlign = "left";
 }
 
+const HOOK_WORD_GAP = 0.12;
+const HOOK_POP = 0.28;
+const HOOK_SLAM = 0.4;
+
+// Each word of the hook pops up from nothing with a little overshoot, one after another.
+// HUGE gets its own entrance: it starts big, slams down to size and shakes the line.
+function drawHook(ctx: CanvasRenderingContext2D, { y, spacing }: { y: number; spacing: number }, t: number | null) {
+  const words = HOOK.split(" ");
+  const space = ctx.measureText(" ").width + spacing * 2;
+  const widths = words.map((word) => spacedWidth(ctx, word, spacing));
+  let x = (FRAME_W - (widths.reduce((sum, w) => sum + w, 0) + space * (words.length - 1))) / 2;
+  const capHeight = ctx.measureText("H").actualBoundingBoxAscent;
+  const hugeAt = words.indexOf("HUGE") * HOOK_WORD_GAP;
+  // A short, fading side-to-side shake once HUGE lands.
+  const sinceSlam = t === null ? Infinity : t - hugeAt - HOOK_SLAM * 0.55;
+  const shake = sinceSlam >= 0 && sinceSlam < 0.3 ? Math.sin(sinceSlam * 70) * 7 * (1 - sinceSlam / 0.3) : 0;
+
+  words.forEach((word, i) => {
+    const w = widths[i];
+    const start = i * HOOK_WORD_GAP;
+    const huge = word === "HUGE";
+    const p = t === null ? 1 : clamp01((t - start) / (huge ? HOOK_SLAM : HOOK_POP));
+    if (p > 0) {
+      const scale = huge ? 1 + 1.6 * (1 - easeOut(p)) ** 2 - 0.12 * Math.sin(Math.PI * clamp01((p - 0.55) / 0.45)) : backOut(p);
+      const cx = x + w / 2;
+      const cy = y - capHeight / 2;
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, p * 3);
+      ctx.translate(cx + shake, cy);
+      ctx.scale(scale, scale);
+      ctx.translate(-cx, -cy);
+      drawSpacedFrom(ctx, word, x, y, spacing);
+      ctx.restore();
+    }
+    x += w + space;
+  });
+}
+
 function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, waveMs, fraction, day, introS }: FrameState) {
   const family = minecraft.style.fontFamily;
   ctx.fillStyle = "#fff";
@@ -646,17 +680,10 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
     drawSpacedFrom(ctx, ABOUT.slice(0, typed), start, about.y, about.spacing);
   }
 
-  // Line 3 fades up last.
-  const hookIn = times ? clamp01((introS! - times.hookStart) / INTRO.fade) : 1;
-  if (hookIn > 0) {
-    ctx.save();
-    ctx.globalAlpha = hookIn;
-    ctx.translate(0, (1 - easeOut(hookIn)) * 20);
-    ctx.font = `${hook.size}px ${family}`;
-    ctx.fillStyle = "#6b6b6b";
-    drawSpaced(ctx, HOOK, FRAME_W / 2, hook.y, hook.spacing);
-    ctx.restore();
-  }
+  // Line 3 pops in word by word, and HUGE slams down.
+  ctx.font = `${hook.size}px ${family}`;
+  ctx.fillStyle = "#6b6b6b";
+  drawHook(ctx, hook, times ? introS! - times.hookStart : null);
 
   drawArt(ctx, getArt(), fraction, seconds, waveMs);
 
