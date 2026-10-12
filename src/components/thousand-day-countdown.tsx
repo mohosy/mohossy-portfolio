@@ -60,7 +60,7 @@ const startedAtStore = storedValue<number | null>(
 
 const designStore = storedValue<Design>(
   "mohossy-count-design",
-  (raw) => (raw && Object.hasOwn(builders, raw) ? (raw as Design) : "bag"),
+  (raw) => (raw && Object.hasOwn(builders, raw) ? (raw as Design) : "watch"),
   (value) => value,
 );
 
@@ -399,7 +399,11 @@ function buildWatch(): Art {
       // The second hand sweeps once a minute.
       const a = ((60 - (seconds % 60)) / 60) * Math.PI * 2;
       bresenham(cx, cy, Math.round(cx + Math.sin(a) * 15), Math.round(cy - Math.cos(a) * 15), (x, y) =>
-        fillCell(x, y, AMBER),
+        fillCell(x, y, INK),
+      );
+      // A gold crown under 12 o'clock, luxury-watch style, drawn over the hand.
+      ["X..X.X.X..X", ".X.X.X.X.X.", ".XXXXXXXXX.", ".XXXXXXXXX.", ".X.X.X.X.X.", ".XXXXXXXXX."].forEach((row, r) =>
+        [...row].forEach((on, c) => on === "X" && fillCell(cx - 5 + c, 39 + r, AMBER)),
       );
     },
   };
@@ -1441,7 +1445,7 @@ const subscribeEverySecond = (callback: () => void) => {
 export function ThousandDayCountdown() {
   const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const startedAt = useSyncExternalStore(startedAtStore.subscribe, startedAtStore.read, () => null);
-  const design = useSyncExternalStore(designStore.subscribe, designStore.read, (): Design => "bag");
+  const design = useSyncExternalStore(designStore.subscribe, designStore.read, (): Design => "watch");
   const liveDay = useSyncExternalStore(
     subscribeEverySecond,
     () => dayNumber(startedAt === null ? TOTAL_SECONDS : secondsLeftAt(Date.now() - startedAt)),
