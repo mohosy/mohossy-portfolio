@@ -178,7 +178,6 @@ const LAYOUT = {
   days: { size: 96, y: 250, spacing: 6 },
   about: { size: 50, y: 340, spacing: 6 },
   hook: { size: 30, y: 400, spacing: 4 },
-  talk: { size: 30, y: 446, spacing: 4 },
   hms: { size: 110, y: 1540 },
 };
 
@@ -562,6 +561,9 @@ const INTRO = {
   typeGap: 0.25,
   typeStep: 0.04,
   hookGap: 0.2,
+  hookHold: 0.7,
+  swipe: 0.32,
+  talkGap: 0.05,
   fade: 0.35,
 };
 
@@ -570,7 +572,15 @@ function introTimes(digits: number) {
   const typeStart = landed + INTRO.typeGap;
   const typeEnd = typeStart + ABOUT.length * INTRO.typeStep;
   const hookStart = typeEnd + INTRO.hookGap;
-  return { landed, typeStart, typeEnd, hookStart };
+  const swipeStart = hookStart + HOOK.length * INTRO.typeStep + INTRO.hookHold;
+  const talkStart = swipeStart + INTRO.swipe + INTRO.talkGap;
+  const talkEnd = talkStart + TALK.length * INTRO.typeStep;
+  return { landed, typeStart, typeEnd, hookStart, swipeStart, talkStart, talkEnd };
+}
+
+// How many letters of `text` have been typed by clip time `t` if typing starts at `start`.
+function typedCount(text: string, start: number, t: number) {
+  return Math.floor(clamp01((t - start) / (text.length * INTRO.typeStep)) * text.length);
 }
 
 // How far reel `i` still has to roll (in digits) at clip time `t`; 0 once it has landed.
@@ -607,55 +617,11 @@ function drawSlotNumber(ctx: CanvasRenderingContext2D, number: string, x: number
   ctx.textAlign = "left";
 }
 
-const HOOK_REVEAL = 1.8;
-const HOOK_SHINE = 0.7;
-// The second tagline starts its own reveal as the first one's shine is passing.
-const TALK_DELAY = HOOK_REVEAL + 0.35;
-
-// Movie-trailer title for a tagline: it fades up slowly with the letters spread wide, glides
-// them together while the line gently grows, then a gold shine sweeps across it.
-function drawTagline(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  { y, spacing }: { y: number; spacing: number },
-  t: number | null,
-) {
-  const p = t === null ? 1 : clamp01(t / HOOK_REVEAL);
-  if (p <= 0) return;
-  const settle = 1 - (1 - p) ** 3;
-  const scale = 0.93 + 0.07 * settle;
-  // Start as wide as fits in the frame, then glide in to the normal spacing.
-  const spread = Math.max(0, (980 / 0.93 - spacedWidth(ctx, text, spacing)) / (text.length - 1));
-  const tracking = spacing + (1 - settle) * spread;
-  const width = spacedWidth(ctx, text, tracking);
-  const capHeight = ctx.measureText("H").actualBoundingBoxAscent;
-  const cx = FRAME_W / 2;
-  const cy = y - capHeight / 2;
-  const x = cx - width / 2;
-
-  ctx.save();
-  ctx.translate(cx, cy);
-  ctx.scale(scale, scale);
-  ctx.translate(-cx, -cy);
-  ctx.globalAlpha = clamp01(p * 1.4) ** 1.5;
-  drawSpacedFrom(ctx, text, x, y, tracking);
-
-  // The shine: the same text in gold, seen only through a slanted band moving left to right.
-  const shine = t === null ? 1 : clamp01((t - HOOK_REVEAL - 0.1) / HOOK_SHINE);
-  if (shine > 0 && shine < 1) {
-    const band = 70;
-    const sweepX = x - band * 2 + (width + band * 4) * easeInOut(shine);
-    ctx.beginPath();
-    ctx.moveTo(sweepX - band / 2 + 20, cy - capHeight);
-    ctx.lineTo(sweepX + band / 2 + 20, cy - capHeight);
-    ctx.lineTo(sweepX + band / 2 - 20, cy + capHeight);
-    ctx.lineTo(sweepX - band / 2 - 20, cy + capHeight);
-    ctx.closePath();
-    ctx.clip();
-    ctx.fillStyle = AMBER;
-    drawSpacedFrom(ctx, text, x, y, tracking);
-  }
-  ctx.restore();
+// Types `text` up to `typed` letters, each already in its final centered position.
+function drawTyped(ctx: CanvasRenderingContext2D, text: string, typed: number, { y, spacing }: { y: number; spacing: number }) {
+  if (typed <= 0) return;
+  const start = FRAME_W / 2 - spacedWidth(ctx, text, spacing) / 2;
+  drawSpacedFrom(ctx, text.slice(0, typed), start, y, spacing);
 }
 
 function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, waveMs, fraction, day, introS }: FrameState) {
@@ -664,7 +630,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
   ctx.textBaseline = "alphabetic";
 
-  const { days, about, hook, talk, hms } = LAYOUT;
+  const { days, about, hook, hms } = LAYOUT;
   const number = String(day);
   const rest = day === 1 ? " DAY LEFT" : " DAYS LEFT";
   const times = introS === undefined ? null : introTimes(number.length);
@@ -689,18 +655,25 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
   // Line 2 types itself out, letter by letter, in its final position.
   ctx.font = `${about.size}px ${family}`;
   ctx.fillStyle = INK;
-  const typed = times ? Math.floor(clamp01((introS! - times.typeStart) / (ABOUT.length * INTRO.typeStep)) * ABOUT.length) : ABOUT.length;
-  if (typed > 0) {
-    const start = FRAME_W / 2 - spacedWidth(ctx, ABOUT, about.spacing) / 2;
-    drawSpacedFrom(ctx, ABOUT.slice(0, typed), start, about.y, about.spacing);
-  }
+  drawTyped(ctx, ABOUT, times ? typedCount(ABOUT, times.typeStart, introS!) : ABOUT.length, about);
 
-  // Lines 3 and 4 come in like movie-trailer title cards, one after the other.
+  // Line 3 types out, swipes off to the left, and the next line types out in its place.
   ctx.font = `${hook.size}px ${family}`;
   ctx.fillStyle = "#6b6b6b";
-  drawTagline(ctx, HOOK, hook, times ? introS! - times.hookStart : null);
-  ctx.font = `${talk.size}px ${family}`;
-  drawTagline(ctx, TALK, talk, times ? introS! - times.hookStart - TALK_DELAY : null);
+  if (!times) {
+    drawTyped(ctx, TALK, TALK.length, hook);
+  } else {
+    const t = introS!;
+    if (t < times.swipeStart + INTRO.swipe) {
+      const swipe = clamp01((t - times.swipeStart) / INTRO.swipe);
+      ctx.save();
+      ctx.globalAlpha = 1 - swipe;
+      ctx.translate(-FRAME_W * swipe ** 3, 0);
+      drawTyped(ctx, HOOK, typedCount(HOOK, times.hookStart, t), hook);
+      ctx.restore();
+    }
+    drawTyped(ctx, TALK, typedCount(TALK, times.talkStart, t), hook);
+  }
 
   drawArt(ctx, getArt(), fraction, seconds, waveMs);
 
@@ -745,13 +718,15 @@ async function renderClipAudio(startMs: number) {
   out.gain.value = 1.8;
   out.connect(ctx.destination);
   const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
-  const { landed, typeStart, typeEnd } = introTimes(digits);
+  const { landed, typeStart, hookStart, talkStart, talkEnd } = introTimes(digits);
 
   playRatchet(ctx, out, digits, landed);
-  [...ABOUT].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, typeStart + i * INTRO.typeStep, out));
+  for (const [text, start] of [[ABOUT, typeStart], [HOOK, hookStart], [TALK, talkStart]] as const) {
+    [...text].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, start + i * INTRO.typeStep, out));
+  }
 
   // The timer keeps counting, but its tick stays quiet until the intro sounds are done.
-  const ticksFrom = typeEnd + 0.1;
+  const ticksFrom = talkEnd + 0.1;
   for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + CLIP_MS; t += 1000) {
     const at = (t - startMs) / 1000;
     const left = secondsLeftAt(t);
