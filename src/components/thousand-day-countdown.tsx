@@ -447,31 +447,45 @@ function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: numb
   const goldCols = offsets.filter((_, c) => holdsGold(c));
   const shift = goldCols.length ? goldCols.reduce((sum, o) => sum + o, 0) / goldCols.length : 0;
   const surfaces = offsets.map((o) => level + o - shift);
-  const fillCell = (c: number, r: number, color: string) => {
-    ctx.fillStyle = color;
-    ctx.fillRect(left + c * cell, top + r * cell, cell, cell);
-  };
-
+  // Each colour is collected into one path and filled once, so neighbouring cells never show
+  // hairline seams, even when the clip zooms in. Gold bleeds a hair sideways and down, where it
+  // always runs under an outline, never up past its surface.
+  const gold = new Path2D();
+  const shine = new Path2D();
+  const inkPath = new Path2D();
+  const bleed = 0.5;
   for (let c = 0; c < cols; c++) {
     const x = left + c * cell;
     const surface = surfaces[c];
     for (let r = 0; r < rows; r++) {
       const y = top + r * cell;
       if (ink[r * cols + c] || isEdge(c, r)) {
-        fillCell(c, r, INK);
+        inkPath.rect(x, y, cell, cell);
         continue;
       }
       if (!isBody(c, r) || y + cell <= surface) continue;
       const from = Math.max(y, surface);
-      ctx.fillStyle = GOLD;
-      ctx.fillRect(x, from, cell, y + cell - from);
-      if (surface > y - cell * 0.5) {
-        ctx.fillStyle = GOLD_LIGHT;
-        ctx.fillRect(x, from, cell, Math.min(cell * 0.5, y + cell - from));
-      }
+      gold.rect(x - bleed, from, cell + bleed * 2, y + cell - from + bleed);
+      if (surface > y - cell * 0.5) shine.rect(x, from, cell, Math.min(cell * 0.5, y + cell - from));
     }
   }
+  ctx.fillStyle = GOLD;
+  ctx.fill(gold);
+  ctx.fillStyle = GOLD_LIGHT;
+  ctx.fill(shine);
+  ctx.fillStyle = INK;
+  ctx.fill(inkPath);
+
+  const overlayPaths = new Map<string, Path2D>();
+  const fillCell = (c: number, r: number, color: string) => {
+    if (!overlayPaths.has(color)) overlayPaths.set(color, new Path2D());
+    overlayPaths.get(color)!.rect(left + c * cell, top + r * cell, cell, cell);
+  };
   art.overlay?.({ fillCell, seconds });
+  for (const [color, path] of overlayPaths) {
+    ctx.fillStyle = color;
+    ctx.fill(path);
+  }
 }
 
 function spacedWidth(ctx: CanvasRenderingContext2D, text: string, spacing: number) {
@@ -553,6 +567,8 @@ type FrameState = {
   day: number;
   // Seconds into a downloaded clip; drives the opening animation. Unset on the live page.
   introS?: number;
+  // Close-up camera for the clip opening: frame point (cx, cy) shown at the centre, `zoom` times.
+  camera?: { zoom: number; cx: number; cy: number };
 };
 
 function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
@@ -648,11 +664,19 @@ function drawTyped(ctx: CanvasRenderingContext2D, text: string, typed: number, {
   drawSpacedFrom(ctx, text.slice(0, typed), start, y, spacing);
 }
 
-function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, waveMs, fraction, day, introS }: FrameState) {
+function drawFrame(
+  ctx: CanvasRenderingContext2D,
+  { seconds, before, sinceMs, waveMs, fraction, day, introS, camera }: FrameState,
+) {
   const family = minecraft.style.fontFamily;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
   ctx.textBaseline = "alphabetic";
+  // Everything is drawn through the camera, so a close-up stays sharp rather than blown up.
+  if (camera) {
+    ctx.setTransform(camera.zoom, 0, 0, camera.zoom, FRAME_W / 2 - camera.zoom * camera.cx, FRAME_H / 2 - camera.zoom * camera.cy);
+  }
 
   const { days, about, hook, hms } = LAYOUT;
   const number = String(day);
@@ -704,14 +728,27 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
   ctx.fillStyle = INK;
   ctx.font = `${hms.size}px ${family}`;
   drawRollingRow(ctx, hmsText(seconds), hmsText(before), sinceMs, hms.y);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 // The clip opens full of gold and drains to the countdown's true level, landing together
 // with the spinning day number; from then on every frame shows the real value.
+const CLOSE_UP = 3;
+const ZOOM_OUT_S = 1;
+
 function withIntro(state: FrameState, clipSeconds: number): FrameState {
   const { landed } = introTimes(String(state.day).length);
   const p = easeInOut(clamp01((clipSeconds - INTRO.drainStart) / (landed - INTRO.drainStart)));
-  return { ...state, introS: clipSeconds, fraction: 1 + (state.fraction - 1) * p };
+  const fraction = 1 + (state.fraction - 1) * p;
+  // The camera opens close on the gold's surface (kept in the upper part of the shot) and
+  // follows it down; it eases back out to the whole frame as the day number lands.
+  const follow = goldLevel(getArt(), fraction) + (FRAME_H / CLOSE_UP) * 0.22;
+  const out = easeInOut(clamp01((clipSeconds - (landed - ZOOM_OUT_S / 2)) / ZOOM_OUT_S));
+  const camera =
+    out >= 1
+      ? undefined
+      : { zoom: CLOSE_UP + (1 - CLOSE_UP) * out, cx: FRAME_W / 2, cy: follow + (FRAME_H / 2 - follow) * out };
+  return { ...state, introS: clipSeconds, fraction, camera };
 }
 
 // "Last 10 seconds": ends just before the latest tick, so the clip has 10 evenly spaced ticks.
