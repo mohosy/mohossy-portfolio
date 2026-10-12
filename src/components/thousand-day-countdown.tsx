@@ -178,6 +178,7 @@ const LAYOUT = {
   days: { size: 96, y: 250, spacing: 6 },
   about: { size: 50, y: 340, spacing: 6 },
   hook: { size: 30, y: 400, spacing: 4 },
+  talk: { size: 30, y: 446, spacing: 4 },
   hms: { size: 110, y: 1540 },
 };
 
@@ -547,6 +548,7 @@ function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
 
 const ABOUT = "TO BECOME A BILLIONAIRE";
 const HOOK = "OR SOMETHING HUGE WILL HAPPEN";
+const TALK = "EVERYONE WILL BE TALKING ABOUT IT";
 
 // Opening sequence of a downloaded clip, in seconds. The day number spins like a slot
 // machine while the gold drains; both land on the true value at the same moment, then
@@ -607,18 +609,25 @@ function drawSlotNumber(ctx: CanvasRenderingContext2D, number: string, x: number
 
 const HOOK_REVEAL = 1.8;
 const HOOK_SHINE = 0.7;
+// The second tagline starts its own reveal as the first one's shine is passing.
+const TALK_DELAY = HOOK_REVEAL + 0.35;
 
-// Movie-trailer title for the hook: it fades up slowly with the letters spread wide, glides
+// Movie-trailer title for a tagline: it fades up slowly with the letters spread wide, glides
 // them together while the line gently grows, then a gold shine sweeps across it.
-function drawHook(ctx: CanvasRenderingContext2D, { y, spacing }: { y: number; spacing: number }, t: number | null) {
+function drawTagline(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  { y, spacing }: { y: number; spacing: number },
+  t: number | null,
+) {
   const p = t === null ? 1 : clamp01(t / HOOK_REVEAL);
   if (p <= 0) return;
   const settle = 1 - (1 - p) ** 3;
   const scale = 0.93 + 0.07 * settle;
   // Start as wide as fits in the frame, then glide in to the normal spacing.
-  const spread = Math.max(0, (980 / 0.93 - spacedWidth(ctx, HOOK, spacing)) / (HOOK.length - 1));
+  const spread = Math.max(0, (980 / 0.93 - spacedWidth(ctx, text, spacing)) / (text.length - 1));
   const tracking = spacing + (1 - settle) * spread;
-  const width = spacedWidth(ctx, HOOK, tracking);
+  const width = spacedWidth(ctx, text, tracking);
   const capHeight = ctx.measureText("H").actualBoundingBoxAscent;
   const cx = FRAME_W / 2;
   const cy = y - capHeight / 2;
@@ -629,7 +638,7 @@ function drawHook(ctx: CanvasRenderingContext2D, { y, spacing }: { y: number; sp
   ctx.scale(scale, scale);
   ctx.translate(-cx, -cy);
   ctx.globalAlpha = clamp01(p * 1.4) ** 1.5;
-  drawSpacedFrom(ctx, HOOK, x, y, tracking);
+  drawSpacedFrom(ctx, text, x, y, tracking);
 
   // The shine: the same text in gold, seen only through a slanted band moving left to right.
   const shine = t === null ? 1 : clamp01((t - HOOK_REVEAL - 0.1) / HOOK_SHINE);
@@ -644,7 +653,7 @@ function drawHook(ctx: CanvasRenderingContext2D, { y, spacing }: { y: number; sp
     ctx.closePath();
     ctx.clip();
     ctx.fillStyle = AMBER;
-    drawSpacedFrom(ctx, HOOK, x, y, tracking);
+    drawSpacedFrom(ctx, text, x, y, tracking);
   }
   ctx.restore();
 }
@@ -655,7 +664,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
   ctx.textBaseline = "alphabetic";
 
-  const { days, about, hook, hms } = LAYOUT;
+  const { days, about, hook, talk, hms } = LAYOUT;
   const number = String(day);
   const rest = day === 1 ? " DAY LEFT" : " DAYS LEFT";
   const times = introS === undefined ? null : introTimes(number.length);
@@ -686,10 +695,12 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
     drawSpacedFrom(ctx, ABOUT.slice(0, typed), start, about.y, about.spacing);
   }
 
-  // Line 3 comes in like a movie-trailer title.
+  // Lines 3 and 4 come in like movie-trailer title cards, one after the other.
   ctx.font = `${hook.size}px ${family}`;
   ctx.fillStyle = "#6b6b6b";
-  drawHook(ctx, hook, times ? introS! - times.hookStart : null);
+  drawTagline(ctx, HOOK, hook, times ? introS! - times.hookStart : null);
+  ctx.font = `${talk.size}px ${family}`;
+  drawTagline(ctx, TALK, talk, times ? introS! - times.hookStart - TALK_DELAY : null);
 
   drawArt(ctx, getArt(), fraction, seconds, waveMs);
 
