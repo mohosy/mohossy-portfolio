@@ -396,14 +396,14 @@ function buildWatch(): Art {
     body,
     ink,
     overlay: ({ fillCell, seconds }) => {
-      // The second hand sweeps once a minute.
+      // A gold crown between the center and 6 o'clock, luxury-watch style, under the hands.
+      ["X..X.X.X..X", ".X.X.X.X.X.", ".XXXXXXXXX.", ".XXXXXXXXX.", ".X.X.X.X.X.", ".XXXXXXXXX."].forEach((row, r) =>
+        [...row].forEach((on, c) => on === "X" && fillCell(cx - 5 + c, 54 + r, AMBER)),
+      );
+      // The second hand sweeps once a minute, over the crown.
       const a = ((60 - (seconds % 60)) / 60) * Math.PI * 2;
       bresenham(cx, cy, Math.round(cx + Math.sin(a) * 15), Math.round(cy - Math.cos(a) * 15), (x, y) =>
         fillCell(x, y, INK),
-      );
-      // A gold crown under 12 o'clock, luxury-watch style, drawn over the hand.
-      ["X..X.X.X..X", ".X.X.X.X.X.", ".XXXXXXXXX.", ".XXXXXXXXX.", ".X.X.X.X.X.", ".XXXXXXXXX."].forEach((row, r) =>
-        [...row].forEach((on, c) => on === "X" && fillCell(cx - 5 + c, 39 + r, AMBER)),
       );
     },
   };
