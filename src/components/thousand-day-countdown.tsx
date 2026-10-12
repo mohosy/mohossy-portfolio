@@ -605,42 +605,48 @@ function drawSlotNumber(ctx: CanvasRenderingContext2D, number: string, x: number
   ctx.textAlign = "left";
 }
 
-const HOOK_WORD_GAP = 0.12;
-const HOOK_POP = 0.28;
-const HOOK_SLAM = 0.4;
+const HOOK_REVEAL = 1.8;
+const HOOK_SHINE = 0.7;
 
-// Each word of the hook pops up from nothing with a little overshoot, one after another.
-// HUGE gets its own entrance: it starts big, slams down to size and shakes the line.
+// Movie-trailer title for the hook: it fades up slowly with the letters spread wide, glides
+// them together while the line gently grows, then a gold shine sweeps across it.
 function drawHook(ctx: CanvasRenderingContext2D, { y, spacing }: { y: number; spacing: number }, t: number | null) {
-  const words = HOOK.split(" ");
-  const space = ctx.measureText(" ").width + spacing * 2;
-  const widths = words.map((word) => spacedWidth(ctx, word, spacing));
-  let x = (FRAME_W - (widths.reduce((sum, w) => sum + w, 0) + space * (words.length - 1))) / 2;
+  const p = t === null ? 1 : clamp01(t / HOOK_REVEAL);
+  if (p <= 0) return;
+  const settle = 1 - (1 - p) ** 3;
+  const scale = 0.93 + 0.07 * settle;
+  // Start as wide as fits in the frame, then glide in to the normal spacing.
+  const spread = Math.max(0, (980 / 0.93 - spacedWidth(ctx, HOOK, spacing)) / (HOOK.length - 1));
+  const tracking = spacing + (1 - settle) * spread;
+  const width = spacedWidth(ctx, HOOK, tracking);
   const capHeight = ctx.measureText("H").actualBoundingBoxAscent;
-  const hugeAt = words.indexOf("HUGE") * HOOK_WORD_GAP;
-  // A short, fading side-to-side shake once HUGE lands.
-  const sinceSlam = t === null ? Infinity : t - hugeAt - HOOK_SLAM * 0.55;
-  const shake = sinceSlam >= 0 && sinceSlam < 0.3 ? Math.sin(sinceSlam * 70) * 7 * (1 - sinceSlam / 0.3) : 0;
+  const cx = FRAME_W / 2;
+  const cy = y - capHeight / 2;
+  const x = cx - width / 2;
 
-  words.forEach((word, i) => {
-    const w = widths[i];
-    const start = i * HOOK_WORD_GAP;
-    const huge = word === "HUGE";
-    const p = t === null ? 1 : clamp01((t - start) / (huge ? HOOK_SLAM : HOOK_POP));
-    if (p > 0) {
-      const scale = huge ? 1 + 1.6 * (1 - easeOut(p)) ** 2 - 0.12 * Math.sin(Math.PI * clamp01((p - 0.55) / 0.45)) : backOut(p);
-      const cx = x + w / 2;
-      const cy = y - capHeight / 2;
-      ctx.save();
-      ctx.globalAlpha = Math.min(1, p * 3);
-      ctx.translate(cx + shake, cy);
-      ctx.scale(scale, scale);
-      ctx.translate(-cx, -cy);
-      drawSpacedFrom(ctx, word, x, y, spacing);
-      ctx.restore();
-    }
-    x += w + space;
-  });
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale, scale);
+  ctx.translate(-cx, -cy);
+  ctx.globalAlpha = clamp01(p * 1.4) ** 1.5;
+  drawSpacedFrom(ctx, HOOK, x, y, tracking);
+
+  // The shine: the same text in gold, seen only through a slanted band moving left to right.
+  const shine = t === null ? 1 : clamp01((t - HOOK_REVEAL - 0.1) / HOOK_SHINE);
+  if (shine > 0 && shine < 1) {
+    const band = 70;
+    const sweepX = x - band * 2 + (width + band * 4) * easeInOut(shine);
+    ctx.beginPath();
+    ctx.moveTo(sweepX - band / 2 + 20, cy - capHeight);
+    ctx.lineTo(sweepX + band / 2 + 20, cy - capHeight);
+    ctx.lineTo(sweepX + band / 2 - 20, cy + capHeight);
+    ctx.lineTo(sweepX - band / 2 - 20, cy + capHeight);
+    ctx.closePath();
+    ctx.clip();
+    ctx.fillStyle = AMBER;
+    drawSpacedFrom(ctx, HOOK, x, y, tracking);
+  }
+  ctx.restore();
 }
 
 function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, waveMs, fraction, day, introS }: FrameState) {
@@ -680,7 +686,7 @@ function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, wa
     drawSpacedFrom(ctx, ABOUT.slice(0, typed), start, about.y, about.spacing);
   }
 
-  // Line 3 pops in word by word, and HUGE slams down.
+  // Line 3 comes in like a movie-trailer title.
   ctx.font = `${hook.size}px ${family}`;
   ctx.fillStyle = "#6b6b6b";
   drawHook(ctx, hook, times ? introS! - times.hookStart : null);
