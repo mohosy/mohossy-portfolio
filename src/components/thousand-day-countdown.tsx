@@ -550,7 +550,7 @@ function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
 }
 
 const ABOUT = "TO BECOME A BILLIONAIRE";
-const HOOK = "(OR SOMETHING HUGE WILL HAPPEN)";
+const HOOK = "OR SOMETHING HUGE WILL HAPPEN";
 
 // Opening sequence of a downloaded clip, in seconds. The day number spins like a slot
 // machine while the gold drains; both land on the true value at the same moment, then
