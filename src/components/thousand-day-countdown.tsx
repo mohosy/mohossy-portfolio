@@ -98,11 +98,30 @@ function knock(pitch: number, { at = 0, gain = 1, decay = 0.06 } = {}): Voice {
 function watchTick(detune = 1, gain = 1): Voice {
   return {
     noise: [
-      { filter: "bandpass", freq: 5200 * detune, q: 2.5, gain: 0.95 * gain, decay: 0.008 },
-      { filter: "highpass", freq: 7000 * detune, gain: 0.25 * gain, decay: 0.004 },
+      { filter: "bandpass", freq: 5200 * detune, q: 2.5, gain: 0.57 * gain, decay: 0.008 },
+      { filter: "highpass", freq: 7000 * detune, gain: 0.15 * gain, decay: 0.004 },
     ],
-    tones: [{ freq: 3400 * detune, gain: 0.105 * gain, decay: 0.025 }],
+    tones: [{ freq: 3400 * detune, gain: 0.063 * gain, decay: 0.025 }],
   };
+}
+
+// A crisp drop of liquid: a short sine that chirps upward, with a tiny click on top.
+function drop(at: number, freq: number, gain: number, decay: number, rise = 2.4): Voice {
+  return {
+    tones: [{ freq, to: freq * rise, gain, decay, at }],
+    noise: [{ filter: "highpass", freq: 4000, gain: gain * 0.25, decay: 0.003, at }],
+  };
+}
+
+// The gold draining: a soft trickle of tiny drops while the level falls (thinning out as it
+// slows), then a few last drips once it has settled.
+function pour(from: number, to: number): Voice {
+  const parts: Voice[] = [];
+  for (let t = from; t < to; t += (0.03 + Math.random() * 0.03) * (1 + 0.8 * ((t - from) / (to - from)))) {
+    parts.push(drop(t, 900 + Math.random() * 1000, 0.0315, 0.03, 1.8));
+  }
+  parts.push(drop(to + 0.1, 760, 0.098, 0.08), drop(to + 0.26, 690, 0.084, 0.08), drop(to + 0.44, 820, 0.063, 0.08));
+  return combine(...parts);
 }
 
 const SOUNDS = {
@@ -129,11 +148,16 @@ function soundFor(secondsLeft: number): SoundName {
 
 let noiseBuffer: AudioBuffer | null = null;
 
+// The same noise every time (seeded), so a click is exactly as loud on every page load.
 function getNoise(ctx: BaseAudioContext) {
   if (!noiseBuffer || noiseBuffer.sampleRate !== ctx.sampleRate) {
     noiseBuffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.05), ctx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+    let seed = 20260512;
+    for (let i = 0; i < data.length; i++) {
+      seed = (seed * 16807) % 2147483647;
+      data[i] = (seed / 2147483647) * 2 - 1;
+    }
   }
   return noiseBuffer;
 }
@@ -558,7 +582,7 @@ const INTRO = {
   firstStop: 1.55,
   stopGap: 0.25,
   drainStart: 0.35,
-  typeGap: 0.25,
+  typeGap: 0.55,
   typeStep: 0.04,
   hookGap: 0.2,
   hookHold: 0.7,
@@ -721,6 +745,12 @@ async function renderClipAudio(startMs: number) {
   const { landed, typeStart, hookStart, talkStart, talkEnd } = introTimes(digits);
 
   playRatchet(ctx, out, digits, landed);
+  // Quieter while little has drained, so a tiny drop in the gold never sounds like a big pour.
+  const drained = 1 - secondsLeftAt(startMs + landed * 1000) / TOTAL_SECONDS;
+  const liquid = ctx.createGain();
+  liquid.gain.value = 0.3 + 0.7 * clamp01(drained / 0.1);
+  liquid.connect(out);
+  playVoice(ctx, pour(INTRO.drainStart, landed), 0, liquid);
   for (const [text, start] of [[ABOUT, typeStart], [HOOK, hookStart], [TALK, talkStart]] as const) {
     [...text].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, start + i * INTRO.typeStep, out));
   }
@@ -732,7 +762,19 @@ async function renderClipAudio(startMs: number) {
     const left = secondsLeftAt(t);
     if (at >= ticksFrom && left < secondsLeftAt(t - 1)) playVoice(ctx, SOUNDS[soundFor(left)], at, out);
   }
-  return ctx.startRendering();
+  // Safety net: if anything peaks too close to full scale, turn the whole track down to fit.
+  const buffer = await ctx.startRendering();
+  let peak = 0;
+  for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+    for (const x of buffer.getChannelData(ch)) peak = Math.max(peak, Math.abs(x));
+  }
+  if (peak > 0.7) {
+    for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+      const data = buffer.getChannelData(ch);
+      for (let i = 0; i < data.length; i++) data[i] *= 0.7 / peak;
+    }
+  }
+  return buffer;
 }
 
 let aacFallbackRegistered = false;
