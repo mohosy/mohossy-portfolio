@@ -58,12 +58,6 @@ const startedAtStore = storedValue<number | null>(
   (value) => (value === null ? null : String(value)),
 );
 
-const designStore = storedValue<Design>(
-  "mohossy-count-design",
-  (raw) => (raw && Object.hasOwn(builders, raw) ? (raw as Design) : "watch"),
-  (value) => value,
-);
-
 const subscribeNoop = () => () => {};
 
 // The count is a pure function of time since START, so any moment can be redrawn exactly.
@@ -88,6 +82,8 @@ const SOUNDS = {
   tick: [{ pitch: 720 }],
   tock: [{ pitch: 610 }],
   minute: [{ pitch: 480, gain: 1.2, decay: 0.12 }],
+  lock: [{ pitch: 560, gain: 1.1, decay: 0.08 }],
+  type: [{ pitch: 1500, gain: 0.3, decay: 0.03 }],
   start: [{ pitch: 820 }, { pitch: 600, at: 0.08 }],
   reset: [{ pitch: 600 }, { pitch: 820, at: 0.08 }],
   done: [
@@ -178,19 +174,11 @@ const COLLAPSE_MS = 300;
 const backOut = (p: number) => 1 + 2.70158 * (p - 1) ** 3 + 1.70158 * (p - 1) ** 2;
 const easeOut = (p: number) => 1 - (1 - p) ** 2;
 
-export type Design = "watch" | "champagne";
-
 type Point = [number, number];
 
 type OverlayContext = {
-  ctx: CanvasRenderingContext2D;
   fillCell: (c: number, r: number, color: string) => void;
-  isBody: (c: number, r: number) => boolean;
-  isEdge: (c: number, r: number) => boolean;
-  surface: (c: number) => number;
-  cellTop: (r: number) => number;
   seconds: number;
-  waveMs: number;
 };
 
 // Pixel art is drawn as shapes on a tiny canvas, then read back as a grid of cells.
@@ -202,8 +190,6 @@ type Art = {
   top: number;
   body: Uint8Array;
   ink: Uint8Array;
-  fill?: string;
-  shine?: string;
   overlay?: (o: OverlayContext) => void;
 };
 
@@ -343,56 +329,14 @@ function buildWatch(): Art {
   };
 }
 
-// A champagne flute: the bubbly drains and bubbles keep rising.
-function buildChampagne(): Art {
-  const cols = 48;
-  const rows = 100;
-  const body = rasterize(cols, rows, (c) => {
-    c.beginPath();
-    c.moveTo(11, 2);
-    c.lineTo(37, 2);
-    c.quadraticCurveTo(36.5, 44, 33, 53);
-    c.quadraticCurveTo(29, 63, 24, 64);
-    c.quadraticCurveTo(19, 63, 15, 53);
-    c.quadraticCurveTo(11.5, 44, 11, 2);
-    c.closePath();
-    c.fill();
-  });
-  const glass = rasterize(cols, rows, (c) => {
-    c.fillRect(23, 63, 2, 28);
-    polygon(c, [[17, 90], [31, 90], [36, 94], [12, 94]]);
-  });
-  const ink = inkGrid(cols, rows, []);
-  glass.forEach((on, i) => (ink[i] ||= on));
-  const bubbles = Array.from({ length: 16 }, (_, i) => ({
-    col: 15 + ((i * 7) % 19),
-    speed: 4 + ((i * 5) % 7),
-    phase: (i * 13) % 50,
-  }));
-  return {
-    ...centered(cols, rows, 9),
-    body,
-    ink,
-    overlay: ({ fillCell, isBody, isEdge, surface, cellTop, waveMs }) => {
-      for (const { col, speed, phase } of bubbles) {
-        const r = 60 - Math.floor(((waveMs / 1000) * speed + phase) % 56);
-        if (isBody(col, r) && !isEdge(col, r) && cellTop(r) > surface(col)) fillCell(col, r, "#FFF4CF");
-      }
-      for (let r = 8; r < 40; r++) if (isBody(14, r) && !isEdge(14, r)) fillCell(14, r, "rgba(255,255,255,0.5)");
-    },
-  };
-}
-
-const builders: Record<Design, () => Art> = {
-  watch: buildWatch,
-  champagne: buildChampagne,
-}
-
 type PreparedArt = Art & {
   isBody: (c: number, r: number) => boolean;
   isEdge: (c: number, r: number) => boolean;
   fillRows: number[];
   fillTotal: number;
+  // Top and bottom (in frame pixels) of the area that can hold gold.
+  fillTop: number;
+  fillBottom: number;
 };
 
 function prepare(art: Art): PreparedArt {
@@ -406,18 +350,24 @@ function prepare(art: Art): PreparedArt {
     for (let c = 0; c < cols; c++) if (isBody(c, r) && !isEdge(c, r) && !ink[r * cols + c]) count++;
     return count;
   });
-  return { ...art, isBody, isEdge, fillRows, fillTotal: fillRows.reduce((sum, n) => sum + n, 0) };
+  const firstRow = fillRows.findIndex((n) => n > 0);
+  const lastRow = fillRows.length - 1 - [...fillRows].reverse().findIndex((n) => n > 0);
+  return {
+    ...art,
+    isBody,
+    isEdge,
+    fillRows,
+    fillTotal: fillRows.reduce((sum, n) => sum + n, 0),
+    fillTop: art.top + firstRow * art.cell,
+    fillBottom: art.top + (lastRow + 1) * art.cell,
+  };
 }
 
-const artCache = new Map<Design, PreparedArt>();
+let watchArt: PreparedArt | undefined;
 
-function getArt(design: Design) {
-  let art = artCache.get(design);
-  if (!art) {
-    art = prepare(builders[design]());
-    artCache.set(design, art);
-  }
-  return art;
+function getArt() {
+  watchArt ??= prepare(buildWatch());
+  return watchArt;
 }
 
 // Where the gold surface sits so that the gold covers exactly `fraction` of the fillable area.
@@ -438,14 +388,22 @@ function goldLevel(art: PreparedArt, fraction: number) {
 }
 
 function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: number, seconds: number, waveMs: number) {
-  const { cols, rows, cell, left, top, ink, fill = GOLD, shine = GOLD_LIGHT, isBody, isEdge } = art;
+  const { cols, rows, cell, left, top, ink, isBody, isEdge } = art;
   const level = goldLevel(art, fraction);
-  // The wave averages out across the width, so it doesn't change how much gold shows.
-  const amplitude = fraction > 0 && fraction < 1 ? cell * 0.45 : 0;
-  const surfaces = Array.from(
+  // The wave's crests and dips cancel out, so it doesn't change how much gold shows. Near
+  // full or empty it shrinks so it never runs past the top or bottom, which would break that.
+  const amplitude = Math.max(0, Math.min(cell * 0.45, (level - art.fillTop) / 2, (art.fillBottom - level) / 2));
+  const offsets = Array.from(
     { length: cols },
-    (_, c) => level + amplitude * Math.sin(((left + c * cell) / 260) * Math.PI * 2 + (waveMs / 1600) * Math.PI * 2),
+    (_, c) => amplitude * Math.sin(((left + c * cell) / 260) * Math.PI * 2 + (waveMs / 1600) * Math.PI * 2),
   );
+  // Re-center the wave on the columns that hold gold at this height, so in every frame its
+  // crests add exactly as much gold as its dips remove.
+  const levelRow = Math.min(rows - 1, Math.max(0, Math.floor((level - top) / cell)));
+  const holdsGold = (c: number) => isBody(c, levelRow) && !isEdge(c, levelRow) && !ink[levelRow * cols + c];
+  const goldCols = offsets.filter((_, c) => holdsGold(c));
+  const shift = goldCols.length ? goldCols.reduce((sum, o) => sum + o, 0) / goldCols.length : 0;
+  const surfaces = offsets.map((o) => level + o - shift);
   const fillCell = (c: number, r: number, color: string) => {
     ctx.fillStyle = color;
     ctx.fillRect(left + c * cell, top + r * cell, cell, cell);
@@ -462,24 +420,15 @@ function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: numb
       }
       if (!isBody(c, r) || y + cell <= surface) continue;
       const from = Math.max(y, surface);
-      ctx.fillStyle = fill;
+      ctx.fillStyle = GOLD;
       ctx.fillRect(x, from, cell, y + cell - from);
       if (surface > y - cell * 0.5) {
-        ctx.fillStyle = shine;
+        ctx.fillStyle = GOLD_LIGHT;
         ctx.fillRect(x, from, cell, Math.min(cell * 0.5, y + cell - from));
       }
     }
   }
-  art.overlay?.({
-    ctx,
-    fillCell,
-    isBody,
-    isEdge,
-    surface: (c) => surfaces[c] ?? level,
-    cellTop: (r) => top + r * cell,
-    seconds,
-    waveMs,
-  });
+  art.overlay?.({ fillCell, seconds });
 }
 
 function spacedWidth(ctx: CanvasRenderingContext2D, text: string, spacing: number) {
@@ -563,6 +512,8 @@ type FrameState = {
   // Share of the 1000 days still left (1 = full gold) and the day shown in the headline.
   fraction: number;
   day: number;
+  // Seconds into a downloaded clip; drives the opening animation. Unset on the live page.
+  introS?: number;
 };
 
 function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
@@ -579,51 +530,122 @@ function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
   };
 }
 
-function drawFrame(
-  ctx: CanvasRenderingContext2D,
-  design: Design,
-  { seconds, before, sinceMs, waveMs, fraction, day }: FrameState,
-) {
+const ABOUT = "TO BECOME A BILLIONAIRE";
+const HOOK = "(OR SOMETHING HUGE WILL HAPPEN)";
+
+// Opening sequence of a downloaded clip, in seconds. The day number spins like a slot
+// machine while the gold drains; both land on the true value at the same moment, then
+// the second line types itself out and the third fades in.
+const INTRO = {
+  headlineIn: 0.15,
+  spinStart: 0.15,
+  firstStop: 1.55,
+  stopGap: 0.25,
+  drainStart: 0.35,
+  typeGap: 0.25,
+  typeStep: 0.04,
+  hookGap: 0.2,
+  fade: 0.35,
+};
+
+function introTimes(digits: number) {
+  const landed = INTRO.firstStop + (digits - 1) * INTRO.stopGap;
+  const typeStart = landed + INTRO.typeGap;
+  const hookStart = typeStart + ABOUT.length * INTRO.typeStep + INTRO.hookGap;
+  return { landed, typeStart, hookStart };
+}
+
+const easeInOut = (p: number) => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
+const clamp01 = (p: number) => Math.min(1, Math.max(0, p));
+
+// One reel per digit; each spins down a few times and clunks onto its digit, left to right.
+function drawSlotNumber(ctx: CanvasRenderingContext2D, number: string, x: number, baseline: number, spacing: number, t: number) {
+  const size = parseFloat(ctx.font);
+  const ascent = ctx.measureText("0").actualBoundingBoxAscent;
+  const pad = size * 0.08;
+  const height = ascent + pad * 2;
+  ctx.textAlign = "center";
+  [...number].forEach((char, i) => {
+    const w = ctx.measureText(char).width;
+    const stop = INTRO.firstStop + i * INTRO.stopGap;
+    const u = clamp01((t - INTRO.spinStart) / (stop - INTRO.spinStart));
+    const reel = Number(char) + (2 + i) * 10 * (1 - backOut(u));
+    const k = Math.floor(reel);
+    const f = reel - k;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, baseline - ascent - pad, w, height);
+    ctx.clip();
+    ctx.fillText(String(((k % 10) + 10) % 10), x + w / 2, baseline - f * height);
+    ctx.fillText(String((((k + 1) % 10) + 10) % 10), x + w / 2, baseline + (1 - f) * height);
+    ctx.restore();
+    x += w + spacing;
+  });
+  ctx.textAlign = "left";
+}
+
+function drawFrame(ctx: CanvasRenderingContext2D, { seconds, before, sinceMs, waveMs, fraction, day, introS }: FrameState) {
   const family = minecraft.style.fontFamily;
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, FRAME_W, FRAME_H);
   ctx.textBaseline = "alphabetic";
 
   const { days, about, hook, hms } = LAYOUT;
-  const dayCount = day;
-  ctx.font = `${days.size}px ${family}`;
-  const number = String(dayCount);
-  const rest = dayCount === 1 ? " DAY LEFT" : " DAYS LEFT";
-  const numberW = spacedWidth(ctx, number, days.spacing) + days.spacing;
-  const x = (FRAME_W - numberW - spacedWidth(ctx, rest, days.spacing)) / 2;
-  ctx.fillStyle = AMBER;
-  drawSpacedFrom(ctx, number, x, days.y, days.spacing);
-  ctx.fillStyle = INK;
-  drawSpacedFrom(ctx, rest, x + numberW, days.y, days.spacing);
-  ctx.font = `${about.size}px ${family}`;
-  drawSpaced(ctx, "TO BECOME A BILLIONAIRE", FRAME_W / 2, about.y, about.spacing);
-  ctx.font = `${hook.size}px ${family}`;
-  ctx.fillStyle = "#6b6b6b";
-  drawSpaced(ctx, "(OR SOMETHING HUGE WILL HAPPEN)", FRAME_W / 2, hook.y, hook.spacing);
+  const number = String(day);
+  const rest = day === 1 ? " DAY LEFT" : " DAYS LEFT";
+  const times = introS === undefined ? null : introTimes(number.length);
 
-  drawArt(ctx, getArt(design), fraction, seconds, waveMs);
+  // Line 1 slides up into place, its number spinning until it lands.
+  const headlineIn = times ? clamp01((introS! - INTRO.headlineIn) / INTRO.fade) : 1;
+  if (headlineIn > 0) {
+    ctx.font = `${days.size}px ${family}`;
+    const numberW = spacedWidth(ctx, number, days.spacing) + days.spacing;
+    const x = (FRAME_W - numberW - spacedWidth(ctx, rest, days.spacing)) / 2;
+    ctx.save();
+    ctx.globalAlpha = headlineIn;
+    ctx.translate(0, (1 - easeOut(headlineIn)) * 40);
+    ctx.fillStyle = AMBER;
+    if (times && introS! < times.landed + 0.5) drawSlotNumber(ctx, number, x, days.y, days.spacing, introS!);
+    else drawSpacedFrom(ctx, number, x, days.y, days.spacing);
+    ctx.fillStyle = INK;
+    drawSpacedFrom(ctx, rest, x + numberW, days.y, days.spacing);
+    ctx.restore();
+  }
+
+  // Line 2 types itself out, letter by letter, in its final position.
+  ctx.font = `${about.size}px ${family}`;
+  ctx.fillStyle = INK;
+  const typed = times ? Math.floor(clamp01((introS! - times.typeStart) / (ABOUT.length * INTRO.typeStep)) * ABOUT.length) : ABOUT.length;
+  if (typed > 0) {
+    const start = FRAME_W / 2 - spacedWidth(ctx, ABOUT, about.spacing) / 2;
+    drawSpacedFrom(ctx, ABOUT.slice(0, typed), start, about.y, about.spacing);
+  }
+
+  // Line 3 fades up last.
+  const hookIn = times ? clamp01((introS! - times.hookStart) / INTRO.fade) : 1;
+  if (hookIn > 0) {
+    ctx.save();
+    ctx.globalAlpha = hookIn;
+    ctx.translate(0, (1 - easeOut(hookIn)) * 20);
+    ctx.font = `${hook.size}px ${family}`;
+    ctx.fillStyle = "#6b6b6b";
+    drawSpaced(ctx, HOOK, FRAME_W / 2, hook.y, hook.spacing);
+    ctx.restore();
+  }
+
+  drawArt(ctx, getArt(), fraction, seconds, waveMs);
 
   ctx.fillStyle = INK;
   ctx.font = `${hms.size}px ${family}`;
   drawRollingRow(ctx, hmsText(seconds), hmsText(before), sinceMs, hms.y);
 }
 
-const INTRO_HOLD_S = 0.6;
-const INTRO_DRAIN_S = 3;
-const easeInOut = (p: number) => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
-
-// The clip opens full of gold and drains to where the countdown really is, the day
-// counting down with it, so the last frame of the intro matches the true level exactly.
+// The clip opens full of gold and drains to the countdown's true level, landing together
+// with the spinning day number; from then on every frame shows the real value.
 function withIntro(state: FrameState, clipSeconds: number): FrameState {
-  const p = easeInOut(Math.min(1, Math.max(0, (clipSeconds - INTRO_HOLD_S) / INTRO_DRAIN_S)));
-  if (p >= 1) return state;
-  const fraction = 1 + (state.fraction - 1) * p;
-  return { ...state, fraction, day: dayNumber(Math.round(fraction * TOTAL_SECONDS)) };
+  const { landed } = introTimes(String(state.day).length);
+  const p = easeInOut(clamp01((clipSeconds - INTRO.drainStart) / (landed - INTRO.drainStart)));
+  return { ...state, introS: clipSeconds, fraction: 1 + (state.fraction - 1) * p };
 }
 
 // "Last 10 seconds": ends just before the latest tick, so the clip has 10 evenly spaced ticks.
@@ -639,6 +661,10 @@ async function renderClipAudio(startMs: number) {
   out.gain.value = 1.8;
   out.connect(ctx.destination);
   if (startMs === 0) playKnocks(ctx, SOUNDS.start, 0, out);
+  const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
+  const { typeStart } = introTimes(digits);
+  for (let i = 0; i < digits; i++) playKnocks(ctx, SOUNDS.lock, INTRO.firstStop + i * INTRO.stopGap, out);
+  [...ABOUT].forEach((char, i) => char !== " " && playKnocks(ctx, SOUNDS.type, typeStart + i * INTRO.typeStep, out));
   for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + CLIP_MS; t += 1000) {
     const left = secondsLeftAt(t);
     if (left < secondsLeftAt(t - 1)) playKnocks(ctx, SOUNDS[soundFor(left)], (t - startMs) / 1000, out);
@@ -648,7 +674,7 @@ async function renderClipAudio(startMs: number) {
 
 let aacFallbackRegistered = false;
 
-async function renderClip(design: Design, startMs: number, onProgress: (fraction: number) => void) {
+async function renderClip(startMs: number, onProgress: (fraction: number) => void) {
   const mb = await import("mediabunny");
   if (typeof VideoEncoder === "undefined" || !(await mb.canEncodeVideo("avc", { width: FRAME_W, height: FRAME_H }))) {
     throw new Error("This browser can't make videos. Try Chrome or Safari.");
@@ -677,7 +703,7 @@ async function renderClip(design: Design, startMs: number, onProgress: (fraction
 
   const frames = (CLIP_FPS * CLIP_MS) / 1000;
   for (let i = 0; i < frames; i++) {
-    drawFrame(ctx, design, withIntro(frameStateAt(startMs + (i * 1000) / CLIP_FPS, true), i / CLIP_FPS));
+    drawFrame(ctx, withIntro(frameStateAt(startMs + (i * 1000) / CLIP_FPS, true), i / CLIP_FPS));
     await video.add(i / CLIP_FPS, 1 / CLIP_FPS);
     if (i % 10 === 0) onProgress(i / frames);
   }
@@ -743,11 +769,6 @@ function canvasToFile(canvas: HTMLCanvasElement, name: string) {
   return new File([bytes], name, { type: "image/png" });
 }
 
-const DESIGNS: { id: Design; label: string }[] = [
-  { id: "watch", label: "WATCH" },
-  { id: "champagne", label: "CHAMPAGNE" },
-];
-
 type ExportState =
   | { status: "idle" }
   | { status: "rendering"; progress: number }
@@ -767,7 +788,6 @@ const subscribeEverySecond = (callback: () => void) => {
 export function ThousandDayCountdown() {
   const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const startedAt = useSyncExternalStore(startedAtStore.subscribe, startedAtStore.read, () => null);
-  const design = useSyncExternalStore(designStore.subscribe, designStore.read, (): Design => "watch");
   const liveDay = useSyncExternalStore(
     subscribeEverySecond,
     () => dayNumber(startedAt === null ? TOTAL_SECONDS : secondsLeftAt(Date.now() - startedAt)),
@@ -836,7 +856,7 @@ export function ThousandDayCountdown() {
     const loop = () => {
       const elapsed = startedAt === null ? 0 : Date.now() - startedAt;
       const seconds = secondsLeftAt(elapsed);
-      drawFrame(ctx, design, frameStateAt(elapsed, animate));
+      drawFrame(ctx, frameStateAt(elapsed, animate));
       if (seconds !== lastSeconds) {
         if (lastSeconds !== null && seconds < lastSeconds) play(soundFor(seconds));
         if (liveTextRef.current) {
@@ -848,7 +868,7 @@ export function ThousandDayCountdown() {
     };
     loop();
     return () => cancelAnimationFrame(frame);
-  }, [startedAt, fontReady, play, design]);
+  }, [startedAt, fontReady, play]);
 
   useEffect(() => {
     const ctx = pfpRef.current?.getContext("2d");
@@ -890,7 +910,7 @@ export function ThousandDayCountdown() {
     const elapsed = startedAt === null ? 0 : Date.now() - startedAt;
     setExportState({ status: "rendering", progress: 0 });
     try {
-      const file = await renderClip(design, clipStartMs(elapsed), (progress) =>
+      const file = await renderClip(clipStartMs(elapsed), (progress) =>
         setExportState({ status: "rendering", progress }),
       );
       const canShareNow = !isPhone() || navigator.userActivation?.isActive !== false;
@@ -958,25 +978,6 @@ export function ThousandDayCountdown() {
         </div>
 
         {exportState.status === "error" && <p className="text-center text-sm text-neutral-600">{exportState.message}</p>}
-
-        <div>
-          <p className="mb-2 text-xs tracking-[0.2em] text-neutral-500">STYLE</p>
-          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
-            {DESIGNS.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={design === id}
-                className={`shrink-0 touch-manipulation border-2 border-black px-3 py-2 text-sm ${
-                  design === id ? "bg-black text-white" : "bg-white text-black"
-                }`}
-                onClick={() => designStore.write(id)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
 
         <button
           type="button"
