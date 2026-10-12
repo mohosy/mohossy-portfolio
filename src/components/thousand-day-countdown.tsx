@@ -75,24 +75,46 @@ function hmsText(seconds: number) {
   return `${pad2(Math.floor((seconds % 86_400) / 3600))}:${pad2(Math.floor((seconds % 3600) / 60))}:${pad2(seconds % 60)}`;
 }
 
-// Soft, close-mic style clicks synthesized with Web Audio, so there is no sound file to load.
-type Knock = { pitch: number; at?: number; gain?: number; decay?: number };
+// Sounds are synthesized with Web Audio, so there is no sound file to load. Each one is a
+// few bursts of filtered noise (the click) and short sine tones (the body or ring).
+type Noise = { filter: BiquadFilterType; freq: number; q?: number; gain: number; decay: number; at?: number };
+type Tone = { freq: number; to?: number; gain: number; decay: number; at?: number };
+type Voice = { noise?: Noise[]; tones?: Tone[] };
+
+const combine = (...voices: Voice[]): Voice => ({
+  noise: voices.flatMap((v) => v.noise ?? []),
+  tones: voices.flatMap((v) => v.tones ?? []),
+});
+
+// A soft wooden knock, for START, RESET and the clip intro.
+function knock(pitch: number, { at = 0, gain = 1, decay = 0.06 } = {}): Voice {
+  return {
+    noise: [{ filter: "bandpass", freq: pitch * 4, q: 0.9, gain: 0.25 * gain, decay: 0.015, at }],
+    tones: [{ freq: pitch, to: pitch * 0.6, gain: 0.2 * gain, decay, at }],
+  };
+}
+
+// The crisp luxury-watch tick for every second: a tiny high click with a faint metallic ping.
+function watchTick(detune = 1, gain = 1): Voice {
+  return {
+    noise: [
+      { filter: "bandpass", freq: 5200 * detune, q: 2.5, gain: 0.95 * gain, decay: 0.008 },
+      { filter: "highpass", freq: 7000 * detune, gain: 0.25 * gain, decay: 0.004 },
+    ],
+    tones: [{ freq: 3400 * detune, gain: 0.105 * gain, decay: 0.025 }],
+  };
+}
 
 const SOUNDS = {
-  tick: [{ pitch: 720 }],
-  tock: [{ pitch: 610 }],
-  minute: [{ pitch: 480, gain: 1.2, decay: 0.12 }],
-  lock: [{ pitch: 560, gain: 1.1, decay: 0.08 }],
-  type: [{ pitch: 1500, gain: 0.3, decay: 0.03 }],
-  start: [{ pitch: 820 }, { pitch: 600, at: 0.08 }],
-  reset: [{ pitch: 600 }, { pitch: 820, at: 0.08 }],
-  done: [
-    { pitch: 820 },
-    { pitch: 720, at: 0.18 },
-    { pitch: 610, at: 0.36 },
-    { pitch: 480, at: 0.54, decay: 0.4 },
-  ],
-} satisfies Record<string, Knock[]>;
+  tick: watchTick(),
+  tock: watchTick(0.88),
+  minute: watchTick(0.8, 1.25),
+  lock: knock(560, { gain: 1.1, decay: 0.08 }),
+  type: knock(1500, { gain: 0.3, decay: 0.03 }),
+  start: combine(knock(820), knock(600, { at: 0.08 })),
+  reset: combine(knock(600), knock(820, { at: 0.08 })),
+  done: combine(knock(820), knock(720, { at: 0.18 }), knock(610, { at: 0.36 }), knock(480, { at: 0.54, decay: 0.4 })),
+} satisfies Record<string, Voice>;
 
 type SoundName = keyof typeof SOUNDS;
 
@@ -113,44 +135,38 @@ function getNoise(ctx: BaseAudioContext) {
   return noiseBuffer;
 }
 
-function playKnocks(
-  ctx: BaseAudioContext,
-  knocks: Knock[],
-  startAt = ctx.currentTime,
-  out: AudioNode = ctx.destination,
-) {
-  for (const { pitch: basePitch, at = 0, gain: baseGain = 1, decay = 0.06 } of knocks) {
-    const t = startAt + at;
-    // A little random wobble so it sounds like a real object, not a machine.
-    const pitch = basePitch * (0.97 + Math.random() * 0.06);
-    const gain = baseGain * (0.85 + Math.random() * 0.3);
-
-    // Crisp transient: a few ms of filtered noise, like a fingernail tap.
-    const noise = ctx.createBufferSource();
-    noise.buffer = getNoise(ctx);
-    const band = ctx.createBiquadFilter();
-    band.type = "bandpass";
-    band.frequency.value = pitch * 4;
-    band.Q.value = 0.9;
-    const noiseAmp = ctx.createGain();
-    noiseAmp.gain.setValueAtTime(0.25 * gain, t);
-    noiseAmp.gain.exponentialRampToValueAtTime(0.0001, t + 0.015);
-    noise.connect(band).connect(noiseAmp).connect(out);
-    noise.start(t);
-    noise.stop(t + 0.03);
-
-    // Woody body: a soft sine that drops in pitch and dies fast.
-    const body = ctx.createOscillator();
-    body.type = "sine";
-    body.frequency.setValueAtTime(pitch, t);
-    body.frequency.exponentialRampToValueAtTime(pitch * 0.6, t + decay);
-    const bodyAmp = ctx.createGain();
-    bodyAmp.gain.setValueAtTime(0.0001, t);
-    bodyAmp.gain.exponentialRampToValueAtTime(0.2 * gain, t + 0.003);
-    bodyAmp.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-    body.connect(bodyAmp).connect(out);
-    body.start(t);
-    body.stop(t + decay + 0.02);
+function playVoice(ctx: BaseAudioContext, voice: Voice, startAt = ctx.currentTime, out: AudioNode = ctx.destination) {
+  // A little random wobble so it sounds like a real object, not a machine.
+  const wobble = 0.97 + Math.random() * 0.06;
+  const level = 0.88 + Math.random() * 0.24;
+  for (const n of voice.noise ?? []) {
+    const t = startAt + (n.at ?? 0);
+    const src = ctx.createBufferSource();
+    src.buffer = getNoise(ctx);
+    const filter = ctx.createBiquadFilter();
+    filter.type = n.filter;
+    filter.frequency.value = n.freq * wobble;
+    filter.Q.value = n.q ?? 0.9;
+    const amp = ctx.createGain();
+    amp.gain.setValueAtTime(n.gain * level, t);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t + n.decay);
+    src.connect(filter).connect(amp).connect(out);
+    src.start(t);
+    src.stop(t + n.decay + 0.02);
+  }
+  for (const tone of voice.tones ?? []) {
+    const t = startAt + (tone.at ?? 0);
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(tone.freq * wobble, t);
+    if (tone.to) osc.frequency.exponentialRampToValueAtTime(tone.to * wobble, t + tone.decay);
+    const amp = ctx.createGain();
+    amp.gain.setValueAtTime(0.0001, t);
+    amp.gain.exponentialRampToValueAtTime(tone.gain * level, t + 0.003);
+    amp.gain.exponentialRampToValueAtTime(0.0001, t + tone.decay);
+    osc.connect(amp).connect(out);
+    osc.start(t);
+    osc.stop(t + tone.decay + 0.02);
   }
 }
 
@@ -660,14 +676,14 @@ async function renderClipAudio(startMs: number) {
   const out = ctx.createGain();
   out.gain.value = 1.8;
   out.connect(ctx.destination);
-  if (startMs === 0) playKnocks(ctx, SOUNDS.start, 0, out);
+  if (startMs === 0) playVoice(ctx, SOUNDS.start, 0, out);
   const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
   const { typeStart } = introTimes(digits);
-  for (let i = 0; i < digits; i++) playKnocks(ctx, SOUNDS.lock, INTRO.firstStop + i * INTRO.stopGap, out);
-  [...ABOUT].forEach((char, i) => char !== " " && playKnocks(ctx, SOUNDS.type, typeStart + i * INTRO.typeStep, out));
+  for (let i = 0; i < digits; i++) playVoice(ctx, SOUNDS.lock, INTRO.firstStop + i * INTRO.stopGap, out);
+  [...ABOUT].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, typeStart + i * INTRO.typeStep, out));
   for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + CLIP_MS; t += 1000) {
     const left = secondsLeftAt(t);
-    if (left < secondsLeftAt(t - 1)) playKnocks(ctx, SOUNDS[soundFor(left)], (t - startMs) / 1000, out);
+    if (left < secondsLeftAt(t - 1)) playVoice(ctx, SOUNDS[soundFor(left)], (t - startMs) / 1000, out);
   }
   return ctx.startRendering();
 }
@@ -842,8 +858,8 @@ export function ThousandDayCountdown() {
   const play = useCallback((name: SoundName) => {
     const ctx = audioRef.current;
     if (!ctx || !soundOnRef.current) return;
-    if (ctx.state === "running") playKnocks(ctx, SOUNDS[name]);
-    else if (unlockedRef.current) void ctx.resume().then(() => playKnocks(ctx, SOUNDS[name]));
+    if (ctx.state === "running") playVoice(ctx, SOUNDS[name]);
+    else if (unlockedRef.current) void ctx.resume().then(() => playVoice(ctx, SOUNDS[name]));
   }, []);
 
   // Redraw on every animation frame while running; tick when the second changes.
