@@ -15,7 +15,6 @@ const STORAGE_KEY = "mohossy-count-started-at";
 const FRAME_W = 1080;
 const FRAME_H = 1920;
 const CLIP_FPS = 30;
-const CLIP_MS = 10_000;
 
 // Small localStorage-backed values (start time, chosen style) that survive reloads.
 function storedValue<T>(key: string, parse: (raw: string | null) => T, serialize: (value: T) => string | null) {
@@ -69,6 +68,11 @@ const pad2 = (n: number) => String(n).padStart(2, "0");
 
 function dayNumber(seconds: number) {
   return Math.ceil(seconds / 86_400);
+}
+
+// The exact time left, DDD:HH:MM:SS (996:17:48:09 on Day 997, which still has 17h 48m to go).
+function timerText(seconds: number) {
+  return `${String(Math.floor(seconds / 86_400)).padStart(3, "0")}:${hmsText(seconds)}`;
 }
 
 function hmsText(seconds: number) {
@@ -202,7 +206,8 @@ const LAYOUT = {
   days: { size: 96, y: 250, spacing: 6 },
   about: { size: 50, y: 340, spacing: 6 },
   hook: { size: 30, y: 400, spacing: 4 },
-  hms: { size: 110, y: 1540 },
+  timer: { size: 92, y: 1530 },
+  timerLabel: { size: 26, y: 1578, spacing: 4 },
 };
 
 const INK = "#000";
@@ -627,10 +632,19 @@ const ABOUT = "TO BECOME A BILLIONAIRE";
 const HOOK = "OR SOMETHING HUGE WILL HAPPEN";
 const TALK = "EVERYONE WILL BE TALKING ABOUT IT";
 
-// Opening sequence of a downloaded clip, in seconds. The day number spins like a slot
-// machine while the gold drains; both land on the true value at the same moment, then
-// the second line types itself out and the third fades in.
+// Opening sequence of a downloaded clip, in seconds, and which parts of it play.
 const INTRO = {
+  clipSeconds: 10,
+  zoom: true,
+  // The day number spins and locks in (false: it just appears with the headline).
+  spin: true,
+  // How lines 2-4 appear: typed out letter by letter, or a quick fade.
+  lines: "typed" as "typed" | "fade",
+  // Swipe "or something huge will happen" away for "everyone will be talking about it".
+  talk: true,
+  sounds: { ratchet: true, typing: true, pour: true },
+  // When the close-up has fully pulled back; null = just after the number lands.
+  zoomOutEnd: null as number | null,
   headlineIn: 0.15,
   spinStart: 0.15,
   firstStop: 1.55,
@@ -646,14 +660,18 @@ const INTRO = {
   fade: 0.35,
 };
 
+const clipMs = () => INTRO.clipSeconds * 1000;
+
 function introTimes(digits: number) {
-  const landed = INTRO.firstStop + (digits - 1) * INTRO.stopGap;
+  const lineTime = (text: string) => (INTRO.lines === "typed" ? text.length * INTRO.typeStep : INTRO.fade);
+  const landed = INTRO.spin ? INTRO.firstStop + (digits - 1) * INTRO.stopGap : INTRO.headlineIn + INTRO.fade;
   const typeStart = landed + INTRO.typeGap;
-  const typeEnd = typeStart + ABOUT.length * INTRO.typeStep;
+  const typeEnd = typeStart + lineTime(ABOUT);
   const hookStart = typeEnd + INTRO.hookGap;
-  const swipeStart = hookStart + HOOK.length * INTRO.typeStep + INTRO.hookHold;
+  const hookEnd = hookStart + lineTime(HOOK);
+  const swipeStart = hookEnd + INTRO.hookHold;
   const talkStart = swipeStart + INTRO.swipe + INTRO.talkGap;
-  const talkEnd = talkStart + TALK.length * INTRO.typeStep;
+  const talkEnd = INTRO.talk ? talkStart + lineTime(TALK) : hookEnd;
   return { landed, typeStart, typeEnd, hookStart, swipeStart, talkStart, talkEnd };
 }
 
@@ -703,6 +721,24 @@ function drawTyped(ctx: CanvasRenderingContext2D, text: string, typed: number, {
   drawSpacedFrom(ctx, text.slice(0, typed), start, y, spacing);
 }
 
+function drawLine(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  start: number,
+  t: number | null,
+  pos: { y: number; spacing: number },
+) {
+  if (t === null) return drawTyped(ctx, text, text.length, pos);
+  if (INTRO.lines === "typed") return drawTyped(ctx, text, typedCount(text, start, t), pos);
+  const shown = clamp01((t - start) / INTRO.fade);
+  if (shown <= 0) return;
+  ctx.save();
+  ctx.globalAlpha *= shown;
+  ctx.translate(0, (1 - easeOut(shown)) * 16);
+  drawTyped(ctx, text, text.length, pos);
+  ctx.restore();
+}
+
 function drawFrame(
   ctx: CanvasRenderingContext2D,
   { seconds, before, sinceMs, waveMs, fraction, day, introS, camera }: FrameState,
@@ -717,7 +753,7 @@ function drawFrame(
     ctx.setTransform(camera.zoom, 0, 0, camera.zoom, FRAME_W / 2 - camera.zoom * camera.cx, FRAME_H / 2 - camera.zoom * camera.cy);
   }
 
-  const { days, about, hook, hms } = LAYOUT;
+  const { days, about, hook, timer, timerLabel } = LAYOUT;
   const number = String(day);
   const rest = day === 1 ? " DAY LEFT" : " DAYS LEFT";
   const times = introS === undefined ? null : introTimes(number.length);
@@ -732,41 +768,51 @@ function drawFrame(
     ctx.globalAlpha = headlineIn;
     ctx.translate(0, (1 - easeOut(headlineIn)) * 40);
     ctx.fillStyle = AMBER;
-    if (times && introS! < times.landed + 0.5) drawSlotNumber(ctx, number, x, days.y, days.spacing, introS!);
+    if (times && INTRO.spin && introS! < times.landed + 0.5) drawSlotNumber(ctx, number, x, days.y, days.spacing, introS!);
     else drawSpacedFrom(ctx, number, x, days.y, days.spacing);
     ctx.fillStyle = INK;
     drawSpacedFrom(ctx, rest, x + numberW, days.y, days.spacing);
     ctx.restore();
   }
 
-  // Line 2 types itself out, letter by letter, in its final position.
+  // Line 2 appears in its final position.
   ctx.font = `${about.size}px ${family}`;
   ctx.fillStyle = INK;
-  drawTyped(ctx, ABOUT, times ? typedCount(ABOUT, times.typeStart, introS!) : ABOUT.length, about);
+  const t = times ? introS! : null;
+  drawLine(ctx, ABOUT, times?.typeStart ?? 0, t, about);
 
-  // Line 3 types out, swipes off to the left, and the next line types out in its place.
+  // Line 3 appears, then (with `talk`) swipes off to the left and line 4 appears in its place.
   ctx.font = `${hook.size}px ${family}`;
   ctx.fillStyle = "#6b6b6b";
-  if (!times) {
+  if (!INTRO.talk) {
+    drawLine(ctx, HOOK, times?.hookStart ?? 0, t, hook);
+  } else if (!times || t === null) {
     drawTyped(ctx, TALK, TALK.length, hook);
   } else {
-    const t = introS!;
     if (t < times.swipeStart + INTRO.swipe) {
       const swipe = clamp01((t - times.swipeStart) / INTRO.swipe);
       ctx.save();
       ctx.globalAlpha = 1 - swipe;
       ctx.translate(-FRAME_W * swipe ** 3, 0);
-      drawTyped(ctx, HOOK, typedCount(HOOK, times.hookStart, t), hook);
+      drawLine(ctx, HOOK, times.hookStart, t, hook);
       ctx.restore();
     }
-    drawTyped(ctx, TALK, typedCount(TALK, times.talkStart, t), hook);
+    drawLine(ctx, TALK, times.talkStart, t, hook);
   }
 
   drawArt(ctx, getArt(), fraction, seconds, waveMs);
 
   ctx.fillStyle = INK;
-  ctx.font = `${hms.size}px ${family}`;
-  drawRollingRow(ctx, hmsText(seconds), hmsText(before), sinceMs, hms.y);
+  ctx.font = `${timer.size}px ${family}`;
+  const slots = drawRollingRow(ctx, timerText(seconds), timerText(before), sinceMs, timer.y);
+  // Small labels under each group, counted from the right since the days group can change width.
+  ctx.font = `${timerLabel.size}px ${family}`;
+  const n = slots.length;
+  const groups: [string, number, number][] = [["DAYS", 0, n - 10], ["HRS", n - 8, n - 7], ["MIN", n - 5, n - 4], ["SEC", n - 2, n - 1]];
+  for (const [label, first, last] of groups) {
+    const cx = (slots[first].x + slots[last].x + slots[last].w) / 2;
+    drawSpacedFrom(ctx, label, cx - spacedWidth(ctx, label, timerLabel.spacing) / 2, timerLabel.y, timerLabel.spacing);
+  }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
@@ -794,8 +840,9 @@ function withIntro(state: FrameState, clipSeconds: number): FrameState {
   // to the whole frame as the day number locks in. The zoom changes at an even rate (log scale)
   // and the centre slides with the size of the view, so even a 24x pull-back feels smooth.
   const zoomStart = INTRO.drainEnd + 0.15;
-  const out = easeInOut(clamp01((clipSeconds - zoomStart) / (landed + 0.25 - zoomStart)));
-  if (out >= 1) return { ...state, introS: clipSeconds, fraction };
+  const zoomEnd = INTRO.zoomOutEnd ?? landed + 0.25;
+  const out = easeInOut(clamp01((clipSeconds - zoomStart) / (zoomEnd - zoomStart)));
+  if (!INTRO.zoom || out >= 1) return { ...state, introS: clipSeconds, fraction };
   const zoom = closeUp ** (1 - out);
   const travel = drop * closeUp;
   const followShare = travel > FRAME_H * 0.5 ? 1 - (FRAME_H * 0.5) / travel : 0;
@@ -808,7 +855,7 @@ function withIntro(state: FrameState, clipSeconds: number): FrameState {
 
 // "Last 10 seconds": ends just before the latest tick, so the clip has 10 evenly spaced ticks.
 function clipStartMs(elapsedMs: number) {
-  return Math.max(0, Math.floor(elapsedMs / 1000) * 1000 - 500 - CLIP_MS);
+  return Math.max(0, Math.floor(elapsedMs / 1000) * 1000 - 500 - clipMs());
 }
 
 // A ratchet click each time the last reel rolls past a digit (at most ~40 a second), so it
@@ -828,7 +875,7 @@ function playRatchet(ctx: BaseAudioContext, out: AudioNode, digits: number, land
 
 async function renderClipAudio(startMs: number) {
   const rate = 48_000;
-  const ctx = new OfflineAudioContext(2, (rate * CLIP_MS) / 1000, rate);
+  const ctx = new OfflineAudioContext(2, (rate * clipMs()) / 1000, rate);
   // Louder than the live page so the ticks carry on a phone speaker.
   const out = ctx.createGain();
   out.gain.value = 1.8;
@@ -836,20 +883,32 @@ async function renderClipAudio(startMs: number) {
   const digits = String(dayNumber(secondsLeftAt(startMs + 2500))).length;
   const { landed, typeStart, hookStart, talkStart, talkEnd } = introTimes(digits);
 
-  playRatchet(ctx, out, digits, landed);
+  const quietFrom = [0];
+  if (INTRO.sounds.ratchet && INTRO.spin) {
+    playRatchet(ctx, out, digits, landed);
+    quietFrom.push(landed + 0.1);
+  }
   // Quieter while little has drained, so a tiny drop in the gold never sounds like a big pour.
   const drained = 1 - secondsLeftAt(startMs + landed * 1000) / TOTAL_SECONDS;
   const liquid = ctx.createGain();
   liquid.gain.value = 0.3 + 0.7 * clamp01(drained / 0.1);
   liquid.connect(out);
-  playVoice(ctx, pour(INTRO.drainStart, INTRO.drainEnd), 0, liquid);
-  for (const [text, start] of [[ABOUT, typeStart], [HOOK, hookStart], [TALK, talkStart]] as const) {
-    [...text].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, start + i * INTRO.typeStep, out));
+  if (INTRO.sounds.pour) {
+    playVoice(ctx, pour(INTRO.drainStart, INTRO.drainEnd), 0, liquid);
+    quietFrom.push(INTRO.drainEnd + 0.52);
+  }
+  if (INTRO.sounds.typing && INTRO.lines === "typed") {
+    const typed: [string, number][] = [[ABOUT, typeStart], [HOOK, hookStart]];
+    if (INTRO.talk) typed.push([TALK, talkStart]);
+    for (const [text, start] of typed) {
+      [...text].forEach((char, i) => char !== " " && playVoice(ctx, SOUNDS.type, start + i * INTRO.typeStep, out));
+    }
+    quietFrom.push(talkEnd);
   }
 
   // The timer keeps counting, but its tick stays quiet until the intro sounds are done.
-  const ticksFrom = talkEnd + 0.1;
-  for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + CLIP_MS; t += 1000) {
+  const ticksFrom = Math.max(...quietFrom) + 0.1;
+  for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + clipMs(); t += 1000) {
     const at = (t - startMs) / 1000;
     const left = secondsLeftAt(t);
     if (at >= ticksFrom && left < secondsLeftAt(t - 1)) playVoice(ctx, SOUNDS[soundFor(left)], at, out);
@@ -898,7 +957,7 @@ async function renderClip(startMs: number, onProgress: (fraction: number) => voi
   output.addAudioTrack(audio);
   await output.start();
 
-  const frames = (CLIP_FPS * CLIP_MS) / 1000;
+  const frames = (CLIP_FPS * clipMs()) / 1000;
   for (let i = 0; i < frames; i++) {
     drawFrame(ctx, withIntro(frameStateAt(startMs + (i * 1000) / CLIP_FPS, true), i / CLIP_FPS));
     await video.add(i / CLIP_FPS, 1 / CLIP_FPS);
@@ -907,7 +966,7 @@ async function renderClip(startMs: number, onProgress: (fraction: number) => voi
   await audio.add(await renderClipAudio(startMs));
   await output.finalize();
 
-  const day = dayNumber(secondsLeftAt(startMs + CLIP_MS));
+  const day = dayNumber(secondsLeftAt(startMs + clipMs()));
   return new File([output.target.buffer!], `countdown-day-${day}.mp4`, { type: "video/mp4" });
 }
 
