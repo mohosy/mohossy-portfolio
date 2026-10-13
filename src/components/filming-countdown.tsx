@@ -127,20 +127,62 @@ export function FilmingCountdown() {
     setStartedAt(at);
   }, []);
 
-  // Hidden reset between takes: press R.
+  const [fullscreen, setFullscreen] = useState(false);
+  const [cursorHidden, setCursorHidden] = useState(false);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void document.documentElement.requestFullscreen().catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setFullscreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+
+  // In full screen the mouse pointer hides after a moment of stillness, so it's not in the shot.
+  useEffect(() => {
+    if (!fullscreen) return;
+    let timer = window.setTimeout(() => setCursorHidden(true), 1500);
+    const onMove = () => {
+      setCursorHidden(false);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setCursorHidden(true), 1500);
+    };
+    window.addEventListener("mousemove", onMove);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("mousemove", onMove);
+      setCursorHidden(false);
+    };
+  }, [fullscreen]);
+
+  // Keyboard: R resets between takes, F toggles full screen.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === "r" || event.key === "R") setStartedAt(null);
+      if (event.key === "f" || event.key === "F") toggleFullscreen();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [toggleFullscreen]);
 
   const started = startedAt !== null;
 
   return (
     <div className={`${minecraft.className} flex w-full flex-col items-center gap-[min(8vh,72px)] px-4`}>
       <h1 className="sr-only">1000 day countdown</h1>
+      {fullscreen && cursorHidden && <style>{"*{cursor:none!important}"}</style>}
+      {!fullscreen && (
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          className="fixed right-4 top-4 touch-manipulation select-none border-[3px] border-black bg-[#8b8b8b] px-4 py-2 text-base tracking-[0.06em] text-white shadow-[inset_3px_3px_0_#c6c6c6,inset_-3px_-3px_0_#555] [text-shadow:0.12em_0.12em_0_#3f3f3f] hover:bg-[#9a9fcf] active:translate-y-[2px] active:bg-[#6f6f6f] active:shadow-[inset_3px_3px_0_#4a4a4a,inset_-3px_-3px_0_#9a9a9a]"
+        >
+          FULL SCREEN
+        </button>
+      )}
       <div className="flex items-start justify-center text-[min(11vw,22vh)] leading-[1.15]" role="timer" aria-label={`${secondsLeft} seconds left`}>
         {groups(secondsLeft).map((group, i) => (
           <div key={group.label} className="flex items-start">
