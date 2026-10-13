@@ -91,6 +91,9 @@ function playPress(ctx: AudioContext) {
   osc.stop(t + 0.1);
 }
 
+const SMALL_BUTTON =
+  "touch-manipulation select-none border-[3px] border-black bg-[#8b8b8b] px-4 py-2 text-base tracking-[0.06em] text-white shadow-[inset_3px_3px_0_#c6c6c6,inset_-3px_-3px_0_#555] [text-shadow:0.12em_0.12em_0_#3f3f3f] hover:bg-[#9a9fcf] active:translate-y-[2px] active:bg-[#6f6f6f] active:shadow-[inset_3px_3px_0_#4a4a4a,inset_-3px_-3px_0_#9a9a9a]";
+
 export function FilmingCountdown() {
   // Nothing is saved: every reload starts a fresh 1000 days, ready for the next take.
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -174,14 +177,16 @@ export function FilmingCountdown() {
     <div className={`${minecraft.className} flex w-full flex-col items-center gap-[min(8vh,72px)] px-4`}>
       <h1 className="sr-only">1000 day countdown</h1>
       {fullscreen && cursorHidden && <style>{"*{cursor:none!important}"}</style>}
+      {/* Setup controls; hidden in full screen so they never show on camera. */}
       {!fullscreen && (
-        <button
-          type="button"
-          onClick={toggleFullscreen}
-          className="fixed right-4 top-4 touch-manipulation select-none border-[3px] border-black bg-[#8b8b8b] px-4 py-2 text-base tracking-[0.06em] text-white shadow-[inset_3px_3px_0_#c6c6c6,inset_-3px_-3px_0_#555] [text-shadow:0.12em_0.12em_0_#3f3f3f] hover:bg-[#9a9fcf] active:translate-y-[2px] active:bg-[#6f6f6f] active:shadow-[inset_3px_3px_0_#4a4a4a,inset_-3px_-3px_0_#9a9a9a]"
-        >
-          FULL SCREEN
-        </button>
+        <div className="fixed right-4 top-4 flex gap-3">
+          <button type="button" onClick={() => setStartedAt(null)} className={SMALL_BUTTON}>
+            RESET
+          </button>
+          <button type="button" onClick={toggleFullscreen} className={SMALL_BUTTON}>
+            FULL SCREEN
+          </button>
+        </div>
       )}
       <div className="flex items-start justify-center text-[min(11vw,22vh)] leading-[1.15]" role="timer" aria-label={`${secondsLeft} seconds left`}>
         {groups(secondsLeft).map((group, i) => (
