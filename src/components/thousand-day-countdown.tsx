@@ -995,6 +995,8 @@ function shareOrSave(file: File) {
 }
 
 const PFP_SIZE = 1080;
+// The teaser version of the red square: four Minecraft dots instead of the day number.
+const DOTS = "....";
 const PFP_RED = "#FD0603";
 
 // Instagram crops profile pictures to a circle, so the number stays well inside it.
@@ -1058,6 +1060,7 @@ export function ThousandDayCountdown() {
   const [pfpText, setPfpText] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pfpRef = useRef<HTMLCanvasElement>(null);
+  const dotsRef = useRef<HTMLCanvasElement>(null);
   const liveTextRef = useRef<HTMLParagraphElement>(null);
   const audioRef = useRef<AudioContext | null>(null);
   const unlockedRef = useRef(false);
@@ -1129,6 +1132,8 @@ export function ThousandDayCountdown() {
   useEffect(() => {
     const ctx = pfpRef.current?.getContext("2d");
     if (ctx && fontReady) drawProfilePic(ctx, pfpNumber);
+    const dots = dotsRef.current?.getContext("2d");
+    if (dots && fontReady) drawProfilePic(dots, DOTS);
   }, [pfpNumber, fontReady]);
 
   useEffect(() => {
@@ -1183,6 +1188,10 @@ export function ThousandDayCountdown() {
         message: error instanceof Error && error.message ? error.message : "Couldn't make the video.",
       });
     }
+  };
+
+  const handleDotsDownload = () => {
+    if (dotsRef.current) shareOrSave(canvasToFile(dotsRef.current, "profile-pic-dots.png"));
   };
 
   const handlePfpDownload = () => {
@@ -1288,6 +1297,20 @@ export function ThousandDayCountdown() {
           disabled={!fontReady || !pfpNumber}
         >
           DOWNLOAD PROFILE PIC
+        </button>
+
+        <h2 className="mt-6 text-xl tracking-[0.2em]">DOTS PIC</h2>
+        <canvas
+          ref={dotsRef}
+          width={PFP_SIZE}
+          height={PFP_SIZE}
+          role="img"
+          aria-label="Red square with four dots"
+          className="aspect-square w-full"
+          style={{ background: PFP_RED }}
+        />
+        <button type="button" className={`${primaryButtonClass} mr-[5px]`} onClick={handleDotsDownload} disabled={!fontReady}>
+          DOWNLOAD DOTS PIC
         </button>
       </section>
     </div>
