@@ -995,12 +995,12 @@ function shareOrSave(file: File) {
 }
 
 const PFP_SIZE = 1080;
-// The teaser version of the red square: four Minecraft dots instead of the day number.
+// The teaser version of the red square: four white Minecraft dots instead of the day number.
 const DOTS = "....";
 const PFP_RED = "#FD0603";
 
 // Instagram crops profile pictures to a circle, so the number stays well inside it.
-function drawProfilePic(ctx: CanvasRenderingContext2D, text: string) {
+function drawProfilePic(ctx: CanvasRenderingContext2D, text: string, color = INK) {
   ctx.fillStyle = PFP_RED;
   ctx.fillRect(0, 0, PFP_SIZE, PFP_SIZE);
   if (!text) return;
@@ -1009,7 +1009,7 @@ function drawProfilePic(ctx: CanvasRenderingContext2D, text: string) {
   const width = ctx.measureText(text).width;
   if (width > 700) ctx.font = `${Math.floor((200 * 700) / width)}px ${family}`;
   const m = ctx.measureText(text);
-  ctx.fillStyle = INK;
+  ctx.fillStyle = color;
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
   ctx.fillText(
@@ -1133,7 +1133,7 @@ export function ThousandDayCountdown() {
     const ctx = pfpRef.current?.getContext("2d");
     if (ctx && fontReady) drawProfilePic(ctx, pfpNumber);
     const dots = dotsRef.current?.getContext("2d");
-    if (dots && fontReady) drawProfilePic(dots, DOTS);
+    if (dots && fontReady) drawProfilePic(dots, DOTS, "#fff");
   }, [pfpNumber, fontReady]);
 
   useEffect(() => {
@@ -1305,7 +1305,7 @@ export function ThousandDayCountdown() {
           width={PFP_SIZE}
           height={PFP_SIZE}
           role="img"
-          aria-label="Red square with four dots"
+          aria-label="Red square with four white dots"
           className="aspect-square w-full"
           style={{ background: PFP_RED }}
         />
