@@ -2,6 +2,7 @@
 
 import localFont from "next/font/local";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { BigCountdown } from "@/components/big-countdown";
 
 const minecraft = localFont({
   src: "../fonts/Minecraft.ttf",
@@ -1041,20 +1042,33 @@ const buttonBase =
 const buttonClass = `${buttonBase} bg-white text-black hover:bg-black hover:text-white`;
 const primaryButtonClass = `${buttonBase} bg-black text-white hover:bg-neutral-800`;
 
-const subscribeEverySecond = (callback: () => void) => {
-  const timer = window.setInterval(callback, 1000);
-  return () => window.clearInterval(timer);
-};
+// Wakes up right on each second boundary of the run, in step with the reel's tick.
+function subscribeToSeconds(startedAt: number | null) {
+  return (callback: () => void) => {
+    if (startedAt === null) return () => {};
+    const wait = () => 1000 - ((Date.now() - startedAt) % 1000) + 5;
+    let timer = 0;
+    const step = () => {
+      callback();
+      timer = window.setTimeout(step, wait());
+    };
+    timer = window.setTimeout(step, wait());
+    return () => window.clearTimeout(timer);
+  };
+}
 
 export function ThousandDayCountdown() {
   const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const storedStart = useSyncExternalStore(startedAtStore.subscribe, startedAtStore.read, () => null);
   const startedAt = LAUNCHED_AT ?? storedStart;
-  const liveDay = useSyncExternalStore(
-    subscribeEverySecond,
-    () => dayNumber(startedAt === null ? TOTAL_SECONDS : secondsLeftAt(Date.now() - startedAt)),
-    () => dayNumber(TOTAL_SECONDS),
+  const subscribeSeconds = useCallback((callback: () => void) => subscribeToSeconds(startedAt)(callback), [startedAt]);
+  const secondsLeft = useSyncExternalStore(
+    subscribeSeconds,
+    () => (startedAt === null ? TOTAL_SECONDS : secondsLeftAt(Date.now() - startedAt)),
+    () => TOTAL_SECONDS,
   );
+  const liveDay = dayNumber(secondsLeft);
+
   const [fontReady, setFontReady] = useState(false);
   const [soundOn, setSoundOn] = useState(true);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
@@ -1214,9 +1228,15 @@ export function ThousandDayCountdown() {
 
   return (
     <div
-      className={`${minecraft.className} flex w-full flex-col items-center gap-14 px-4 pb-[max(24px,env(safe-area-inset-bottom))] lg:flex-row lg:items-start lg:justify-center`}
+      className={`${minecraft.className} flex w-full flex-col items-center gap-14 px-4 pb-[max(24px,env(safe-area-inset-bottom))]`}
     >
       <h1 className="sr-only">1000 Day Countdown</h1>
+
+      {/* The main countdown. Remounted once on hydration so it doesn't roll from 1000:00:00:00 on load. */}
+      <section className={`flex w-full flex-col items-center gap-4 ${hydrated ? "" : "invisible"}`}>
+        <BigCountdown key={hydrated ? "live" : "static"} seconds={secondsLeft} className="text-[min(10.5vw,112px)]" />
+        {LAUNCHED_AT !== null && <p className="text-sm tracking-[0.2em] text-neutral-500">STARTED OCT 23, 2026</p>}
+      </section>
 
       <section className="flex w-[min(calc(100vw-32px),420px,calc(70svh*9/16))] flex-col gap-4">
         <canvas
@@ -1230,7 +1250,7 @@ export function ThousandDayCountdown() {
         <p ref={liveTextRef} className="sr-only" role="timer" />
 
         <div className="grid grid-cols-2 gap-3 pr-[5px]">
-          {LAUNCHED_AT === null ? (
+          {LAUNCHED_AT === null && (
             <>
               <button type="button" className={buttonClass} onClick={handleStart} disabled={!hydrated || running}>
                 START
@@ -1239,8 +1259,6 @@ export function ThousandDayCountdown() {
                 {confirmReset ? "SURE?" : "RESET"}
               </button>
             </>
-          ) : (
-            <p className="col-span-2 text-center text-sm tracking-[0.2em] text-neutral-500">STARTED OCT 23, 2026</p>
           )}
           <button
             type="button"
@@ -1263,7 +1281,7 @@ export function ThousandDayCountdown() {
         </button>
       </section>
 
-      <section className="flex w-[min(calc(100vw-32px),420px)] flex-col gap-4 lg:w-[340px]">
+      <section className="flex w-[min(calc(100vw-32px),420px)] flex-col gap-4">
         <h2 className="text-xl tracking-[0.2em]">PROFILE PIC</h2>
         <canvas
           ref={pfpRef}

@@ -12,7 +12,7 @@ export default function CountPage() {
   return (
     <main
       id="main-content"
-      className="flex min-h-[100svh] items-center justify-center bg-white py-6 text-black"
+      className="flex min-h-[100svh] justify-center bg-white py-12 text-black"
     >
       <ThousandDayCountdown />
     </main>
