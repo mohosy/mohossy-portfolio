@@ -534,12 +534,26 @@ function solveSurfaces(art: PreparedArt, fraction: number, offsets: number[]) {
   return offsets.map((o) => base + o);
 }
 
-function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: number, seconds: number, waveMs: number) {
+// In the clip's close-up the wave and the light band under the surface are scaled down, so a
+// magnified surface stays a calm, crisp line instead of a huge wobble.
+type ArtLook = { waveScale?: number; shineMax?: number };
+
+function drawArt(
+  ctx: CanvasRenderingContext2D,
+  art: PreparedArt,
+  fraction: number,
+  seconds: number,
+  waveMs: number,
+  { waveScale = 1, shineMax = Infinity }: ArtLook = {},
+) {
   const { cols, rows, cell, left, top, ink, isBody, isEdge } = art;
   const level = goldLevel(art, fraction);
   // A gentle wave on the surface. Near full or empty it shrinks so it never runs past the top
   // or bottom of the shape.
-  const amplitude = Math.max(0, Math.min(cell * 0.45, (level - art.fillTop) / 2, (art.fillBottom - level) / 2));
+  const amplitude = Math.max(
+    0,
+    Math.min(cell * 0.45 * waveScale, (level - art.fillTop) / 2, (art.fillBottom - level) / 2),
+  );
   const offsets = Array.from(
     { length: cols },
     (_, c) => amplitude * Math.sin(((left + c * cell) / 260) * Math.PI * 2 + (waveMs / 1600) * Math.PI * 2),
@@ -558,7 +572,7 @@ function drawArt(ctx: CanvasRenderingContext2D, art: PreparedArt, fraction: numb
     // The light band just under the surface, then plain gold below it. They sit side by side
     // (the band reaches 1 px under the gold so their shared edge has no gap), never stacked, so
     // the soft top edge shows exactly as much gold as is really there.
-    const shineEnd = surface + cell * 0.5;
+    const shineEnd = surface + Math.min(cell * 0.5, shineMax);
     for (let r = 0; r < rows; r++) {
       const y = top + r * cell;
       if (ink[r * cols + c] || isEdge(c, r)) {
@@ -679,7 +693,10 @@ type FrameState = {
   // Seconds into a downloaded clip; drives the opening animation. Unset on the live page.
   introS?: number;
   // Close-up camera for the clip opening: frame point (cx, cy) shown at the centre, `zoom` times.
-  camera?: { zoom: number; cx: number; cy: number };
+  camera?: { zoom: number; cx: number; cy: number; closeUp: number };
+  look?: ArtLook;
+  // In the close-up: where the gold started (frame pixels) and the label for the gap it leaves.
+  gap?: { startLevel: number; label: string; alpha: number };
 };
 
 function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
@@ -717,8 +734,8 @@ const INTRO = {
   spinStart: 0.15,
   firstStop: 1.55,
   stopGap: 0.25,
-  drainStart: 0.3,
-  drainEnd: 1.3,
+  drainStart: 0.25,
+  drainEnd: 1.15,
   typeGap: 0.55,
   typeStep: 0.04,
   hookGap: 0.2,
@@ -809,7 +826,7 @@ function drawLine(
 
 function drawFrame(
   ctx: CanvasRenderingContext2D,
-  { seconds, before, sinceMs, waveMs, fraction, day, introS, camera }: FrameState,
+  { seconds, before, sinceMs, waveMs, fraction, day, introS, camera, look, gap }: FrameState,
 ) {
   const family = minecraft.style.fontFamily;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -868,7 +885,7 @@ function drawFrame(
     drawLine(ctx, TALK, times.talkStart, t, hook);
   }
 
-  drawArt(ctx, getArt(), fraction, seconds, waveMs);
+  drawArt(ctx, getArt(), fraction, seconds, waveMs, look);
 
   ctx.fillStyle = INK;
   ctx.font = `${timer.size}px ${family}`;
@@ -882,43 +899,100 @@ function drawFrame(
     drawSpacedFrom(ctx, label, cx - spacedWidth(ctx, label, timerLabel.spacing) / 2, timerLabel.y, timerLabel.spacing);
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+  // Only for real close-ups: once the pour is big, the 3x shot shows it plainly.
+  if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4) drawGapLabel(ctx, camera, gap, fraction);
+}
+
+// While the camera is in close: "13 HRS GONE" in the gap the gold left, and how far it's zoomed in.
+function drawGapLabel(
+  ctx: CanvasRenderingContext2D,
+  camera: NonNullable<FrameState["camera"]>,
+  gap: NonNullable<FrameState["gap"]>,
+  fraction: number,
+) {
+  const family = minecraft.style.fontFamily;
+  const toScreen = (y: number) => FRAME_H / 2 + camera.zoom * (y - camera.cy);
+  const top = toScreen(gap.startLevel);
+  const surface = toScreen(goldLevel(getArt(), fraction));
+  const space = surface - top;
+  ctx.save();
+  if (space > 90) {
+    ctx.globalAlpha = gap.alpha * clamp01((space - 90) / 80);
+    ctx.font = `60px ${family}`;
+    const w = spacedWidth(ctx, gap.label, 5);
+    const y = (top + surface) / 2 + 22;
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(FRAME_W / 2 - w / 2 - 18, y - 66, w + 36, 86);
+    ctx.fillStyle = INK;
+    drawSpacedFrom(ctx, gap.label, FRAME_W / 2 - w / 2, y, 5);
+  }
+  const zoom = camera.closeUp;
+  const tag = `ZOOM X${zoom >= 100 ? Math.round(zoom / 10) * 10 : Math.round(zoom)}`;
+  ctx.globalAlpha = gap.alpha;
+  ctx.font = `36px ${family}`;
+  const tagW = spacedWidth(ctx, tag, 3) + 36;
+  ctx.fillStyle = INK;
+  ctx.fillRect(FRAME_W / 2 - tagW / 2, 1700, tagW, 60);
+  ctx.fillStyle = "#fff";
+  drawSpacedFrom(ctx, tag, FRAME_W / 2 - tagW / 2 + 18, 1745, 3);
+  ctx.restore();
+}
+
+// "13 HRS GONE", "5 DAYS GONE": how much of the 1000 days has drained.
+function goneText(seconds: number) {
+  const gone = TOTAL_SECONDS - seconds;
+  if (gone < 3600) return `${Math.max(1, Math.round(gone / 60))} MIN GONE`;
+  if (gone < 48 * 3600) {
+    const h = Math.floor(gone / 3600);
+    return `${h} ${h === 1 ? "HR" : "HRS"} GONE`;
+  }
+  return `${Math.floor(gone / 86_400)} DAYS GONE`;
 }
 
 // The clip opens full of gold and drains to the countdown's true level, landing together
 // with the spinning day number; from then on every frame shows the real value.
-// How close the opening shot gets: close enough that today's drop covers ~240 px on screen.
-// Early on the gold only falls a few pixels, so the camera goes in tighter (up to 24x);
-// once the drop is big it stays at 3x so the whole pour is in view.
-const DROP_ON_SCREEN = 240;
+// How close the opening shot gets: close enough that the drop since the start covers ~620 px on
+// screen. Early on that's a fraction of a pixel of gold, so the camera goes in very tight (about
+// x400 on Day 999, up to x1500 in the first hours), with the wave calmed and the gap labelled so
+// it still reads; once the drop is big it stays at 3x so the whole pour is in view.
+const DROP_ON_SCREEN = 620;
 const MIN_CLOSE_UP = 3;
-const MAX_CLOSE_UP = 24;
+const MAX_CLOSE_UP = 1500;
 
 function withIntro(state: FrameState, clipSeconds: number): FrameState {
   const art = getArt();
-  const { landed } = introTimes(String(state.day).length);
   // The gold drains first, while the camera is in close, and holds a beat at its new level.
   const p = easeInOut(clamp01((clipSeconds - INTRO.drainStart) / (INTRO.drainEnd - INTRO.drainStart)));
   const fraction = 1 + (state.fraction - 1) * p;
-  const drop = goldLevel(art, state.fraction) - goldLevel(art, 1);
-  const closeUp = Math.min(MAX_CLOSE_UP, Math.max(MIN_CLOSE_UP, DROP_ON_SCREEN / Math.max(drop, 0.01)));
+  const startLevel = goldLevel(art, 1);
+  const drop = goldLevel(art, state.fraction) - startLevel;
+  const closeUp = Math.min(MAX_CLOSE_UP, Math.max(MIN_CLOSE_UP, DROP_ON_SCREEN / Math.max(drop, 1e-6)));
 
-  // The shot opens with the surface a quarter of the way down and holds still, so you watch the
-  // gold drop. If the drop would run past half the screen, the camera follows part of the way
-  // (in step with the gold, so it never jerks) to keep the surface in view. Then it pulls back
-  // to the whole frame as the day number locks in. The zoom changes at an even rate (log scale)
-  // and the centre slides with the size of the view, so even a 24x pull-back feels smooth.
-  const zoomStart = INTRO.drainEnd + 0.15;
-  const zoomEnd = INTRO.zoomOutEnd ?? landed + 0.25;
+  // The shot opens with the gold's starting edge 30% down the screen and holds still, so you watch
+  // the gold drop. If the drop would run past half the screen, the camera follows part of the way
+  // (in step with the gold, so it never jerks) to keep the surface in view. Then it pulls back to
+  // the whole frame. The zoom changes at an even rate (log scale) and a bigger pull-back takes a
+  // little longer (0.7 s from 3x, ~1.2 s from x400), so even a huge zoom-out stays smooth.
+  const zoomStart = INTRO.drainEnd + 0.12;
+  const zoomEnd = INTRO.zoomOutEnd ?? zoomStart + Math.min(1.3, Math.max(0.7, 0.55 + 0.11 * Math.log(closeUp)));
   const out = easeInOut(clamp01((clipSeconds - zoomStart) / (zoomEnd - zoomStart)));
   if (!INTRO.zoom || out >= 1) return { ...state, introS: clipSeconds, fraction };
   const zoom = closeUp ** (1 - out);
   const travel = drop * closeUp;
   const followShare = travel > FRAME_H * 0.5 ? 1 - (FRAME_H * 0.5) / travel : 0;
-  const startLevel = goldLevel(art, 1);
-  const follow = startLevel + (FRAME_H / closeUp) * 0.25 + followShare * (goldLevel(art, fraction) - startLevel);
+  const follow = startLevel + (FRAME_H / closeUp) * 0.2 + followShare * (goldLevel(art, fraction) - startLevel);
   const widen = (1 / zoom - 1 / closeUp) / (1 - 1 / closeUp);
-  const camera = { zoom, cx: FRAME_W / 2, cy: follow + (FRAME_H / 2 - follow) * widen };
-  return { ...state, introS: clipSeconds, fraction, camera };
+  // Aimed at the watch's middle column, clear of the band's stripes.
+  const ax = art.left + (art.cols / 2 + 0.5) * art.cell;
+  const camera = { zoom, closeUp, cx: ax + (FRAME_W / 2 - ax) * widen, cy: follow + (FRAME_H / 2 - follow) * widen };
+  return {
+    ...state,
+    introS: clipSeconds,
+    fraction,
+    camera,
+    look: { waveScale: Math.min(1, 6 / (art.cell * 0.45 * zoom)), shineMax: 18 / zoom },
+    gap: { startLevel, label: goneText(state.seconds), alpha: 1 - clamp01(out * 4) },
+  };
 }
 
 // "Last 10 seconds": ends just before the latest tick, so the clip has 10 evenly spaced ticks.
