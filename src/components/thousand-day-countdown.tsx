@@ -999,8 +999,8 @@ const PFP_SIZE = 1080;
 const DOTS = "....";
 const PFP_RED = "#FD0603";
 
-// Instagram crops profile pictures to a circle, so the number stays well inside it.
-function drawProfilePic(ctx: CanvasRenderingContext2D, text: string, color = INK) {
+// Instagram crops profile pictures to a circle, so the number stays well inside it. White on red.
+function drawProfilePic(ctx: CanvasRenderingContext2D, text: string) {
   ctx.fillStyle = PFP_RED;
   ctx.fillRect(0, 0, PFP_SIZE, PFP_SIZE);
   if (!text) return;
@@ -1009,7 +1009,7 @@ function drawProfilePic(ctx: CanvasRenderingContext2D, text: string, color = INK
   const width = ctx.measureText(text).width;
   if (width > 700) ctx.font = `${Math.floor((200 * 700) / width)}px ${family}`;
   const m = ctx.measureText(text);
-  ctx.fillStyle = color;
+  ctx.fillStyle = "#fff";
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
   ctx.fillText(
@@ -1133,7 +1133,7 @@ export function ThousandDayCountdown() {
     const ctx = pfpRef.current?.getContext("2d");
     if (ctx && fontReady) drawProfilePic(ctx, pfpNumber);
     const dots = dotsRef.current?.getContext("2d");
-    if (dots && fontReady) drawProfilePic(dots, DOTS, "#fff");
+    if (dots && fontReady) drawProfilePic(dots, DOTS);
   }, [pfpNumber, fontReady]);
 
   useEffect(() => {
