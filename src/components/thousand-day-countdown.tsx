@@ -83,13 +83,17 @@ function secondsLeftAt(elapsedMs: number) {
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
+// The day you're in, counted down: Day 1000 is the first 24 hours, Day 1 the last, 0 once it's over.
+// At the end of a day the timer reads 1000:00:00:00, then rolls to 999:23:59:59.
 function dayNumber(seconds: number) {
-  return Math.ceil(seconds / 86_400);
+  if (seconds <= 0) return 0;
+  return Math.min(TOTAL_SECONDS / 86_400, Math.floor(seconds / 86_400) + 1);
 }
 
-// The exact time left, DDD:HH:MM:SS (996:17:48:09 on Day 997, which still has 17h 48m to go).
+// The timer starts with the day number, so it always matches the day: 1000:22:26:09 is Day 1000
+// with 22h 26m left in it (he wanted the day count and the timer to agree, 23 Oct).
 function timerText(seconds: number) {
-  return `${String(Math.floor(seconds / 86_400)).padStart(3, "0")}:${hmsText(seconds)}`;
+  return `${String(dayNumber(seconds)).padStart(3, "0")}:${hmsText(seconds)}`;
 }
 
 function hmsText(seconds: number) {
@@ -1233,7 +1237,12 @@ export function ThousandDayCountdown() {
 
       {/* The main countdown. Remounted once on hydration so it doesn't roll from 1000:00:00:00 on load. */}
       <section className={`flex w-full flex-col items-center gap-4 ${hydrated ? "" : "invisible"}`}>
-        <BigCountdown key={hydrated ? "live" : "static"} seconds={secondsLeft} className="text-[min(10.5vw,112px)]" />
+        <BigCountdown
+          key={hydrated ? "live" : "static"}
+          seconds={secondsLeft}
+          days={liveDay}
+          className="text-[min(10.5vw,112px)]"
+        />
         {LAUNCHED_AT !== null && (
           <div className="flex flex-col items-center gap-1 text-center text-sm tracking-[0.2em] text-neutral-500">
             <p>STARTED {laDate(LAUNCHED_AT)}</p>

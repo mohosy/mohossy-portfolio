@@ -4,9 +4,9 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const pad = (n: number, width = 2) => String(n).padStart(width, "0");
 
-function groups(seconds: number) {
+function groups(seconds: number, days: number) {
   return [
-    { label: "DAYS", value: pad(Math.floor(seconds / 86_400), 3) },
+    { label: "DAYS", value: pad(days, 3) },
     { label: "HRS", value: pad(Math.floor((seconds % 86_400) / 3600)) },
     { label: "MIN", value: pad(Math.floor((seconds % 3600) / 60)) },
     { label: "SEC", value: pad(seconds % 60) },
@@ -34,14 +34,15 @@ function Digit({ value }: { value: string }) {
 }
 
 // Big DDD:HH:MM:SS with DAYS/HRS/MIN/SEC labels. The caller sets the font and the size (font-size).
-export function BigCountdown({ seconds, className = "" }: { seconds: number; className?: string }) {
+// `days` replaces the full days left (e.g. /count shows the day you're in, so it matches the reel).
+export function BigCountdown({ seconds, days, className = "" }: { seconds: number; days?: number; className?: string }) {
   return (
     <div
       className={`flex items-start justify-center leading-[1.15] ${className}`}
       role="timer"
       aria-label={`${seconds} seconds left`}
     >
-      {groups(seconds).map((group, i) => (
+      {groups(seconds, days ?? Math.floor(seconds / 86_400)).map((group, i) => (
         <div key={group.label} className="flex items-start">
           {i > 0 && <span className="h-[1.15em]">:</span>}
           <div className="flex flex-col items-center">
