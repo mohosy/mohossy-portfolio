@@ -719,7 +719,8 @@ const TALK = "EVERYONE WILL BE TALKING ABOUT IT";
 
 // Opening sequence of a downloaded clip, in seconds, and which parts of it play.
 const INTRO = {
-  clipSeconds: 10,
+  // 13 s: the opening takes ~7.5 s, so this leaves ~5 s of ticking at the end (he asked for more, 24 Oct).
+  clipSeconds: 13,
   zoom: true,
   // The day number spins and locks in (false: it just appears with the headline).
   spin: true,
@@ -995,7 +996,7 @@ function withIntro(state: FrameState, clipSeconds: number): FrameState {
   };
 }
 
-// "Last 10 seconds": ends just before the latest tick, so the clip has 10 evenly spaced ticks.
+// The clip ends just before the latest tick, so its ticks land on whole seconds of the video.
 function clipStartMs(elapsedMs: number) {
   return Math.max(0, Math.floor(elapsedMs / 1000) * 1000 - 500 - clipMs());
 }
@@ -1307,6 +1308,7 @@ export function ThousandDayCountdown() {
   };
 
   const handleDownload = async () => {
+    if (exportState.status === "rendering") return;
     // A finished clip whose tap has expired waits for a fresh tap to open the share sheet.
     if (exportState.status === "ready") {
       setExportState({ status: "idle" });
@@ -1406,16 +1408,29 @@ export function ThousandDayCountdown() {
               </button>
             </>
           )}
+          {/* While the video is made the button stays readable and fills up like a progress bar;
+              when a phone needs a second tap to open the share sheet, it turns gold. */}
           <button
             type="button"
-            className={`${primaryButtonClass} col-span-2`}
+            className={`${exportState.status === "ready" ? `${buttonBase} bg-[#F2B33D] text-black` : primaryButtonClass} relative col-span-2 overflow-hidden ${exportState.status === "rendering" ? "pointer-events-none" : ""}`}
             onClick={handleDownload}
-            disabled={!fontReady || exportState.status === "rendering"}
+            disabled={!fontReady}
+            aria-disabled={exportState.status === "rendering"}
           >
-            {downloadLabel}
+            {exportState.status === "rendering" && (
+              <span
+                aria-hidden
+                className="absolute inset-y-0 left-0 bg-neutral-600"
+                style={{ width: `${Math.round(exportState.progress * 100)}%` }}
+              />
+            )}
+            <span className="relative">{downloadLabel}</span>
           </button>
         </div>
 
+        {exportState.status === "rendering" && (
+          <p className="text-center text-sm tracking-[0.2em] text-neutral-500">KEEP THIS PAGE OPEN</p>
+        )}
         {exportState.status === "error" && <p className="text-center text-sm text-neutral-600">{exportState.message}</p>}
 
       </section>
