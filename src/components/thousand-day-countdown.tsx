@@ -1081,8 +1081,8 @@ export function ThousandDayCountdown() {
   const liveDay = dayNumber(secondsLeft);
 
   const [fontReady, setFontReady] = useState(false);
-  const [soundOn, setSoundOn] = useState(true);
-  const [audioUnlocked, setAudioUnlocked] = useState(false);
+  // Off until tapped: phones only allow sound after a tap anyway, so the button always tells the truth.
+  const [soundOn, setSoundOn] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [exportState, setExportState] = useState<ExportState>({ status: "idle" });
   // null means the profile picture follows the live countdown.
@@ -1114,17 +1114,12 @@ export function ThousandDayCountdown() {
     audioRef.current ??= new AudioContext();
     void audioRef.current.resume();
     unlockedRef.current = true;
-    setAudioUnlocked(true);
   }, []);
 
-  useEffect(() => {
-    window.addEventListener("click", unlockAudio);
-    window.addEventListener("keydown", unlockAudio);
-    return () => {
-      window.removeEventListener("click", unlockAudio);
-      window.removeEventListener("keydown", unlockAudio);
-    };
-  }, [unlockAudio]);
+  const toggleSound = () => {
+    if (!soundOn) unlockAudio();
+    setSoundOn((on) => !on);
+  };
 
   const play = useCallback((name: SoundName) => {
     const ctx = audioRef.current;
@@ -1243,10 +1238,19 @@ export function ThousandDayCountdown() {
           <div className="flex flex-col items-center gap-1 text-center text-sm tracking-[0.2em] text-neutral-500">
             <p>STARTED {laDate(LAUNCHED_AT)}</p>
             <p className="text-black">
-              ENDS {laDate(LAUNCHED_AT + TOTAL_SECONDS * 1000)} AT {laTime(LAUNCHED_AT + TOTAL_SECONDS * 1000)}
+              ENDS {laDate(LAUNCHED_AT + TOTAL_SECONDS * 1000)}{" "}
+              <span className="whitespace-nowrap">AT {laTime(LAUNCHED_AT + TOTAL_SECONDS * 1000)}</span>
             </p>
           </div>
         )}
+        <button
+          type="button"
+          aria-pressed={soundOn}
+          onClick={toggleSound}
+          className={`${soundOn ? primaryButtonClass : buttonClass} mt-2 min-w-52`}
+        >
+          {soundOn ? "SOUND: ON" : "SOUND: OFF"}
+        </button>
       </section>
 
       <section className="flex w-[min(calc(100vw-32px),420px,calc(70svh*9/16))] flex-col gap-4">
@@ -1283,13 +1287,6 @@ export function ThousandDayCountdown() {
 
         {exportState.status === "error" && <p className="text-center text-sm text-neutral-600">{exportState.message}</p>}
 
-        <button
-          type="button"
-          className="self-center py-2 text-sm tracking-[0.2em] text-neutral-500 hover:text-black"
-          onClick={() => setSoundOn((on) => !on)}
-        >
-          {!soundOn ? "SOUND: OFF" : running && !audioUnlocked ? "TAP FOR SOUND" : "SOUND: ON"}
-        </button>
       </section>
 
       <section className="flex w-[min(calc(100vw-32px),420px)] flex-col gap-4">
