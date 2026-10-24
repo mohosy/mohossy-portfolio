@@ -10,6 +10,9 @@ const minecraft = localFont({
 
 const TOTAL_SECONDS = 1000 * 86_400;
 const STORAGE_KEY = "mohossy-count-started-at";
+// The real run started on Fri 23 Oct 2026 at 7:36:15 PM Los Angeles time. It's fixed here so every
+// phone and laptop counts from the same moment; set it to null to bring back the START button.
+const LAUNCHED_AT: number | null = Date.UTC(2026, 9, 24, 2, 36, 15);
 
 // The page and the downloaded clip are drawn by the same code at Reels size (9:16).
 const FRAME_W = 1080;
@@ -1045,7 +1048,8 @@ const subscribeEverySecond = (callback: () => void) => {
 
 export function ThousandDayCountdown() {
   const hydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
-  const startedAt = useSyncExternalStore(startedAtStore.subscribe, startedAtStore.read, () => null);
+  const storedStart = useSyncExternalStore(startedAtStore.subscribe, startedAtStore.read, () => null);
+  const startedAt = LAUNCHED_AT ?? storedStart;
   const liveDay = useSyncExternalStore(
     subscribeEverySecond,
     () => dayNumber(startedAt === null ? TOTAL_SECONDS : secondsLeftAt(Date.now() - startedAt)),
@@ -1226,12 +1230,18 @@ export function ThousandDayCountdown() {
         <p ref={liveTextRef} className="sr-only" role="timer" />
 
         <div className="grid grid-cols-2 gap-3 pr-[5px]">
-          <button type="button" className={buttonClass} onClick={handleStart} disabled={!hydrated || running}>
-            START
-          </button>
-          <button type="button" className={buttonClass} onClick={handleReset} disabled={!hydrated || !running}>
-            {confirmReset ? "SURE?" : "RESET"}
-          </button>
+          {LAUNCHED_AT === null ? (
+            <>
+              <button type="button" className={buttonClass} onClick={handleStart} disabled={!hydrated || running}>
+                START
+              </button>
+              <button type="button" className={buttonClass} onClick={handleReset} disabled={!hydrated || !running}>
+                {confirmReset ? "SURE?" : "RESET"}
+              </button>
+            </>
+          ) : (
+            <p className="col-span-2 text-center text-sm tracking-[0.2em] text-neutral-500">STARTED OCT 23, 2026</p>
+          )}
           <button
             type="button"
             className={`${primaryButtonClass} col-span-2`}
