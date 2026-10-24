@@ -15,6 +15,19 @@ const STORAGE_KEY = "mohossy-count-started-at";
 // phone and laptop counts from the same moment; set it to null to bring back the START button.
 const LAUNCHED_AT: number | null = Date.UTC(2026, 9, 24, 2, 36, 15);
 
+// "OCT 23, 2026" / "7:36 PM PDT" in Los Angeles time, the same on the server and every phone.
+const laDate = (ms: number) =>
+  new Date(ms)
+    .toLocaleDateString("en-US", { timeZone: "America/Los_Angeles", month: "short", day: "numeric", year: "numeric" })
+    .toUpperCase();
+const laTime = (ms: number) =>
+  new Date(ms).toLocaleTimeString("en-US", {
+    timeZone: "America/Los_Angeles",
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
+
 // The page and the downloaded clip are drawn by the same code at Reels size (9:16).
 const FRAME_W = 1080;
 const FRAME_H = 1920;
@@ -999,8 +1012,6 @@ function shareOrSave(file: File) {
 }
 
 const PFP_SIZE = 1080;
-// The teaser version of the red square: four white Minecraft dots instead of the day number.
-const DOTS = "....";
 const PFP_RED = "#FD0603";
 
 // Instagram crops profile pictures to a circle, so the number stays well inside it. White on red.
@@ -1078,7 +1089,6 @@ export function ThousandDayCountdown() {
   const [pfpText, setPfpText] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pfpRef = useRef<HTMLCanvasElement>(null);
-  const dotsRef = useRef<HTMLCanvasElement>(null);
   const liveTextRef = useRef<HTMLParagraphElement>(null);
   const audioRef = useRef<AudioContext | null>(null);
   const unlockedRef = useRef(false);
@@ -1150,8 +1160,6 @@ export function ThousandDayCountdown() {
   useEffect(() => {
     const ctx = pfpRef.current?.getContext("2d");
     if (ctx && fontReady) drawProfilePic(ctx, pfpNumber);
-    const dots = dotsRef.current?.getContext("2d");
-    if (dots && fontReady) drawProfilePic(dots, DOTS);
   }, [pfpNumber, fontReady]);
 
   useEffect(() => {
@@ -1208,10 +1216,6 @@ export function ThousandDayCountdown() {
     }
   };
 
-  const handleDotsDownload = () => {
-    if (dotsRef.current) shareOrSave(canvasToFile(dotsRef.current, "profile-pic-dots.png"));
-  };
-
   const handlePfpDownload = () => {
     if (pfpRef.current && pfpNumber) shareOrSave(canvasToFile(pfpRef.current, `profile-pic-${pfpNumber}.png`));
   };
@@ -1235,7 +1239,14 @@ export function ThousandDayCountdown() {
       {/* The main countdown. Remounted once on hydration so it doesn't roll from 1000:00:00:00 on load. */}
       <section className={`flex w-full flex-col items-center gap-4 ${hydrated ? "" : "invisible"}`}>
         <BigCountdown key={hydrated ? "live" : "static"} seconds={secondsLeft} className="text-[min(10.5vw,112px)]" />
-        {LAUNCHED_AT !== null && <p className="text-sm tracking-[0.2em] text-neutral-500">STARTED OCT 23, 2026</p>}
+        {LAUNCHED_AT !== null && (
+          <div className="flex flex-col items-center gap-1 text-center text-sm tracking-[0.2em] text-neutral-500">
+            <p>STARTED {laDate(LAUNCHED_AT)}</p>
+            <p className="text-black">
+              ENDS {laDate(LAUNCHED_AT + TOTAL_SECONDS * 1000)} AT {laTime(LAUNCHED_AT + TOTAL_SECONDS * 1000)}
+            </p>
+          </div>
+        )}
       </section>
 
       <section className="flex w-[min(calc(100vw-32px),420px,calc(70svh*9/16))] flex-col gap-4">
@@ -1325,20 +1336,6 @@ export function ThousandDayCountdown() {
           disabled={!fontReady || !pfpNumber}
         >
           DOWNLOAD PROFILE PIC
-        </button>
-
-        <h2 className="mt-6 text-xl tracking-[0.2em]">DOTS PIC</h2>
-        <canvas
-          ref={dotsRef}
-          width={PFP_SIZE}
-          height={PFP_SIZE}
-          role="img"
-          aria-label="Red square with four white dots"
-          className="aspect-square w-full"
-          style={{ background: PFP_RED }}
-        />
-        <button type="button" className={`${primaryButtonClass} mr-[5px]`} onClick={handleDotsDownload} disabled={!fontReady}>
-          DOWNLOAD DOTS PIC
         </button>
       </section>
     </div>
