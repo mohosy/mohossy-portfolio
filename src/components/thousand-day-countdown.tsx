@@ -83,21 +83,68 @@ function secondsLeftAt(elapsedMs: number) {
 
 const pad2 = (n: number) => String(n).padStart(2, "0");
 
-// The day you're in, counted down: Day 1000 is the first 24 hours, Day 1 the last, 0 once it's over.
-// At the end of a day the timer reads 1000:00:00:00, then rolls to 999:23:59:59.
-function dayNumber(seconds: number) {
-  if (seconds <= 0) return 0;
-  return Math.min(TOTAL_SECONDS / 86_400, Math.floor(seconds / 86_400) + 1);
+const DAY_MS = 86_400_000;
+const LA_PARTS = new Intl.DateTimeFormat("en-US", {
+  timeZone: "America/Los_Angeles",
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "numeric",
+  second: "numeric",
+  hourCycle: "h23",
+});
+
+// The Los Angeles wall clock at an instant, read back as if it were UTC.
+function laWall(ms: number) {
+  const p = Object.fromEntries(LA_PARTS.formatToParts(ms).map((part) => [part.type, Number(part.value)]));
+  return Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
 }
 
-// The timer starts with the day number, so it always matches the day: 1000:22:26:09 is Day 1000
-// with 22h 26m left in it (he wanted the day count and the timer to agree, 23 Oct).
+// Which calendar day it is in Los Angeles (days since 1 Jan 1970), and when that day's midnight was.
+const laDay = (ms: number) => Math.floor(laWall(ms) / DAY_MS);
+function laMidnight(day: number) {
+  const guess = day * DAY_MS + 8 * 3_600_000; // around midnight PST; DST only flips at 2 AM
+  return day * DAY_MS + (guess - laWall(guess));
+}
+
+// The day you're in and the seconds left in it. Since 23 Oct the days change at midnight LA time
+// (he wanted Saturday to be 999 all day): Fri 23 Oct 2026 from 7:36 PM = Day 1000, Sat = 999, ...,
+// Wed 18 Jul 2029 = Day 1, Thu 19 Jul 2029 = Day 0 until the end at 7:36 PM. A day's last second
+// reads 1000:00:00:00, then it rolls to 999:23:59:59. Without a fixed start, days are 24 h blocks.
+const clockCache = new Map<number, { day: number; left: number }>();
+function dayClock(seconds: number) {
+  if (seconds <= 0) return { day: 0, left: 0 };
+  if (seconds >= TOTAL_SECONDS) return { day: TOTAL_SECONDS / 86_400, left: 0 };
+  if (LAUNCHED_AT === null) return { day: Math.floor(seconds / 86_400) + 1, left: seconds % 86_400 };
+  const hit = clockCache.get(seconds);
+  if (hit) return hit;
+  const end = LAUNCHED_AT + TOTAL_SECONDS * 1000;
+  const at = end - seconds * 1000;
+  const today = laDay(at - 1); // the stroke of midnight still belongs to the day that's ending
+  const clock = {
+    day: TOTAL_SECONDS / 86_400 - (today - laDay(LAUNCHED_AT)),
+    left: Math.round((Math.min(end, laMidnight(today + 1)) - at) / 1000),
+  };
+  if (clockCache.size > 16) clockCache.clear();
+  clockCache.set(seconds, clock);
+  return clock;
+}
+
+function dayNumber(seconds: number) {
+  return dayClock(seconds).day;
+}
+
+// The timer starts with the day number, so it always matches the day: 1000:02:49:10 is Day 1000
+// with 2h 49m left in it (he wanted the day count and the timer to agree, 23 Oct).
 function timerText(seconds: number) {
   return `${String(dayNumber(seconds)).padStart(3, "0")}:${hmsText(seconds)}`;
 }
 
+// Time left in the current day (a 25-hour DST day can show 24:xx:xx).
 function hmsText(seconds: number) {
-  return `${pad2(Math.floor((seconds % 86_400) / 3600))}:${pad2(Math.floor((seconds % 3600) / 60))}:${pad2(seconds % 60)}`;
+  const left = dayClock(seconds).left;
+  return `${pad2(Math.floor(left / 3600))}:${pad2(Math.floor((left % 3600) / 60))}:${pad2(left % 60)}`;
 }
 
 // Sounds are synthesized with Web Audio, so there is no sound file to load. Each one is a
@@ -1241,6 +1288,7 @@ export function ThousandDayCountdown() {
           key={hydrated ? "live" : "static"}
           seconds={secondsLeft}
           days={liveDay}
+          rest={dayClock(secondsLeft).left}
           className="text-[min(10.5vw,112px)]"
         />
         {LAUNCHED_AT !== null && (

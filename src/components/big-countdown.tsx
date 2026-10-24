@@ -4,12 +4,12 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const pad = (n: number, width = 2) => String(n).padStart(width, "0");
 
-function groups(seconds: number, days: number) {
+function groups(days: number, rest: number) {
   return [
     { label: "DAYS", value: pad(days, 3) },
-    { label: "HRS", value: pad(Math.floor((seconds % 86_400) / 3600)) },
-    { label: "MIN", value: pad(Math.floor((seconds % 3600) / 60)) },
-    { label: "SEC", value: pad(seconds % 60) },
+    { label: "HRS", value: pad(Math.floor(rest / 3600)) },
+    { label: "MIN", value: pad(Math.floor((rest % 3600) / 60)) },
+    { label: "SEC", value: pad(rest % 60) },
   ];
 }
 
@@ -34,15 +34,26 @@ function Digit({ value }: { value: string }) {
 }
 
 // Big DDD:HH:MM:SS with DAYS/HRS/MIN/SEC labels. The caller sets the font and the size (font-size).
-// `days` replaces the full days left (e.g. /count shows the day you're in, so it matches the reel).
-export function BigCountdown({ seconds, days, className = "" }: { seconds: number; days?: number; className?: string }) {
+// `days` + `rest` replace full days left + the remainder (/count shows the day you're in and the
+// time left in it, so it matches the reel).
+export function BigCountdown({
+  seconds,
+  days,
+  rest,
+  className = "",
+}: {
+  seconds: number;
+  days?: number;
+  rest?: number;
+  className?: string;
+}) {
   return (
     <div
       className={`flex items-start justify-center leading-[1.15] ${className}`}
       role="timer"
       aria-label={`${seconds} seconds left`}
     >
-      {groups(seconds, days ?? Math.floor(seconds / 86_400)).map((group, i) => (
+      {groups(days ?? Math.floor(seconds / 86_400), rest ?? seconds % 86_400).map((group, i) => (
         <div key={group.label} className="flex items-start">
           {i > 0 && <span className="h-[1.15em]">:</span>}
           <div className="flex flex-col items-center">
