@@ -697,6 +697,9 @@ type FrameState = {
   look?: ArtLook;
   // In the close-up: where the gold started (frame pixels) and the label for the gap it leaves.
   gap?: { startLevel: number; label: string; alpha: number };
+  // Waves on the magnified surface: how strong (0 when not zoomed in), and seconds since the gold
+  // started to drop (for the slosh).
+  ripple?: { scale: number; since: number; style: RippleStyle };
 };
 
 function frameStateAt(elapsedMs: number, animate: boolean): FrameState {
@@ -827,7 +830,7 @@ function drawLine(
 
 function drawFrame(
   ctx: CanvasRenderingContext2D,
-  { seconds, before, sinceMs, waveMs, fraction, day, introS, camera, look, gap }: FrameState,
+  { seconds, before, sinceMs, waveMs, fraction, day, introS, camera, look, gap, ripple }: FrameState,
 ) {
   const family = minecraft.style.fontFamily;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -887,6 +890,7 @@ function drawFrame(
   }
 
   drawArt(ctx, getArt(), fraction, seconds, waveMs, look);
+  if (camera && ripple && ripple.scale > 0) drawRipples(ctx, camera, fraction, waveMs, ripple);
 
   ctx.fillStyle = INK;
   ctx.font = `${timer.size}px ${family}`;
@@ -902,6 +906,104 @@ function drawFrame(
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   // Only for real close-ups: once the pour is big, the 3x shot shows it plainly.
   if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4) drawGapLabel(ctx, camera, gap, fraction);
+}
+
+let fillCells: Path2D | undefined;
+
+// Every cell that can hold gold, as one shape (outlines and stripes left out).
+function fillCellsPath(art: PreparedArt) {
+  if (!fillCells) {
+    const path = new Path2D();
+    art.fillCols.forEach((rowsInCol, c) =>
+      rowsInCol.forEach((r) => path.rect(art.left + c * art.cell, art.top + r * art.cell, art.cell, art.cell)),
+    );
+    fillCells = path;
+  }
+  return fillCells;
+}
+
+// In the close-up the surface moves like real liquid: long, smooth waves that sway slowly (no
+// small bumps), plus a slosh that rocks the surface after the gold drops and settles. A thin bright
+// line sits on the edge with a soft fade into the gold under it. Drawn smoothly in screen space over
+// the exact (flat) level; the waves rise and dip evenly around it, so the gold shown is still the
+// true amount. Only cells that hold gold are repainted, so outlines and stripes stay put.
+type RippleStyle = {
+  // [share of the height, wavelength in screen px, speed in radians/s]
+  waves: [number, number, number][];
+  height: number;
+  // The slosh after the drop: peak height (px), wavelength, period and how fast it dies down (s).
+  slosh: { height: number; length: number; period: number; decay: number };
+  edge: number;
+  fade: number;
+};
+
+// Six looks for the surface; each day uses the next one, so the daily videos don't all move the
+// same way while everything else stays recognisable (he liked A-C and asked for variety, 24 Oct).
+const RIPPLE_STYLES: RippleStyle[] = [
+  // A: gentle waves
+  { waves: [[0.75, 1500, 1.6], [0.25, 800, -2.2]], height: 20, slosh: { height: 34, length: 2600, period: 1.1, decay: 0.9 }, edge: 4, fade: 40 },
+  // B: slow sway
+  { waves: [[1, 2400, 1.2]], height: 14, slosh: { height: 40, length: 3000, period: 1.3, decay: 1 }, edge: 4, fade: 40 },
+  // C: glassy calm
+  { waves: [[1, 3400, 0.8]], height: 8, slosh: { height: 22, length: 3400, period: 1.4, decay: 0.8 }, edge: 4, fade: 60 },
+  // D: sway with a soft second wave
+  { waves: [[0.6, 2400, 1.2], [0.4, 1100, -1.8]], height: 16, slosh: { height: 36, length: 2800, period: 1.2, decay: 0.9 }, edge: 4, fade: 45 },
+  // E: calm surface, bigger slosh
+  { waves: [[1, 2000, 1]], height: 10, slosh: { height: 55, length: 2400, period: 1, decay: 1.1 }, edge: 4, fade: 45 },
+  // F: soft roll the other way
+  { waves: [[0.7, 1800, -1.4], [0.3, 3200, 0.9]], height: 18, slosh: { height: 28, length: 3200, period: 1.5, decay: 0.8 }, edge: 4, fade: 50 },
+];
+
+const rippleStyleFor = (day: number) => RIPPLE_STYLES[day % RIPPLE_STYLES.length];
+
+function drawRipples(
+  ctx: CanvasRenderingContext2D,
+  camera: NonNullable<FrameState["camera"]>,
+  fraction: number,
+  waveMs: number,
+  ripple: NonNullable<FrameState["ripple"]>,
+) {
+  const art = getArt();
+  const level = FRAME_H / 2 + camera.zoom * (goldLevel(art, fraction) - camera.cy);
+  const { waves, height, slosh, edge, fade } = ripple.style;
+  const reach = (height + slosh.height) * ripple.scale;
+  if (level < -reach * 2 || level > FRAME_H + reach * 2) return;
+  const t = waveMs / 1000;
+  const rock =
+    ripple.since > 0
+      ? slosh.height * Math.exp(-ripple.since / slosh.decay) * Math.sin((2 * Math.PI * ripple.since) / slosh.period)
+      : 0;
+  const wave = (x: number) =>
+    ripple.scale *
+    (height * waves.reduce((sum, [share, length, speed]) => sum + share * Math.sin((2 * Math.PI * x) / length + speed * t), 0) +
+      rock * Math.sin((2 * Math.PI * x) / slosh.length + 0.6));
+  const top = level - reach - 4;
+  const bottom = level + reach + fade + 4;
+  const xs = Array.from({ length: FRAME_W / 4 + 1 }, (_, i) => i * 4);
+  const curve = xs.map((x) => level + wave(x));
+
+  ctx.save();
+  ctx.setTransform(camera.zoom, 0, 0, camera.zoom, FRAME_W / 2 - camera.zoom * camera.cx, FRAME_H / 2 - camera.zoom * camera.cy);
+  ctx.clip(fillCellsPath(art));
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  const band = (upper: (i: number) => number, lower: (i: number) => number, fill: string | CanvasGradient) => {
+    ctx.beginPath();
+    xs.forEach((x, i) => (i ? ctx.lineTo(x, upper(i)) : ctx.moveTo(x, upper(i))));
+    for (let i = xs.length - 1; i >= 0; i--) ctx.lineTo(xs[i], lower(i));
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+  };
+  band(() => top, (i) => curve[i], "#fff");
+  band((i) => curve[i] + edge, () => bottom, GOLD);
+  // The soft fade follows the surface: a gradient per short stretch would be costly, so one
+  // gradient spans the band and the wave's own height keeps it close to the edge.
+  const glow = ctx.createLinearGradient(0, level - reach, 0, level + reach + fade);
+  glow.addColorStop(0, GOLD_LIGHT);
+  glow.addColorStop(1, GOLD);
+  band((i) => curve[i] + edge, (i) => curve[i] + edge + fade, glow);
+  band((i) => curve[i], (i) => curve[i] + edge, "#FFF1C4");
+  ctx.restore();
 }
 
 // While the camera is in close: "13 HRS GONE" in the gap the gold left, and how far it's zoomed in.
@@ -960,7 +1062,7 @@ const DROP_ON_SCREEN = 620;
 const MIN_CLOSE_UP = 3;
 const MAX_CLOSE_UP = 1500;
 
-function withIntro(state: FrameState, clipSeconds: number): FrameState {
+function withIntro(state: FrameState, clipSeconds: number, style: RippleStyle): FrameState {
   const art = getArt();
   // The gold drains first, while the camera is in close, and holds a beat at its new level.
   const p = easeInOut(clamp01((clipSeconds - INTRO.drainStart) / (INTRO.drainEnd - INTRO.drainStart)));
@@ -993,6 +1095,8 @@ function withIntro(state: FrameState, clipSeconds: number): FrameState {
     camera,
     look: { waveScale: Math.min(1, 6 / (art.cell * 0.45 * zoom)), shineMax: 18 / zoom },
     gap: { startLevel, label: goneText(state.seconds), alpha: 1 - clamp01(out * 4) },
+    // Liquid waves while in close, fading out as the camera pulls back.
+    ripple: { scale: clamp01((zoom - 3) / 5), since: clipSeconds - INTRO.drainStart, style },
   };
 }
 
@@ -1101,8 +1205,9 @@ async function renderClip(startMs: number, onProgress: (fraction: number) => voi
   await output.start();
 
   const frames = (CLIP_FPS * clipMs()) / 1000;
+  const style = rippleStyleFor(dayNumber(secondsLeftAt(startMs + clipMs())));
   for (let i = 0; i < frames; i++) {
-    drawFrame(ctx, withIntro(frameStateAt(startMs + (i * 1000) / CLIP_FPS, true), i / CLIP_FPS));
+    drawFrame(ctx, withIntro(frameStateAt(startMs + (i * 1000) / CLIP_FPS, true), i / CLIP_FPS, style));
     await video.add(i / CLIP_FPS, 1 / CLIP_FPS);
     if (i % 10 === 0) onProgress(i / frames);
   }
