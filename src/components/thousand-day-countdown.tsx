@@ -271,16 +271,17 @@ function playVoice(ctx: BaseAudioContext, voice: Voice, startAt = ctx.currentTim
 
 // Frame layout in 1080x1920 pixels, kept clear of the Reels caption and button overlays.
 // Everything sits inside Instagram's safe area on any phone: below the top bar (y > 250), above the
-// caption and username (y < 1520), and clear of the ~100 px that tall iPhones crop off each side
-// and of the like/share buttons on the right (all text fits in x 100-980).
+// caption and username (y < 1480), clear of the ~100 px tall iPhones crop off each side, and in the
+// lower half (where the like/comment/share buttons run down the right edge) nothing goes past
+// x 860: the lines under the watch are at most 640 px wide (24 Oct: the old line hit the buttons).
 // The countdown sits on top (it's the hook: people see it first and wonder what it's for), the
 // watch in the middle, and the answer ("999 DAYS LEFT TO BECOME A BILLIONAIRE") underneath.
 const LAYOUT = {
   timer: { size: 88, y: 330 },
   timerLabel: { size: 24, y: 372, spacing: 4 },
-  days: { size: 88, y: 1352, spacing: 6 },
-  about: { size: 46, y: 1424, spacing: 6 },
-  hook: { size: 30, y: 1476, spacing: 4 },
+  days: { size: 80, y: 1344, spacing: 6 },
+  about: { size: 36, y: 1404, spacing: 5 },
+  hook: { size: 26, y: 1450, spacing: 4 },
 };
 
 const INK = "#000";
