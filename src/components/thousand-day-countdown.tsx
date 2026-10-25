@@ -273,12 +273,14 @@ function playVoice(ctx: BaseAudioContext, voice: Voice, startAt = ctx.currentTim
 // Everything sits inside Instagram's safe area on any phone: below the top bar (y > 250), above the
 // caption and username (y < 1520), and clear of the ~100 px that tall iPhones crop off each side
 // and of the like/share buttons on the right (all text fits in x 100-980).
+// The countdown sits on top (it's the hook: people see it first and wonder what it's for), the
+// watch in the middle, and the answer ("999 DAYS LEFT TO BECOME A BILLIONAIRE") underneath.
 const LAYOUT = {
-  days: { size: 88, y: 340, spacing: 6 },
-  about: { size: 46, y: 420, spacing: 6 },
-  hook: { size: 30, y: 476, spacing: 4 },
-  timer: { size: 88, y: 1460 },
-  timerLabel: { size: 24, y: 1502, spacing: 4 },
+  timer: { size: 88, y: 330 },
+  timerLabel: { size: 24, y: 372, spacing: 4 },
+  days: { size: 88, y: 1352, spacing: 6 },
+  about: { size: 46, y: 1424, spacing: 6 },
+  hook: { size: 30, y: 1476, spacing: 4 },
 };
 
 const INK = "#000";
@@ -389,7 +391,7 @@ function ring(plot: (x: number, y: number) => void, cx: number, cy: number, r: n
 }
 
 function centered(cols: number, rows: number, cell: number) {
-  return { cols, rows, cell, left: (FRAME_W - cols * cell) / 2, top: 960 - (rows * cell) / 2 };
+  return { cols, rows, cell, left: (FRAME_W - cols * cell) / 2, top: 860 - (rows * cell) / 2 };
 }
 
 // A gold watch: the band and case drain, the white dial keeps ticking.
@@ -741,7 +743,9 @@ const INTRO = {
   headlineIn: 0,
   spinStart: 0.15,
   // Big text on the very first frame, over the close-up ({day} = the day number); null = none.
-  hook: "I HAVE {day} DAYS LEFT" as string | null,
+  hook: null as string | null,
+  // "13 HRS GONE" in the close-up's gap (off: the countdown on top is the only thing to read).
+  gapLabel: false,
   firstStop: 1.2,
   stopGap: 0.15,
   drainStart: 0,
@@ -898,6 +902,14 @@ function drawFrame(
   drawArt(ctx, getArt(), fraction, seconds, waveMs, look);
   if (camera && ripple && ripple.scale > 0) drawRipples(ctx, camera, fraction, waveMs, ripple);
 
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  // The countdown never moves with the camera: from the first frame it ticks on top, on a white
+  // strip, while the close-up plays out below it.
+  if (camera) {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, FRAME_W, timerLabel.y + 40);
+  }
   ctx.fillStyle = INK;
   ctx.font = `${timer.size}px ${family}`;
   const slots = drawRollingRow(ctx, timerText(seconds), timerText(before), sinceMs, timer.y);
@@ -909,10 +921,9 @@ function drawFrame(
     const cx = (slots[first].x + slots[last].x + slots[last].w) / 2;
     drawSpacedFrom(ctx, label, cx - spacedWidth(ctx, label, timerLabel.spacing) / 2, timerLabel.y, timerLabel.spacing);
   }
-  ctx.setTransform(1, 0, 0, 1, 0, 0);
   // Only for real close-ups: once the pour is big, the 3x shot shows it plainly.
   // One message at a time: a hook line replaces the "GONE" label and zoom tag.
-  if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4 && !INTRO.hook) drawGapLabel(ctx, camera, gap, fraction);
+  if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4 && INTRO.gapLabel && !INTRO.hook) drawGapLabel(ctx, camera, gap, fraction);
   if (INTRO.hook && introS !== undefined) drawHook(ctx, INTRO.hook.replace("{day}", String(day)), gap?.alpha ?? 0);
 }
 
