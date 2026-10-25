@@ -732,7 +732,10 @@ const INTRO = {
   clipSeconds: 9,
   zoom: true,
   // The day number spins and locks in (false: it just appears with the headline).
-  spin: true,
+  spin: false,
+  // Line 1 under the watch: the countdown on top already shows the days, so it just says
+  // "TIME LEFT" (24 Oct); null = "999 DAYS LEFT" with the spinning number.
+  headline: "TIME LEFT" as string | null,
   // How lines 2-4 appear: typed out letter by letter, or a quick fade.
   lines: "typed" as "typed" | "fade",
   // Swipe "or something huge will happen" away for "everyone will be talking about it" (off since 24 Oct).
@@ -740,7 +743,8 @@ const INTRO = {
   sounds: { ratchet: true, typing: true, pour: true },
   // When the close-up has fully pulled back; null = just after the number lands.
   zoomOutEnd: null as number | null,
-  headlineIn: 0,
+  // "TIME LEFT" comes in as the camera finishes pulling back, then the next lines type out.
+  headlineIn: 1.9,
   spinStart: 0.15,
   // Big text on the very first frame, over the close-up ({day} = the day number); null = none.
   hook: null as string | null,
@@ -857,9 +861,17 @@ function drawFrame(
   const rest = day === 1 ? " DAY LEFT" : " DAYS LEFT";
   const times = introS === undefined ? null : introTimes(number.length);
 
-  // Line 1 slides up into place, its number spinning until it lands.
+  // Line 1 slides up into place, its number spinning until it lands (or just "TIME LEFT").
   const headlineIn = times ? clamp01((introS! - INTRO.headlineIn) / INTRO.fade) : 1;
-  if (headlineIn > 0) {
+  if (headlineIn > 0 && INTRO.headline) {
+    ctx.font = `${days.size}px ${family}`;
+    ctx.save();
+    ctx.globalAlpha = headlineIn;
+    ctx.translate(0, (1 - easeOut(headlineIn)) * 40);
+    ctx.fillStyle = INK;
+    drawSpacedFrom(ctx, INTRO.headline, (FRAME_W - spacedWidth(ctx, INTRO.headline, days.spacing)) / 2, days.y, days.spacing);
+    ctx.restore();
+  } else if (headlineIn > 0) {
     ctx.font = `${days.size}px ${family}`;
     const numberW = spacedWidth(ctx, number, days.spacing) + days.spacing;
     const x = (FRAME_W - numberW - spacedWidth(ctx, rest, days.spacing)) / 2;
