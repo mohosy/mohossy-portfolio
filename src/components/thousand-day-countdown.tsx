@@ -741,19 +741,29 @@ const INTRO = {
   // Swipe "or something huge will happen" away for "everyone will be talking about it" (off since 24 Oct).
   talk: false,
   sounds: { ratchet: true, typing: true, pour: true },
+  // Level of the gold's pour + drips (24 Oct: he found it too quiet).
+  pourGain: 4,
   // When the close-up has fully pulled back; null = just after the number lands.
   zoomOutEnd: null as number | null,
   // "TIME LEFT" comes in as the camera finishes pulling back, then the next lines type out.
-  headlineIn: 1.9,
+  headlineIn: 2,
   spinStart: 0.15,
   // Big text on the very first frame, over the close-up ({day} = the day number); null = none.
   hook: null as string | null,
   // "13 HRS GONE" in the close-up's gap (off: the countdown on top is the only thing to read).
   gapLabel: false,
+  // First-3-seconds hooks: ticks (and a deeper first tick) from frame 1; hundredths of a second
+  // racing on the countdown during the opening; the countdown starting big and shrinking to the top.
+  soundHook: false,
+  racing: false,
+  // Crisp opening (24 Oct): the countdown on top gives a small punch with a tap on frame 1 and
+  // pulses on each tick, the gold is already there dropping below it, then a swoosh as the camera
+  // pulls back and a click as "TIME LEFT" lands; ticks from the very start.
+  trailer: true,
   firstStop: 1.2,
   stopGap: 0.15,
-  drainStart: 0,
-  drainEnd: 0.9,
+  drainStart: 0.05,
+  drainEnd: 0.85,
   typeGap: 0.55,
   typeStep: 0.04,
   hookGap: 0.2,
@@ -917,14 +927,41 @@ function drawFrame(
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   // The countdown never moves with the camera: from the first frame it ticks on top, on a white
-  // strip, while the close-up plays out below it.
-  if (camera) {
-    ctx.fillStyle = "#fff";
-    ctx.fillRect(0, 0, FRAME_W, timerLabel.y + 40);
+  // strip, while the close-up plays out below it. In the crisp opening it punches in a little on
+  // frame 1 and pulses on each tick until "TIME LEFT" comes in.
+  const racing = INTRO.racing && introS !== undefined ? 1 - clamp01((introS - INTRO.headlineIn) / 0.3) : 0;
+  ctx.font = `${timer.size * 0.5}px ${family}`;
+  const racingW = racing > 0 ? ctx.measureText(".00").width + 4 : 0;
+  const strip = timerLabel.y + 40;
+  const timerY = timer.y;
+  let timerScale = 1;
+  if (INTRO.trailer && introS !== undefined && introS < INTRO.headlineIn + 0.3) {
+    const punch = introS < 0.08 ? TRAILER.punch * easeOut(introS / 0.08) : TRAILER.punch * Math.exp(-(introS - 0.08) / 0.25);
+    const pulse = sinceMs === null ? 0 : TRAILER.pulse * Math.exp(-sinceMs / 120);
+    timerScale = 1 + punch + pulse;
   }
+  const panel = camera ? timer.y + (strip - timer.y) * timerScale : 0;
+  if (panel > 0) {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, FRAME_W, panel);
+  }
+  ctx.save();
+  ctx.translate(FRAME_W / 2 - (racingW / 2) * racing * timerScale, timerY);
+  ctx.scale(timerScale, timerScale);
+  ctx.translate(-FRAME_W / 2, -timer.y);
   ctx.fillStyle = INK;
   ctx.font = `${timer.size}px ${family}`;
   const slots = drawRollingRow(ctx, timerText(seconds), timerText(before), sinceMs, timer.y);
+  // Hundredths of a second racing during the opening, fading out as "TIME LEFT" comes in.
+  if (racing > 0) {
+    const last = slots[slots.length - 1];
+    ctx.save();
+    ctx.globalAlpha = racing;
+    ctx.font = `${timer.size * 0.5}px ${family}`;
+    ctx.textAlign = "left";
+    ctx.fillText(`.${String(99 - (Math.floor(waveMs / 10) % 100)).padStart(2, "0")}`, last.x + last.w + 4, timer.y);
+    ctx.restore();
+  }
   // Small labels under each group, counted from the right since the days group can change width.
   ctx.font = `${timerLabel.size}px ${family}`;
   const n = slots.length;
@@ -933,6 +970,7 @@ function drawFrame(
     const cx = (slots[first].x + slots[last].x + slots[last].w) / 2;
     drawSpacedFrom(ctx, label, cx - spacedWidth(ctx, label, timerLabel.spacing) / 2, timerLabel.y, timerLabel.spacing);
   }
+  ctx.restore();
   // Only for real close-ups: once the pour is big, the 3x shot shows it plainly.
   // One message at a time: a hook line replaces the "GONE" label and zoom tag.
   if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4 && INTRO.gapLabel && !INTRO.hook) drawGapLabel(ctx, camera, gap, fraction);
@@ -1037,6 +1075,9 @@ function drawRipples(
   ctx.restore();
 }
 
+// The crisp opening's punch-in on frame 1 and pulse on each tick, as shares of the countdown's size.
+const TRAILER = { punch: 0.08, pulse: 0.04 };
+
 // While the camera is in close: "13 HRS GONE" in the gap the gold left.
 // The opening hook: big white words on black bars in the top third, there from the first frame
 // and gone as the camera pulls back.
@@ -1122,15 +1163,19 @@ function withIntro(state: FrameState, clipSeconds: number, style: RippleStyle): 
   // the gold drop. If the drop would run past half the screen, the camera follows part of the way
   // (in step with the gold, so it never jerks) to keep the surface in view. Then it pulls back to
   // the whole frame. The zoom changes at an even rate (log scale) and a bigger pull-back takes a
-  // little longer (0.7 s from 3x, ~1.2 s from x400), so even a huge zoom-out stays smooth.
+  // little longer (0.7 s from 3x, ~1.4 s from x900), so even a huge zoom-out stays smooth. The curve
+  // gets going quickly (time is warped so the start isn't sluggish) and lands softly.
   const zoomStart = INTRO.drainEnd + 0.12;
-  const zoomEnd = INTRO.zoomOutEnd ?? zoomStart + Math.min(1.3, Math.max(0.7, 0.55 + 0.11 * Math.log(closeUp)));
-  const out = easeInOut(clamp01((clipSeconds - zoomStart) / (zoomEnd - zoomStart)));
+  const zoomEnd = INTRO.zoomOutEnd ?? zoomStart + Math.min(1.4, Math.max(0.7, 0.6 + 0.12 * Math.log(closeUp)));
+  const out = (1 - Math.cos(Math.PI * clamp01((clipSeconds - zoomStart) / (zoomEnd - zoomStart)) ** 0.75)) / 2;
   if (!INTRO.zoom || out >= 1) return { ...state, introS: clipSeconds, fraction };
   const zoom = closeUp ** (1 - out);
   const travel = drop * closeUp;
   const followShare = travel > FRAME_H * 0.5 ? 1 - (FRAME_H * 0.5) / travel : 0;
-  const follow = startLevel + (FRAME_H / closeUp) * 0.2 + followShare * (goldLevel(art, fraction) - startLevel);
+  // The gold's starting edge sits 3 px under the bottom of the countdown's white strip, so the
+  // band's black rim above it stays hidden: just white, then gold dropping away.
+  const edgeAt = LAYOUT.timerLabel.y + 40 - 3;
+  const follow = startLevel + (FRAME_H / closeUp) * ((FRAME_H / 2 - edgeAt) / FRAME_H) + followShare * (goldLevel(art, fraction) - startLevel);
   const widen = (1 / zoom - 1 / closeUp) / (1 - 1 / closeUp);
   // Aimed at the watch's middle column, clear of the band's stripes.
   const ax = art.left + (art.cols / 2 + 0.5) * art.cell;
@@ -1167,6 +1212,34 @@ function playRatchet(ctx: BaseAudioContext, out: AudioNode, digits: number, land
   }
 }
 
+// Crisp ASMR-style sounds for the opening (from his approved SFX library, see public/sfx/README.md):
+// a tap on frame 1, an airy swoosh peaking as the camera pulls back, and a click as "TIME LEFT" lands.
+async function playTrailerSounds(ctx: BaseAudioContext) {
+  const load = (name: string) =>
+    fetch(`/sfx/${name}.mp3`)
+      .then((response) => response.arrayBuffer())
+      .then((data) => ctx.decodeAudioData(data));
+  try {
+    const [tap, swoosh, click] = await Promise.all(["tap", "swoosh", "click"].map(load));
+    const zoomMid = INTRO.drainEnd + 0.12 + 0.5;
+    const cues: [AudioBuffer, number, number][] = [
+      [tap, 0, 0.6],
+      [swoosh, zoomMid - 0.21, 0.5],
+      [click, INTRO.headlineIn + 0.05, 0.5],
+    ];
+    for (const [buffer, at, gain] of cues) {
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      const amp = ctx.createGain();
+      amp.gain.value = gain;
+      src.connect(amp).connect(ctx.destination);
+      src.start(Math.max(0, at));
+    }
+  } catch {
+    // No network: the clip still has its ticks and pour.
+  }
+}
+
 async function renderClipAudio(startMs: number) {
   const rate = 48_000;
   const ctx = new OfflineAudioContext(2, (rate * clipMs()) / 1000, rate);
@@ -1182,10 +1255,9 @@ async function renderClipAudio(startMs: number) {
     playRatchet(ctx, out, digits, landed);
     quietFrom.push(landed + 0.1);
   }
-  // Quieter while little has drained, so a tiny drop in the gold never sounds like a big pour.
-  const drained = 1 - secondsLeftAt(startMs + landed * 1000) / TOTAL_SECONDS;
+  // The pour is up front now: the close-up makes even an early drop look big (24 Oct: "too low").
   const liquid = ctx.createGain();
-  liquid.gain.value = 0.3 + 0.7 * clamp01(drained / 0.1);
+  liquid.gain.value = INTRO.pourGain;
   liquid.connect(out);
   if (INTRO.sounds.pour) {
     playVoice(ctx, pour(INTRO.drainStart, INTRO.drainEnd), 0, liquid);
@@ -1201,7 +1273,9 @@ async function renderClipAudio(startMs: number) {
   }
 
   // The timer keeps counting, but its tick stays quiet until the intro sounds are done.
-  const ticksFrom = Math.max(...quietFrom) + 0.1;
+  const ticksFrom = INTRO.soundHook || INTRO.trailer ? 0 : Math.max(...quietFrom) + 0.1;
+  if (INTRO.soundHook && !INTRO.trailer) playVoice(ctx, SOUNDS.minute, 0.02, out);
+  if (INTRO.trailer) await playTrailerSounds(ctx);
   for (let t = Math.max(1000, Math.ceil(startMs / 1000) * 1000); t < startMs + clipMs(); t += 1000) {
     const at = (t - startMs) / 1000;
     const left = secondsLeftAt(t);
