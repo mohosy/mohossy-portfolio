@@ -722,15 +722,16 @@ const TALK = "EVERYONE WILL BE TALKING ABOUT IT";
 
 // Opening sequence of a downloaded clip, in seconds, and which parts of it play.
 const INTRO = {
-  // 12 s: the opening takes ~7.5 s, so this leaves ~4 s of ticking at the end (13 s was a bit long, 24 Oct).
-  clipSeconds: 12,
+  // 10 s: without the swipe to "everyone will be talking about it" the opening takes ~5 s, then
+  // ~5 ticks (24 Oct: 13 s was a bit long, then he dropped the talking line to make it shorter).
+  clipSeconds: 10,
   zoom: true,
   // The day number spins and locks in (false: it just appears with the headline).
   spin: true,
   // How lines 2-4 appear: typed out letter by letter, or a quick fade.
   lines: "typed" as "typed" | "fade",
-  // Swipe "or something huge will happen" away for "everyone will be talking about it".
-  talk: true,
+  // Swipe "or something huge will happen" away for "everyone will be talking about it" (off since 24 Oct).
+  talk: false,
   sounds: { ratchet: true, typing: true, pour: true },
   // When the close-up has fully pulled back; null = just after the number lands.
   zoomOutEnd: null as number | null,
