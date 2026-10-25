@@ -722,9 +722,9 @@ const TALK = "EVERYONE WILL BE TALKING ABOUT IT";
 
 // Opening sequence of a downloaded clip, in seconds, and which parts of it play.
 const INTRO = {
-  // 10 s: without the swipe to "everyone will be talking about it" the opening takes ~5 s, then
-  // ~5 ticks (24 Oct: 13 s was a bit long, then he dropped the talking line to make it shorter).
-  clipSeconds: 10,
+  // 9 s: the opening takes ~4.4 s, then ~4.5 s of ticking (24 Oct: 13 s was a bit long, he dropped
+  // the talking line, then picked the faster opening with the hook).
+  clipSeconds: 9,
   zoom: true,
   // The day number spins and locks in (false: it just appears with the headline).
   spin: true,
@@ -735,12 +735,14 @@ const INTRO = {
   sounds: { ratchet: true, typing: true, pour: true },
   // When the close-up has fully pulled back; null = just after the number lands.
   zoomOutEnd: null as number | null,
-  headlineIn: 0.15,
+  headlineIn: 0,
   spinStart: 0.15,
-  firstStop: 1.55,
-  stopGap: 0.25,
-  drainStart: 0.25,
-  drainEnd: 1.15,
+  // Big text on the very first frame, over the close-up ({day} = the day number); null = none.
+  hook: "I HAVE {day} DAYS LEFT" as string | null,
+  firstStop: 1.2,
+  stopGap: 0.15,
+  drainStart: 0,
+  drainEnd: 0.9,
   typeGap: 0.55,
   typeStep: 0.04,
   hookGap: 0.2,
@@ -906,7 +908,9 @@ function drawFrame(
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   // Only for real close-ups: once the pour is big, the 3x shot shows it plainly.
-  if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4) drawGapLabel(ctx, camera, gap, fraction);
+  // One message at a time: a hook line replaces the "GONE" label and zoom tag.
+  if (camera && gap && gap.alpha > 0 && camera.closeUp >= 4 && !INTRO.hook) drawGapLabel(ctx, camera, gap, fraction);
+  if (INTRO.hook && introS !== undefined) drawHook(ctx, INTRO.hook.replace("{day}", String(day)), gap?.alpha ?? 0);
 }
 
 let fillCells: Path2D | undefined;
@@ -1008,6 +1012,31 @@ function drawRipples(
 }
 
 // While the camera is in close: "13 HRS GONE" in the gap the gold left, and how far it's zoomed in.
+// The opening hook: big white words on black bars in the top third, there from the first frame
+// and gone as the camera pulls back.
+function drawHook(ctx: CanvasRenderingContext2D, text: string, alpha: number) {
+  if (alpha <= 0) return;
+  const family = minecraft.style.fontFamily;
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  ctx.font = `84px ${family}`;
+  const lines: string[] = [];
+  for (const word of text.split(" ")) {
+    const last = lines[lines.length - 1];
+    if (last && spacedWidth(ctx, `${last} ${word}`, 6) <= 900) lines[lines.length - 1] = `${last} ${word}`;
+    else lines.push(word);
+  }
+  lines.forEach((line, i) => {
+    const w = spacedWidth(ctx, line, 6);
+    const y = 330 + i * 116;
+    ctx.fillStyle = INK;
+    ctx.fillRect(FRAME_W / 2 - w / 2 - 26, y - 90, w + 52, 112);
+    ctx.fillStyle = "#fff";
+    drawSpacedFrom(ctx, line, FRAME_W / 2 - w / 2, y, 6);
+  });
+  ctx.restore();
+}
+
 function drawGapLabel(
   ctx: CanvasRenderingContext2D,
   camera: NonNullable<FrameState["camera"]>,
