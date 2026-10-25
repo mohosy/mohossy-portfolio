@@ -270,12 +270,15 @@ function playVoice(ctx: BaseAudioContext, voice: Voice, startAt = ctx.currentTim
 }
 
 // Frame layout in 1080x1920 pixels, kept clear of the Reels caption and button overlays.
+// Everything sits inside Instagram's safe area on any phone: below the top bar (y > 250), above the
+// caption and username (y < 1520), and clear of the ~100 px that tall iPhones crop off each side
+// and of the like/share buttons on the right (all text fits in x 100-980).
 const LAYOUT = {
-  days: { size: 96, y: 250, spacing: 6 },
-  about: { size: 50, y: 340, spacing: 6 },
-  hook: { size: 30, y: 400, spacing: 4 },
-  timer: { size: 92, y: 1530 },
-  timerLabel: { size: 26, y: 1578, spacing: 4 },
+  days: { size: 88, y: 340, spacing: 6 },
+  about: { size: 46, y: 420, spacing: 6 },
+  hook: { size: 30, y: 476, spacing: 4 },
+  timer: { size: 88, y: 1460 },
+  timerLabel: { size: 24, y: 1502, spacing: 4 },
 };
 
 const INK = "#000";
@@ -386,7 +389,7 @@ function ring(plot: (x: number, y: number) => void, cx: number, cy: number, r: n
 }
 
 function centered(cols: number, rows: number, cell: number) {
-  return { cols, rows, cell, left: (FRAME_W - cols * cell) / 2, top: 955 - (rows * cell) / 2 };
+  return { cols, rows, cell, left: (FRAME_W - cols * cell) / 2, top: 960 - (rows * cell) / 2 };
 }
 
 // A gold watch: the band and case drain, the white dial keeps ticking.
@@ -428,7 +431,7 @@ function buildWatch(): Art {
     },
   );
   return {
-    ...centered(cols, rows, 9),
+    ...centered(cols, rows, 8),
     body,
     ink,
     overlay: ({ fillCell, seconds }) => {
@@ -1011,7 +1014,7 @@ function drawRipples(
   ctx.restore();
 }
 
-// While the camera is in close: "13 HRS GONE" in the gap the gold left, and how far it's zoomed in.
+// While the camera is in close: "13 HRS GONE" in the gap the gold left.
 // The opening hook: big white words on black bars in the top third, there from the first frame
 // and gone as the camera pulls back.
 function drawHook(ctx: CanvasRenderingContext2D, text: string, alpha: number) {
@@ -1023,12 +1026,12 @@ function drawHook(ctx: CanvasRenderingContext2D, text: string, alpha: number) {
   const lines: string[] = [];
   for (const word of text.split(" ")) {
     const last = lines[lines.length - 1];
-    if (last && spacedWidth(ctx, `${last} ${word}`, 6) <= 900) lines[lines.length - 1] = `${last} ${word}`;
+    if (last && spacedWidth(ctx, `${last} ${word}`, 6) <= 780) lines[lines.length - 1] = `${last} ${word}`;
     else lines.push(word);
   }
   lines.forEach((line, i) => {
     const w = spacedWidth(ctx, line, 6);
-    const y = 330 + i * 116;
+    const y = 380 + i * 116;
     ctx.fillStyle = INK;
     ctx.fillRect(FRAME_W / 2 - w / 2 - 26, y - 90, w + 52, 112);
     ctx.fillStyle = "#fff";
@@ -1059,15 +1062,6 @@ function drawGapLabel(
     ctx.fillStyle = INK;
     drawSpacedFrom(ctx, gap.label, FRAME_W / 2 - w / 2, y, 5);
   }
-  const zoom = camera.closeUp;
-  const tag = `ZOOM X${zoom >= 100 ? Math.round(zoom / 10) * 10 : Math.round(zoom)}`;
-  ctx.globalAlpha = gap.alpha;
-  ctx.font = `36px ${family}`;
-  const tagW = spacedWidth(ctx, tag, 3) + 36;
-  ctx.fillStyle = INK;
-  ctx.fillRect(FRAME_W / 2 - tagW / 2, 1700, tagW, 60);
-  ctx.fillStyle = "#fff";
-  drawSpacedFrom(ctx, tag, FRAME_W / 2 - tagW / 2 + 18, 1745, 3);
   ctx.restore();
 }
 
