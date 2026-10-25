@@ -722,8 +722,8 @@ const TALK = "EVERYONE WILL BE TALKING ABOUT IT";
 
 // Opening sequence of a downloaded clip, in seconds, and which parts of it play.
 const INTRO = {
-  // 13 s: the opening takes ~7.5 s, so this leaves ~5 s of ticking at the end (he asked for more, 24 Oct).
-  clipSeconds: 13,
+  // 12 s: the opening takes ~7.5 s, so this leaves ~4 s of ticking at the end (13 s was a bit long, 24 Oct).
+  clipSeconds: 12,
   zoom: true,
   // The day number spins and locks in (false: it just appears with the headline).
   spin: true,
