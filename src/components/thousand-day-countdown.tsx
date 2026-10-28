@@ -1438,15 +1438,14 @@ export function ThousandDayCountdown() {
   const [soundOn, setSoundOn] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
   const [exportState, setExportState] = useState<ExportState>({ status: "idle" });
-  // null means the profile picture follows the live countdown.
-  const [pfpText, setPfpText] = useState<string | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pfpRef = useRef<HTMLCanvasElement>(null);
   const liveTextRef = useRef<HTMLParagraphElement>(null);
   const audioRef = useRef<AudioContext | null>(null);
   const unlockedRef = useRef(false);
   const soundOnRef = useRef(soundOn);
-  const pfpNumber = pfpText ?? String(liveDay);
+  // The profile pic always shows today's day number (the manual -/+ was removed, 28 Oct).
+  const pfpNumber = String(liveDay);
 
   useEffect(() => {
     soundOnRef.current = soundOn;
@@ -1569,7 +1568,6 @@ export function ThousandDayCountdown() {
     if (pfpRef.current && pfpNumber) shareOrSave(canvasToFile(pfpRef.current, `profile-pic-${pfpNumber}.png`));
   };
 
-  const nudgePfp = (step: number) => setPfpText(String(Math.max(0, (parseInt(pfpNumber, 10) || 0) + step)));
 
   const running = startedAt !== null;
   const downloadLabel =
@@ -1673,32 +1671,6 @@ export function ThousandDayCountdown() {
           className="aspect-square w-full"
           style={{ background: PFP_RED }}
         />
-        <div className="grid grid-cols-[auto_1fr_auto] gap-3 pr-[5px]">
-          <button type="button" className={`${buttonClass} w-14 px-0`} onClick={() => nudgePfp(-1)} aria-label="One less">
-            -
-          </button>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            aria-label="Day number on the profile picture"
-            className="min-h-14 w-full border-4 border-black text-center text-2xl outline-none focus:bg-neutral-100"
-            value={pfpNumber}
-            onChange={(event) => setPfpText(event.target.value.replace(/\D/g, "").slice(0, 4))}
-          />
-          <button type="button" className={`${buttonClass} w-14 px-0`} onClick={() => nudgePfp(1)} aria-label="One more">
-            +
-          </button>
-        </div>
-        <p className="text-center text-xs tracking-[0.15em] text-neutral-500">
-          {pfpText === null ? (
-            "MATCHES THE COUNTDOWN"
-          ) : (
-            <button type="button" className="py-1 underline underline-offset-4" onClick={() => setPfpText(null)}>
-              MATCH THE COUNTDOWN ({liveDay})
-            </button>
-          )}
-        </p>
         <button
           type="button"
           className={`${primaryButtonClass} mr-[5px]`}
