@@ -1380,10 +1380,11 @@ function drawProfilePic(ctx: CanvasRenderingContext2D, text: string) {
   ctx.fillStyle = "#fff";
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
+  // Centred on the digits' ink (not their spacing), snapped to whole pixels so the edges stay crisp.
   ctx.fillText(
     text,
-    PFP_SIZE / 2 + (m.actualBoundingBoxLeft - m.actualBoundingBoxRight) / 2,
-    PFP_SIZE / 2 + (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2,
+    Math.round(PFP_SIZE / 2 + (m.actualBoundingBoxLeft - m.actualBoundingBoxRight) / 2),
+    Math.round(PFP_SIZE / 2 + (m.actualBoundingBoxAscent - m.actualBoundingBoxDescent) / 2),
   );
 }
 
